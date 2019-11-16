@@ -1,0 +1,35 @@
+-r requirements.txt
+
+## Administration tools
+pip-tools
+
+
+## Linter tools
+mypy
+flake8-isort
+pylint
+docutils
+pygments
+bandit
+black;python_version>="3.6"
+
+## Test tools
+tox
+asynctest
+green
+coveralls
+pytest
+nose2
+
+# Pypi
+twine
+
+# Sample integrations
+#hypercorn;python_version>="3.6"
+#quart;python_version>="3.6"
+
+sphinx
+sphinx_rtd_theme
+doc8
+
+pybadges
