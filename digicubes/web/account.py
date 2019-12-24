@@ -8,10 +8,10 @@ from flask import abort, current_app, request, Response, redirect, Flask, url_fo
 from flask_wtf.csrf import CSRFError
 from werkzeug.local import LocalProxy
 
-from digicubes.client import DigiCubeClient, RoleService, UserService
-from digicubes.common.structures import BearerTokenData
-from digicubes.common.exceptions import DigiCubeError
-from digicubes.common.entities import RightEntity
+from digicubes_client.client import DigiCubeClient, RoleService, UserService
+from digicubes_common.structures import BearerTokenData
+from digicubes_common.exceptions import DigiCubeError
+from digicubes_common.entities import RightEntity
 
 logger = logging.getLogger(__name__)
 # pylint: disable=unnecessary-lambda

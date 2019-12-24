@@ -19,7 +19,7 @@ from os.path import isfile
 from docopt import docopt
 import yaml
 
-from digicubes.web.modules.account.config import AccountConfig
+from digicubes_rest.web.modules.account.config import AccountConfig
 
 # logging.basicConfig(level=logging.INFO)
 
@@ -67,7 +67,7 @@ def config_from_yaml(app, filename):
 
 def run():
     """Runs the server"""
-    from digicubes.web import create_app
+    from digicubes_rest.web import create_app
 
     arguments = docopt(__doc__, help=True, version="Run DigiCubes Webserver 1.0")
 

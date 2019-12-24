@@ -4,10 +4,10 @@ The Admin Blueprint
 import logging
 from flask import Blueprint, render_template, abort, request
 
-from digicubes.client import UserProxy
-from digicubes.common.exceptions import DigiCubeError
-from digicubes.common.structures import BearerTokenData
-from digicubes.web.account import login_required, needs_right, account_manager
+from digicubes_client.client import UserProxy
+from digicubes_common.exceptions import DigiCubeError
+from digicubes_common.structures import BearerTokenData
+from digicubes_rest.web.account import login_required, needs_right, account_manager
 from .forms import LoginForm, RegisterForm
 
 account_service = Blueprint("account", __name__)
