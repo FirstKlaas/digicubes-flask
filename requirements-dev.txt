@@ -13,7 +13,7 @@ attrs==19.3.0
 babel==2.7.0              # via sphinx
 bandit==1.6.2
 black==19.10b0 ; python_version >= "3.6"
-bleach==3.1.0             # via readme-renderer
+bleach==3.1.1             # via readme-renderer
 cattrs==0.9.0
 certifi==2019.9.11
 chardet==3.0.4
@@ -37,7 +37,6 @@ gitpython==3.0.5          # via bandit
 green==3.0.0
 idna==2.8
 imagesize==1.1.0          # via sphinx
-importlib-metadata==0.23  # via pluggy, pytest, tox
 isort==4.3.21             # via flake8-isort, pylint
 itsdangerous==1.1.0
 jinja2==2.10.3
@@ -45,7 +44,7 @@ lazy-object-proxy==1.4.3  # via astroid
 lxml==4.4.1               # via green
 markupsafe==1.1.1
 mccabe==0.6.1             # via flake8, pylint
-more-itertools==7.2.0     # via pytest, zipp
+more-itertools==7.2.0     # via pytest
 mypy-extensions==0.4.3    # via mypy
 mypy==0.740
 nose2==0.9.1
@@ -87,7 +86,7 @@ toml==0.10.0              # via black, tox
 tox==3.14.1
 tqdm==4.38.0              # via twine
 twine==2.0.0
-typed-ast==1.4.0          # via astroid, black, mypy
+typed-ast==1.4.0          # via black, mypy
 typing-extensions==3.7.4.1  # via mypy
 unidecode==1.1.1          # via green
 urllib3==1.25.7
@@ -97,7 +96,6 @@ webencodings==0.5.1       # via bleach
 werkzeug==0.16.0
 wrapt==1.11.2             # via astroid
 wtforms==2.2.1
-zipp==0.6.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.6.0        # via sphinx, twine
+# setuptools
