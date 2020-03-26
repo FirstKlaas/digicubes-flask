@@ -38,7 +38,7 @@ class CurrentUser:
         self._rights = None  # Cached User rights
 
     def __str__(self):
-        return f"Current User: id={self.id}"
+        return self.id
 
     def __eq__(self, other):
         return self.token == other

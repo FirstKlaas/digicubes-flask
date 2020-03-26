@@ -53,3 +53,8 @@ pack: ci
 publish: pack
 	twine check ./dist/*
 	twine upload ./dist/*
+
+run: export FLASK_ENV=development
+run: export FLASK_APP=digicubes.web
+run:
+	flask run
