@@ -12,7 +12,7 @@ attrs==19.3.0             # via -r requirements.txt, black, cattrs, digicubes-co
 babel==2.8.0              # via sphinx
 bandit==1.6.2             # via -r requirements-dev.in
 black==19.10b0 ; python_version >= "3.6"  # via -r requirements-dev.in
-bleach==3.1.3             # via readme-renderer
+bleach==3.1.4             # via readme-renderer
 cattrs==0.9.0             # via -r requirements.txt, digicubes-common, digicubes-pyclient
 certifi==2019.11.28       # via -r requirements.txt, digicubes-pyclient, requests
 cffi==1.14.0              # via cryptography
@@ -39,7 +39,6 @@ gitpython==3.1.0          # via bandit
 green==3.1.0              # via -r requirements-dev.in
 idna==2.8                 # via -r requirements.txt, digicubes-pyclient, requests
 imagesize==1.2.0          # via sphinx
-importlib-metadata==1.5.2  # via keyring, pluggy, pytest, tox, twine, virtualenv
 isort[pyproject]==4.3.21  # via flake8-isort, pylint
 itsdangerous==1.1.0       # via -r requirements.txt, flask, flask-wtf
 jeepney==0.4.3            # via keyring, secretstorage
@@ -93,7 +92,7 @@ toml==0.10.0              # via black, isort, tox
 tox==3.14.6               # via -r requirements-dev.in
 tqdm==4.43.0              # via twine
 twine==3.1.1              # via -r requirements-dev.in
-typed-ast==1.4.1          # via astroid, black, mypy
+typed-ast==1.4.1          # via black, mypy
 typing-extensions==3.7.4.1  # via mypy
 unidecode==1.1.1          # via green
 urllib3==1.25.7           # via -r requirements.txt, digicubes-pyclient, requests
@@ -103,7 +102,6 @@ webencodings==0.5.1       # via bleach
 werkzeug==1.0.0           # via -r requirements.txt, flask
 wrapt==1.11.2             # via astroid
 wtforms==2.2.1            # via -r requirements.txt, flask-wtf
-zipp==3.1.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
