@@ -1,4 +1,4 @@
-checkfiles = digicubes/
+checkfiles = digicubes_flask/
 
 help:
 	@echo  "DigiCubes flask addon development makefile"
@@ -37,10 +37,10 @@ nose: deps
 	nose2 -v digicubes
 
 check: deps
-	black -l 100 --check digicubes/
+	black -l 100 --check $(checkfiles)
 
 style:
-	black -l 100 digicubes/ 
+	black -l 100 $(checkfiles)
 
 badges: deps
 	python lintbadge.py
@@ -55,6 +55,6 @@ publish: pack
 	twine upload ./dist/*
 
 run: export FLASK_ENV=development
-run: export FLASK_APP=digicubes.web
+run: export FLASK_APP=digicubes_flask.web
 run:
 	flask run

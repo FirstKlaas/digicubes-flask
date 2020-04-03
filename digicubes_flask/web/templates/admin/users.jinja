@@ -1,0 +1,43 @@
+{% extends "admin/base.jinja" %}
+
+{% macro checkbox(state) -%}
+    <i class="small material-icons">done</i>
+{%- endmacro %}
+
+{% block page_title %}
+Users Overview
+{% endblock %}
+
+{% block sub_menu %}
+    <li>
+        <a href="{{url_for('admin.create_user')}}">Create new User Account</a>
+    </li>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+    <table class="highlight">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Login</th>
+                <th>Email</th>
+                <th>Verified</th>
+                <th>Activated</th>
+            </tr>
+            <tbody class="dc-thin">
+            {% for user in users %}
+            <tr>
+            <td>{{ user.last_name }}, {{ user.first_name }}</td>
+            <td>{{ user.login }}</td>
+            <td>{{ user.email }}</td>
+            <td class="dc-icon-column">{{ checkbox(user.is_verified) }}</td>
+            <td class="dc-icon-column">{{ checkbox(user.is_active) }}</td>
+            
+            </tr>
+            {% endfor %}
+            </tbody>
+        </thead>
+    </table>   
+</div> 
+{% endblock %}        

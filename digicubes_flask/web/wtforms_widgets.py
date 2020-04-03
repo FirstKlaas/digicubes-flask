@@ -1,10 +1,9 @@
 """
-Some forms to be used with the wtforms package.
+Some form widgets.
 """
 import logging
 
-from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SubmitField, Field, validators
+from wtforms import Field
 from wtforms.widgets import html_params
 
 logger = logging.getLogger(__name__)
@@ -62,51 +61,10 @@ def materialize_submit(field, **kwargs):
     button_attrs = {
         "id": field_id,
         "type": field_type,
-        "class": "btn blue waves-effect waves-light",
+        "class": "btn light-blue lighten-1 waves-effect waves-light",
     }
 
     html = [f"<button {html_params(**button_attrs)}>{label}"]
     html.append(f"<i class='material-icons right'>{icon}</i>")
     html.append("</button>")
     return "".join(html)
-
-
-class RegisterForm(FlaskForm):
-    """
-    The registration form
-    """
-
-    first_name = StringField("First Name", widget=materialize_input)
-    last_name = StringField("Last Name", widget=materialize_input)
-    email = StringField(
-        "Email",
-        widget=materialize_input,
-        validators=[validators.Email(), validators.InputRequired()],
-    )
-    login = StringField(
-        "Your Account Name", widget=materialize_input, validators=[validators.InputRequired()]
-    )
-    password = PasswordField(
-        "Password", widget=materialize_input, validators=[validators.InputRequired()]
-    )
-    password2 = PasswordField(
-        "Retype Password",
-        widget=materialize_input,
-        validators=[
-            validators.InputRequired(),
-            validators.EqualTo("password", message="Passwords are not identical."),
-        ],
-    )
-    submit = SubmitField("Register", widget=materialize_submit)
-
-
-class LoginForm(FlaskForm):
-    """
-    The login form.
-    """
-
-    login = StringField("Login", widget=materialize_input, validators=[validators.InputRequired()])
-    password = PasswordField(
-        "Password", widget=materialize_input, validators=[validators.InputRequired()]
-    )
-    submit = SubmitField("Login", widget=materialize_submit)

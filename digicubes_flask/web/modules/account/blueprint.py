@@ -7,7 +7,7 @@ from flask import Blueprint, render_template, abort, request
 from digicubes_client.client import UserProxy
 from digicubes_common.exceptions import DigiCubeError
 from digicubes_common.structures import BearerTokenData
-from digicubes_rest.web.account import login_required, needs_right, account_manager
+from digicubes_flask import login_required, account_manager
 from .forms import LoginForm, RegisterForm
 
 account_service = Blueprint("account", __name__)
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 @login_required
 def index():
     """The home route"""
-    return render_template("root/index.jinja")
+    return render_template("account/index.jinja")
 
 
 @account_service.route("/logout", methods=["GET"])
@@ -66,29 +66,7 @@ def login():
             return account_manager.unauthorized()
 
     logger.debug("Validation of the form failed")
-    return render_template("root/login.jinja", form=form)
-
-
-@account_service.route("/users/")
-@login_required
-def user_list():
-    """The user list route."""
-    return render_template("root/all_users.jinja")
-
-
-@account_service.route("/panel/usertable/")
-@login_required
-def panel_user_table():
-    """The user list route."""
-    offset = request.args.get("offset", None)
-    count = request.args.get("count", None)
-    token = account_manager.token
-    try:
-        users = account_manager.user.all(token, offset=offset, count=count)
-        return render_template("root/panel/user_table.jinja", users=users)
-    except DigiCubeError:
-        abort(500)
-
+    return render_template("account/login.jinja", form=form)
 
 @account_service.route("/register", methods=["GET", "POST"])
 def register():
@@ -132,23 +110,3 @@ def register():
 
     logger.debug("Validation of the form failed")
     return render_template("root/register.jinja", form=form)
-
-
-@account_service.route("/right_test/")
-@login_required
-@needs_right("test_right")
-def right_test():
-    """
-    This is just a test route to check, if the needs_right decorator works
-    correctly.
-    """
-    return "YoLo"
-
-
-@account_service.route("/roles/")
-@needs_right("no_limits")
-def roles():
-    """
-    Display all roles
-    """
-    return render_template("root/roles.jinja")

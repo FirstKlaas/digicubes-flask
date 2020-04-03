@@ -1,0 +1,29 @@
+{% extends "admin/base.jinja" %}
+
+{% block page_title %}
+Roles Overview
+{% endblock %}
+
+{% block sub_menu %}
+    <li>
+        <a href="#">New Role</a>
+    </li>
+{% endblock %}
+
+
+{% block main_content %}
+
+    <div class="section">
+    </div>
+
+    <div class="section">
+        {% for role in roles %}
+        <div class="row">
+            <div class="col s10 dc-thin">{{ role.name }}</div>            
+            <div class="col s1"><i class="material-icons">edit</i></div>
+            <div class="col s1"><i class="material-icons">delete</i></div>
+        </div>
+    {% endfor %}
+    </div> 
+{% endblock %}  
+

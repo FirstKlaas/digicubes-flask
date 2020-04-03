@@ -1,0 +1,33 @@
+{% extends "admin/base.jinja" %}
+
+{% block page_title %}
+Schools Overview
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+    <table class="highlight">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Angelegt am</th>
+                <th class="right-align">Actions</th>
+            </tr>
+            <tbody class="dc-thin">
+            {% for school in schools %}
+                <tr>
+                    <td>{{ school.name }}</td> 
+                    <td>{{ school.created_at }}</td> 
+
+                    <td class="right-align">
+                        <a href="#"><i class="material-icons red-text text-darken-3">delete</i></a>
+                        <a href="#"><i class="material-icons light-blue-text text-lighten-1">edit</i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </thead>
+    </table>   
+</div> 
+{% endblock %}        
+

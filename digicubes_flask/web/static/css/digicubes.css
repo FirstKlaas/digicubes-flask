@@ -1,0 +1,22 @@
+
+TBODY.dc-thin TD {
+    font-weight: 300 !important;
+    padding: 5px !important;
+}
+
+.dc-thin {
+    font-weight: 300 !important;
+}
+
+nav.dc-submenu {
+    height: 50px;
+    line-height: 50px;
+}
+
+.dc-submenu .brand-logo {
+    font-size: 1.9rem !important;
+}
+
+.dc-icon-column {
+    width: 35px;
+}
