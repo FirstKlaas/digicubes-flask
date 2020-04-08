@@ -12,18 +12,30 @@ Roles Overview
 
 
 {% block main_content %}
-
-    <div class="section">
+<div class="section">
+    <div class="row">
+        <h2>All Roles</h2>
     </div>
 
-    <div class="section">
-        {% for role in roles %}
-        <div class="row">
-            <div class="col s10 dc-thin">{{ role.name }}</div>            
-            <div class="col s1"><i class="material-icons">edit</i></div>
-            <div class="col s1"><i class="material-icons">delete</i></div>
-        </div>
-    {% endfor %}
-    </div> 
+    <table class="highlight">
+        <thead>
+            <tr>
+            <th>Name</th>
+            <th style="width: 10em;">Angelegt am</th>
+            <th class="right-align" style="width: 1em;" colspan=2>Actions</th>
+        </tr>
+        <tbody>
+            {% for role in roles %}
+                <tr>
+                    <td><a href="#">{{ role.name }}</a></td> 
+                    <td style="width: 10em;">{{ role.created_at | digidate }}</td> 
+                    <td class="right-align" style="width: 1em;">
+                        <a href="#"><i class="material-icons red-text text-darken-3">delete</i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div> 
 {% endblock %}  
 

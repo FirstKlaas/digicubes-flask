@@ -4,8 +4,7 @@
 {% block space_name %}Administration{% endblock %}
 
 {% block main_menu %}
-  <li><a href="{{ url_for('account.logout') }}">Home</a></li>
-  <li><a href="{{ url_for('account.logout') }}">Logout</a></li>
+  <li><a href="{{ url_for('account.home') }}">Home</a></li>
   <li><a href="{{ url_for('admin.users') }}">User</a></li>
   <li><a href="{{ url_for('admin.roles') }}">Roles</a></li>
   <li><a href="{{ url_for('admin.rights') }}">Rights</a></li>

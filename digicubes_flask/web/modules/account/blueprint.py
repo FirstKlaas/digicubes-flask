@@ -2,7 +2,7 @@
 The Admin Blueprint
 """
 import logging
-from flask import Blueprint, render_template, abort, request
+from flask import Blueprint, render_template, abort, current_app as app, redirect, url_for
 
 from digicubes_client.client import UserProxy
 from digicubes_common.exceptions import DigiCubeError
@@ -20,6 +20,31 @@ logger = logging.getLogger(__name__)
 def index():
     """The home route"""
     return render_template("account/index.jinja")
+
+
+@account_service.route("/home")
+@login_required
+def home():
+    """Routing to the right home url"""
+    token = account_manager.token
+    my_roles = account_manager.user.get_my_roles(token, ["name"])
+
+    homes = app.config["DIGICUBES_DISPATCHER_HOMES"]
+    print(homes)
+    print(my_roles)
+    print(len(my_roles))
+    if len(my_roles) == 1:
+        # Dispatch directly to the right homepage
+        rolename = my_roles[0].name
+        url = url_for(homes[rolename])
+        logger.debug(
+            "User %s has only one role (%s). Redirecting immediately to %s", "me", rolename, url
+        )
+        print(f"Redirecting to {url}")
+        return redirect(url)
+
+    homes_data = [(role.name, homes[role.name]) for role in my_roles]
+    return render_template("account/home.jinja", data=homes_data)
 
 
 @account_service.route("/logout", methods=["GET"])
@@ -67,6 +92,7 @@ def login():
 
     logger.debug("Validation of the form failed")
     return render_template("account/login.jinja", form=form)
+
 
 @account_service.route("/register", methods=["GET", "POST"])
 def register():

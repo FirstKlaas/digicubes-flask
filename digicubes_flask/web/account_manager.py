@@ -2,12 +2,20 @@
 The main extension module
 """
 import logging
+from typing import List
+
 from flask import abort, current_app, request, Response, redirect, Flask, url_for, session
 from flask_wtf.csrf import CSRFError
 
 from digicubes_flask import account_manager, current_user
 
-from digicubes_client.client import DigiCubeClient, RoleService, UserService, RightService, SchoolService
+from digicubes_client.client import (
+    DigiCubeClient,
+    RoleService,
+    UserService,
+    RightService,
+    SchoolService,
+)
 from digicubes_common.structures import BearerTokenData
 
 logger = logging.getLogger(__name__)
@@ -69,12 +77,29 @@ class DigicubesAccountManager:
             # are written to the session. Or removed if requested.
             app.after_request(update_current_user)
 
+            def has_right(user_id: int, right: str) -> bool:
+                # Villeicht nicht über den user_service machen, sondern
+                # über den account manager. Dann hätte man die Möglichkeit,
+                # die Rechte zumindest im g  Scope zu sichern.
+                rights = self.user.get_rights(self.token, user_id)
+                return "no_limits" in rights or right in rights
+
+            def is_root(user_id: int) -> bool:
+                rights = self.user.get_rights(self.token, user_id)
+                return "no_limits" in rights
+
+            # Make certain objects available to be used in jinja2 templates
             app.context_processor(
-                lambda: {"account_manager": account_manager, "current_user": current_user}
+                lambda: {
+                    "digicubes": account_manager,
+                    "current_user": current_user,
+                    "has_right": has_right,
+                    "is_root": is_root,
+                }
             )
 
             @app.errorhandler(CSRFError)
-            def handle_csrf_error(e): # pylint: disable=unused-variable
+            def handle_csrf_error(e):  # pylint: disable=unused-variable
                 logger.error("A CSFR error occorred. %s", e.description)
                 return e.description, 400
 
@@ -91,7 +116,7 @@ class DigicubesAccountManager:
         """
         Returns the token for the current user.
         """
-        return current_user.token
+        return current_user.token if current_user is not None else None
 
     @property
     def authenticated(self):
@@ -234,3 +259,7 @@ class DigicubesAccountManager:
     @property
     def school(self) -> SchoolService:
         return self._client.school_service
+
+    def refresh_token(self) -> str:
+        if current_user.token is not None:
+            current_user.token = self._client.refresh_token(current_user.token)

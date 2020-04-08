@@ -6,6 +6,7 @@ import logging
 from wtforms import Field
 from wtforms.widgets import html_params
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -47,6 +48,90 @@ def materialize_input(field: Field, **kwargs):
     html.append("</div>")
 
     return "".join(html)
+
+
+def materialize_textarea(field: Field, **kwargs):
+    """
+    A widget for the materialize textarea.
+    """
+    field_id = kwargs.pop("id", field.id)
+
+    attributes = {
+        "id": field_id,
+        "name": field_id,
+        "class": "materialize-textarea",
+        "required": "",
+    }
+
+    content = ""
+
+    if field.data is not None and kwargs.get("value", True):
+        content = field.data
+
+    if "data-length" in kwargs:
+        attributes["data-length"] = kwargs["data-length"]
+
+    grid = kwargs.get("grid", "")
+    outer_params = {"class": f"input-field col {grid}"}
+
+    label_params = {"for": field_id}
+
+    label = field.label
+    html = [f"<div {html_params(**outer_params)}>"]
+    html.append(f"<textarea {html_params(**attributes)}>{content}</textarea>")
+    html.append(f"<label {html_params(**label_params)}>{ label }</label>")
+    if len(field.errors) > 0:
+        error_text = ", ".join(field.errors)
+        attributes = {"class": "red-text"}
+        html.append(f"<span { html_params(**attributes) }>{ error_text }</span>")
+    html.append("</div>")
+
+    return "".join(html)
+
+
+def materialize_switch(field, **kwargs):
+
+    field_id = kwargs.pop("id", field.id)
+
+    attributes = {
+        "id": field_id,
+        "name": field_id,
+        "type": "checkbox",
+    }
+
+    grid = kwargs.get("grid", "s12")  # Default, if no grid was specified
+    outer_params = {"class": f"switch col {grid}"}
+
+    return f"""
+        <div {html_params(**outer_params)}>
+            <label>
+                {kwargs.get('checked_label','Yes')}
+                <input {html_params(**attributes)}>
+                <span class='lever'></span>
+                {kwargs.get('unchecked_label','No')}
+            </label>
+        </div>
+    """
+
+
+def materialize_picker(field, **kwargs):
+    """
+    A Widget to render an date picker
+    """
+
+    grid = kwargs.get("grid", "s12")  # Default, if no grid was specified
+    outer_params = {"class": f"switch col {grid}"}
+
+    field_id = kwargs.pop("id", field.id)
+
+    attributes = {"id": field_id, "name": field_id, "type": "text", "class": "datepicker"}
+
+    return f"""
+        <div {html_params(**outer_params)}>
+        <label for='{field_id}'>{ field.label }</label>
+        <input {html_params(**attributes)}>
+        </div>
+    """
 
 
 def materialize_submit(field, **kwargs):

@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 # pylint: disable=unnecessary-lambda
 account_manager = LocalProxy(lambda: _get_account_manager())
+digicubes = account_manager
 current_user = LocalProxy(lambda: _get_current_user())
 
 DIGICUBES_ACCOUNT_ATTRIBUTE_NAME = "digicubes_account_manager"

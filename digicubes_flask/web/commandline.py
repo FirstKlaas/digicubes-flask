@@ -19,6 +19,7 @@ from docopt import docopt
 
 logger = logging.getLogger(__name__)
 
+
 def run():
     """Runs the server"""
     arguments = docopt(__doc__, help=True, version="Run DigiCubes Webserver 1.0")
@@ -30,7 +31,7 @@ def run():
         os.environ["FLASK_ENV"] = "testing"
     else:
         os.environ["FLASK_ENV"] = "production"
-        
+
 
 if __name__ == "__main__":
     run()

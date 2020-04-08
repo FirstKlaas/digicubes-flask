@@ -1,7 +1,7 @@
 {% extends "account_base.jinja" %}
 
 {% block main_menu %}
-  <li><a href="/">Home</a></li>
+  <li><a href="{{ url_for('account.login')}}">Home</a></li>
 {% endblock %}
 
 {% block main_content %}

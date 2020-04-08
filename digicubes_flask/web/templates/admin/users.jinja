@@ -1,7 +1,11 @@
 {% extends "admin/base.jinja" %}
 
 {% macro checkbox(state) -%}
-    <i class="small material-icons">done</i>
+    {% if state %}
+        <i class="small material-icons green-text">done</i>
+    {% else %}
+        <i class="small material-icons red-text">block</i>
+    {% endif %}
 {%- endmacro %}
 
 {% block page_title %}
@@ -16,24 +20,31 @@ Users Overview
 
 {% block main_content %}
 <div class="section">
+    <div class="row">
+        <h2>All Users</h2>
+    </div>
+
     <table class="highlight">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Login</th>
-                <th>Email</th>
-                <th>Verified</th>
-                <th>Activated</th>
+                <th style="width: 20em;">Login</th>
+                <th style="width: 20em;">First Name</th>
+                <th style="width: 20em;">Last Name</th>
+                <th style="width: 60em;">Email</th>
+                <th style="width: 20em;">Created at</th>
+                <th style="width: 1em;">Verified</th>
+                <th style="width: 1em;">Activated</th>
             </tr>
-            <tbody class="dc-thin">
+            <tbody >
             {% for user in users %}
             <tr>
-            <td>{{ user.last_name }}, {{ user.first_name }}</td>
-            <td>{{ user.login }}</td>
-            <td>{{ user.email }}</td>
-            <td class="dc-icon-column">{{ checkbox(user.is_verified) }}</td>
-            <td class="dc-icon-column">{{ checkbox(user.is_active) }}</td>
-            
+                <td><a href="{{ url_for('admin.edit_user', user_id=user.id) }}">{{ user.login }}</a></td>
+                <td >{{ user.first_name | nonefilter }}</td>
+                <td>{{ user.last_name | nonefilter }}</td>
+                <td>{{ user.email | nonefilter }}</td>
+                <td>{{ user.created_at | digidate }}</td> 
+                <td>{{ checkbox(user.is_verified) }}</td>
+                <td>{{ checkbox(user.is_active) }}</td>
             </tr>
             {% endfor %}
             </tbody>

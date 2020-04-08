@@ -4,24 +4,33 @@
 Schools Overview
 {% endblock %}
 
+{% block sub_menu %}
+    <li>
+        <a href="{{url_for('admin.create_school')}}">Create new School</a>
+    </li>
+{% endblock %}
+
 {% block main_content %}
 <div class="section">
+    <div class="row">
+        <h2>All Schools</h2>
+    </div>
     <table class="highlight">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Angelegt am</th>
-                <th class="right-align">Actions</th>
+                <th style="width: 20rem;">Name</th>
+                <th style="width: 60rem;">Description</th>
+                <th style="width: 10rem;">Created at</th>
+                <th class="right-align" style="width: 1rem;"></th>
             </tr>
-            <tbody class="dc-thin">
+            <tbody>
             {% for school in schools %}
                 <tr>
-                    <td>{{ school.name }}</td> 
-                    <td>{{ school.created_at }}</td> 
-
-                    <td class="right-align">
-                        <a href="#"><i class="material-icons red-text text-darken-3">delete</i></a>
-                        <a href="#"><i class="material-icons light-blue-text text-lighten-1">edit</i></a>
+                    <td><a href="{{ url_for('admin.edit_school', school_id=school.id) }}">{{ school.name }}</a></td> 
+                    <td>{{ school.description | md }}</td>                     
+                    <td>{{ school.created_at | digidate }}</td> 
+                    <td class="right-align dc-icon-column">
+                        <a href="{{ url_for('admin.delete_school', school_id=school.id) }}"><i class="material-icons red-text text-darken-3">delete</i></a>
                     </td>
                 </tr>
             {% endfor %}

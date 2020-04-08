@@ -7,6 +7,10 @@ Rights
 
 {% block main_content %}
 <div class="section">
+    <div class="row">
+        <h2>All Rights</h2>
+    </div>
+
     <table class="highlight">
         <thead>
             <tr>                
@@ -15,13 +19,13 @@ Rights
                 <th class="right-align">Action</th>
             </tr>
         </thead>
-        <tbody class="dc-thin">
+        <tbody>
         {% for right in rights %}
         <tr>
             <td>{{ right.name }}</td>            
-            <td>{{ right.created_at }}</td>            
+            <td style="width: 10rem;">{{ right.created_at | digidate }}</td>            
             <td class="right-align dc-icon-column">
-                <i class="material-icons red-text text-darken-3">delete</i>
+                <a href="#"><i class="material-icons red-text text-darken-3">delete</i></a>
             </td>
         </tr>
         {% endfor %}

@@ -1,3 +1,34 @@
+button, input, optgroup, select, textarea, BODY {
+    font-family: 'Exo 2', 'Roboto', 'Ubuntu', sans-serif !important;
+    color: #37474f;
+}
+
+strong {
+    font-weight: bold;
+}
+
+.dc-brand {
+    font-family: 'Roboto', 'Ubuntu', sans-serif !important;
+}
+
+.dc-attr {
+    font-weight: 900;
+    padding: 3px 0px !important;
+}
+
+.dc-val {
+    background-color: #eceff1;
+    padding: 3px 10px !important;
+}
+
+H2 {
+    font-size: 2.5rem;
+    color: #03a9f4;
+}
+
+TH {
+    color: #37474f;
+}
 
 TBODY.dc-thin TD {
     font-weight: 300 !important;
@@ -18,5 +49,18 @@ nav.dc-submenu {
 }
 
 .dc-icon-column {
-    width: 35px;
+    width: 1rem;
+}
+
+
+div[contenteditable] {
+    padding: 0.5rem !important;
+}
+
+div[contenteditable=true] {
+    background-color: #eceff1;
+}
+
+div[contenteditable=false] {
+    background-color: lightblue;
 }

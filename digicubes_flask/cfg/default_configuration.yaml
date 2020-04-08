@@ -2,10 +2,46 @@
 TOKEN_COOKIE_NAME: "digicubes.token"
 TOKEN_SESSION_NAME: "digicubes.account"
 
+# Core System
+# -------------
+DIGICUBES_SYS_ROLES: # THe minimum roles, we need
+    -
+        name: root
+        rights:
+            - CREATE_SCHOOL
+            - READ_SCHOOL
+            - UPDATE_SCHOOL
+            - DELETE_SCHOOL
+            - CREATE_USER
+            - READ_USER
+            - UPDATE_USER
+            - DELETE_USER
+            - READ_RIGHT
+            - READ_ROLE        
+
+    - 
+        name: admin
+        rights:
+            - CREATE_CLASS
+            - UPDATE_CLASS
+            - VIEW_CLASSES
+
+    -
+        name: student
+        rights:
+            - VIEW_CLASSES
+
 # Account space
 # -------------
-
 DIGICUBES_ACCOUNT_URL_PREFIX: "/account"
+
+# The route, that dispatches to the right homepage
+# if the user has more than one role. Otherwise
+# chains to the homepage for his role.  
+DIGICUBES_DISPATCHER_VIEW: "account.home"
+DIGICUBES_DISPATCHER_HOMES:
+    root: "account.index"
+    admin: "admin.index"
 
 # If true, new users are verified automatically
 # after registration
@@ -13,10 +49,12 @@ DIGICUBES_ACCOUNT_AUTO_VERIFY: true
 
 DIGICUBES_ACCOUNT_LOGIN_VIEW: "account.login"
 DIGICUBES_ACCOUNT_REGISTER_VIEW: "account.register"
-DIGICUBES_ACCOUNT_INDEX_VIEW: "account.index"
+DIGICUBES_ACCOUNT_INDEX_VIEW: "account.home"
+DIGICUBES_ACCOUNT_HOME_VIEW: "account.index"
 
 # Admin space
 DIGICUBES_ADMIN_URL_PREFIX: "/admin"
+DIGICUBES_ADMIN_HOME_VIEW: "admin.index"
 
 DIGICUBES_API_SERVER_PROTOCOL: "http"
 DIGICUBES_API_SERVER_HOSTNAME: "localhost"
