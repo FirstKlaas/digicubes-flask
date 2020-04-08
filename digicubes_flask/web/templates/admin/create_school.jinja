@@ -9,18 +9,7 @@ Create new School
   <h2>New School</h2>
   <div class="row">
     <div class="col s12" id="dc_main">
-      <form method="POST" action="{{ url_for('admin.create_school') }}">
-          {{ form.csrf_token }}
-          <div class="row">
-            {{ form.name(grid="s12") }}
-          </div>
-          <div class="row">
-            {{ form.description(grid="s12", value="test") }}
-          </div>
-          <div class="row">
-            <div class="col s12 right-align">{{ form.submit }}</div>
-          </div>
-      </form>
+    {% include "admin/fragments/create_school_form.jinja" with context %}
     </div>
   </div>
 </div>

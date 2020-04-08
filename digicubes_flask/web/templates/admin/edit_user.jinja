@@ -48,18 +48,17 @@ Edit User Account
     </div>
     <div class="row">
         <div class="bold col s2 m1 dc-attr">Last login at</div>
-        <div class="light col s3 m3 dc-val">{{ user.last_login_at | digidate }}</div>
+        <div class="light col s3 m3 dc-val">{{ user.last_login_at | digidate }}&nbsp</div>
         <div class="bold col s7 m8"></div>
     </div>
     <div class="row">
         <div class="bold col s2 m1 dc-attr">Roles</div>
-        <div class="col s10 m11">
+        <div class="col s3 m3 dc-val">&nbsp;
         {% for role in roles %}
             <div class="chip green lighten-2">{{role.name}}</div>
         {% endfor %}
-            <div class="chip blue-grey lighten-5">God<i class="close material-icons">close</i></div>
-            
         </div>
+        <div class="bold col s7 m8"></div>
     </div>    
 </div>
 {% endblock %}

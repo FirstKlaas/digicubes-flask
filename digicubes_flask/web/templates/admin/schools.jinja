@@ -15,6 +15,7 @@ Schools Overview
     <div class="row">
         <h2>All Schools</h2>
     </div>
+    {% if schools %}
     <table class="highlight">
         <thead>
             <tr>
@@ -37,6 +38,9 @@ Schools Overview
             </tbody>
         </thead>
     </table>   
+    {% else %}
+        <a href="{{ url_for('admin.create_school') }}" class="waves-effect waves-light light-blue btn-large">Create your first school</a>
+    {% endif %}
 </div> 
 {% endblock %}        
 

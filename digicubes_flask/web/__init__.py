@@ -13,7 +13,7 @@ from flask_moment import Moment
 import yaml
 
 from digicubes_client.client.proxy import RightProxy, RoleProxy
-from digicubes_flask import account_manager as accm
+from digicubes_flask import account_manager as accm, current_user
 
 from .account_manager import DigicubesAccountManager
 
@@ -58,7 +58,7 @@ def create_app():
         raise ValueError(f"Cannot convert given value. Unsupported type {type(dtstr)}")
 
     @app.template_filter()
-    def md(txt:str) -> str: # pylint: disable=unused-variable
+    def md(txt: str) -> str: # pylint: disable=unused-variable
         return markdown(txt)
 
     @app.template_filter()
@@ -98,8 +98,9 @@ def create_app():
                 # Aktuslisierung des Tokens für den aktuellen Request
                 # nicht wichtig ist und der zusätzliche Call einen
                 # minimalen Performance Verlust bedeutet.
-                accm.refresh_token()
-
+                logger.debug("Refreshing token in 'at the end oth the request.")
+                new_token = accm.refresh_token()
+                current_user.token = new_token
         else:
             logger.info("No account manager in request scope found. Maybe not an issue.")
 
