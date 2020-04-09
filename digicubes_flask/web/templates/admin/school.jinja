@@ -1,0 +1,87 @@
+{% extends "admin/base.jinja" %}
+
+{% block page_title %}
+School
+{% endblock %}
+
+{% block sub_menu %}
+    <li>
+        <a href="{{ url_for('admin.update_school', school_id=school.id) }}">Edit</a>
+    </li>
+    <li>
+        <a href="{{ url_for('admin.create_school_course', school_id=school.id) }}">New Course</a>
+    </li>
+    <li>
+        <a href="#">Delete</a>
+    </li>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+    <div class="row">
+        <h2>Details</h2>
+    </div>
+    <div class="row">
+        <div class="col s2 m1 dc-attr">Name</div>
+        <div class="light col s3 m3 dc-val">{{ school.name | nonefilter }}</div>
+        <div class="bold col s7 m8"></div>
+    </div>
+    <div class="row">
+        <div class="bold col s2 m1 dc-attr">Description</div>
+        <div class="light col s3 m3 dc-val">{{ school.description | md }}</div>
+        <div class="bold col s7 m8"></div>
+    </div>
+    <div class="row">
+        <div class="bold col s2 m1 dc-attr">Created at</div>
+        <div class="light col s3 m3 dc-val">{{ school.created_at | digidate }}</div>
+        <div class="bold col s7 m8"></div>
+    </div>
+    <div class="row">
+        <div class="bold col s2 m1 dc-attr">Modified at</div>
+        <div class="light col s3 m3 dc-val">{{ school.modified_at | digidate }}</div>
+        <div class="bold col s7 m8"></div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="row">
+        <h2>Courses</h2>
+    </div>
+
+
+    {% if courses %}
+        <table class="highlight">
+            <thead>
+            <tr>
+                <th style="width: 20em;">Name</th>
+                <th style="width: 60em;">Description</th>
+                <th style="width: 10em;">From</th>
+                <th style="width: 10em;">Until</th>
+                <th style="width: 12em;">Created at</th>
+                <th style="width: 1em;"></th>
+            </tr>
+            <tbody >
+        {% for course in courses %}
+            <tr>
+                <td>{{ course.name | nonefilter }}</td>
+                <td>{{ course.description | md }}</td>
+                <td>{{ course.from_date | digidate }}</td>
+                <td>{{ course.until_date | digidate }}</td>
+                <td>{{ course.created_at | digidate }}</td> 
+                <td class="right-align dc-icon-column">
+                    <a href="#">
+                        <i class="material-icons red-text text-darken-3">delete</i>
+                    </a>
+                </td>
+
+            </tr>
+        {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+    <a href="{{ url_for('admin.create_school_course', school_id=school.id) }}" class="waves-effect waves-light light-blue btn-large">Create your first course</a>
+    {% endif %}
+</div>
+
+{% endblock %}
+

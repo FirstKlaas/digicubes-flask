@@ -3,6 +3,10 @@ button, input, optgroup, select, textarea, BODY {
     color: #37474f;
 }
 
+p {
+    margin: 0px;
+}
+
 strong {
     font-weight: bold;
 }

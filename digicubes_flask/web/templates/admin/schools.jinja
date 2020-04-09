@@ -27,7 +27,7 @@ Schools Overview
             <tbody>
             {% for school in schools %}
                 <tr>
-                    <td><a href="{{ url_for('admin.edit_school', school_id=school.id) }}">{{ school.name }}</a></td> 
+                    <td><a href="{{ url_for('admin.school', school_id=school.id) }}">{{ school.name }}</a></td> 
                     <td>{{ school.description | md }}</td>                     
                     <td>{{ school.created_at | digidate }}</td> 
                     <td class="right-align dc-icon-column">

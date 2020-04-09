@@ -1,0 +1,8 @@
+{% import "macros/forms.jinja" as forms %}
+
+<form method="POST" action="{{ url_for('admin.update_school', school_id=school.id) }}">
+    {{ form.csrf_token }}
+    {{ forms.row(form, "name") }}
+    {{ forms.row(form, "description") }}
+    {{ forms.submit(form) }}
+</form>

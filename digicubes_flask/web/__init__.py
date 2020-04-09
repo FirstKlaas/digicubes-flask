@@ -11,9 +11,11 @@ from typing import Optional
 from flask import Flask, redirect, url_for, Response, request, Request
 from flask_moment import Moment
 import yaml
+from markdown import markdown
 
 from digicubes_client.client.proxy import RightProxy, RoleProxy
 from digicubes_flask import account_manager as accm, current_user
+from digicubes_common.exceptions import DigiCubeError
 
 from .account_manager import DigicubesAccountManager
 
@@ -21,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 logging.basicConfig(level=logging.DEBUG)
 
-from markdown import markdown
+digicubes: DigicubesAccountManager = accm
 
 # moment = Moment()
 
@@ -41,6 +43,12 @@ def create_app():
     app = Flask(__name__)
     app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # TODO: Set via configuration
     # moment.init_app(app)
+
+    @app.errorhandler(DigiCubeError)
+    def handle_digicube_error(error):  # pylint: disable=unused-variable
+        logger.fatal("Error occurred. Going back to login page.")
+        digicubes.logout()
+        return redirect(url_for('account.login'))
 
     @app.template_filter()
     def digidate(dtstr):  # pylint: disable=unused-variable

@@ -150,19 +150,44 @@ def create_school():
     return render_template("admin/create_school.jinja", form=form)
 
 
-@admin_blueprint.route("/eschool/<int:school_id>/")
+@admin_blueprint.route("/school/<int:school_id>/")
 @login_required
-def edit_school(school_id: int):
-    """Editing an existing school"""
+def school(school_id: int):
+    """Schow details of an existing school"""
     service: SchoolService = digicubes.school
     token = digicubes.token
     # Gettting the school details from the server
     # TODO: Was, wenn die Schule nicht existiert?
-    school = service.get(token, school_id)
-    courses = service.get_courses(digicubes.token, school)
-    print('#'*80)
-    print(courses)
-    return render_template("admin/edit_school.jinja", school=school, courses=courses)
+    db_school = service.get(token, school_id)
+    courses = service.get_courses(digicubes.token, db_school)
+    return render_template("admin/school.jinja", school=db_school, courses=courses)
+
+
+@admin_blueprint.route("/uschool/<int:school_id>/", methods=("GET", "POST"))
+@login_required
+def update_school(school_id: int):
+    service: SchoolService = digicubes.school
+    token = digicubes.token
+    form = CreateSchoolForm()
+    
+    if form.validate_on_submit():
+        digicubes.school.update(
+            token,
+            SchoolProxy(
+                id=school_id,
+                name=form.name.data,
+                description=form.description.data)
+        )
+
+        return redirect(url_for("admin.school", school_id=school_id))
+
+    # Gettting the school details from the server
+    # TODO: Was, wenn die Schule nicht existiert?
+    db_school: SchoolProxy = service.get(token, school_id)    
+    form.name.data = db_school.name
+    form.description.data = db_school.description
+    
+    return render_template("admin/edit_school.jinja", form=form, school=db_school)
 
 
 @admin_blueprint.route("/dschool/<int:school_id>/")
@@ -212,8 +237,8 @@ def create_school_course(school_id: int):
             )
         )
 
-        return redirect(url_for("admin.edit_school", school_id=school_id))
+        return redirect(url_for("admin.school", school_id=school_id))
 
     token: str = server.token
-    school: SchoolProxy = server.school.get(token, school_id)
-    return render_template("admin/create_course.jinja", school=school, form=form)
+    school_proxy: SchoolProxy = server.school.get(token, school_id)
+    return render_template("admin/create_course.jinja", school=school_proxy, form=form)
