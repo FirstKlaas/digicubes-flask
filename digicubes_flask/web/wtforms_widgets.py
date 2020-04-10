@@ -6,16 +6,17 @@ import logging
 from wtforms import Field
 from wtforms.widgets import html_params
 
+from markupsafe import Markup, escape
 
 logger = logging.getLogger(__name__)
 
 
-def materialize_input(field: Field, **kwargs):
+def materialize_password(field: Field, **kwargs):
     """
     A widget for the materialize input field.
     """
     field_id = kwargs.pop("id", field.id)
-    field_type = kwargs.get("type", "text")
+    field_type = kwargs.get("type", "password")
 
     attributes = {
         "id": field_id,
@@ -40,7 +41,46 @@ def materialize_input(field: Field, **kwargs):
     label = field.label
     html = [f"<div {html_params(**outer_params)}>"]
     html.append(f"<input {html_params(**attributes)}></input>")
-    html.append(f"<label {html_params(**label_params)}>{ label }</label>")
+    html.append(f"<label {html_params(**label_params)}>{ escape(label) }</label>")
+    if len(field.errors) > 0:
+        error_text = ", ".join(field.errors)
+        attributes = {"class": "red-text"}
+        html.append(f"<span { html_params(**attributes) }>{ error_text }</span>")
+    html.append("</div>")
+
+    return "".join(html)
+
+def materialize_input(field: Field, **kwargs):
+    """
+    A widget for the materialize input field.
+    """
+    field_id = kwargs.pop("id", field.id)
+    field_type = kwargs.get("type", "text")
+
+    attributes = {
+        "id": field_id,
+        "name": field_id,
+        "type": field_type,
+        "class": "validate",
+        "required": "",
+    }
+
+    if field.data is not None and kwargs.get("value", True):
+        attributes["value"] = escape(field.data)
+
+    if "data-length" in kwargs:
+        attributes["data-length"] = kwargs["data-length"]
+
+    grid = kwargs.get("grid", "")
+    outer_params = {"class": f"input-field col {grid}"}
+
+    label_params = {"for": field_id}
+
+    # label = kwargs.get("label", field_id)
+    label = field.label
+    html = [f"<div {html_params(**outer_params)}>"]
+    html.append(f"<input {html_params(**attributes)}></input>")
+    html.append(f"<label {html_params(**label_params)}>{ escape(label) }</label>")
     if len(field.errors) > 0:
         error_text = ", ".join(field.errors)
         attributes = {"class": "red-text"}
@@ -78,15 +118,15 @@ def materialize_textarea(field: Field, **kwargs):
 
     label = field.label
     html = [f"<div {html_params(**outer_params)}>"]
-    html.append(f"<textarea {html_params(**attributes)}>{content}</textarea>")
-    html.append(f"<label {html_params(**label_params)}>{ label }</label>")
+    html.append(f"<textarea {html_params(**attributes)}>{ escape(content) }</textarea>")
+    html.append(f"<label {html_params(**label_params)}>{ escape(label) }</label>")
     if len(field.errors) > 0:
         error_text = ", ".join(field.errors)
         attributes = {"class": "red-text"}
         html.append(f"<span { html_params(**attributes) }>{ error_text }</span>")
     html.append("</div>")
 
-    return "".join(html)
+    return Markup("".join(html))
 
 
 def materialize_switch(field, **kwargs):
@@ -133,6 +173,29 @@ def materialize_picker(field, **kwargs):
         </div>
     """
 
+def materialize_checkbox(field, **kwargs):
+
+    field_id = kwargs.pop("id", field.id)
+
+    div_params = {
+        "class": f"switch col {kwargs.pop('grid', 's12')}"}
+    input_params = {
+        "id"    : field_id,
+        "name"  : field_id,
+        "type"  : "checkbox",
+        "class" : "filled-in", 
+    }
+    if field.data:
+        input_params["checked"] = "checked"
+
+    return f"""
+    <div {html_params(**div_params)}>    
+        <label>
+            <input {html_params(**input_params)} />
+            <span>{field.label}</span>
+        </label>
+    </div>
+    """
 
 def materialize_submit(field, **kwargs):
     """
@@ -150,6 +213,6 @@ def materialize_submit(field, **kwargs):
     }
 
     html = [f"<button {html_params(**button_attrs)}>{label}"]
-    html.append(f"<i class='material-icons right'>{icon}</i>")
+    html.append(f"<i class='material-icons right'>{ icon}</i>")
     html.append("</button>")
     return "".join(html)

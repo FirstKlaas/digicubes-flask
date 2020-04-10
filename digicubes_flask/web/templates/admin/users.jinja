@@ -1,12 +1,25 @@
 {% extends "admin/base.jinja" %}
 
-{% macro checkbox(state) -%}
+{% macro icon_verified(state) -%}
     {% if state %}
-        <i class="small material-icons green-text">done</i>
+        <i class="small material-icons light-blue-text">verified_user</i>
     {% else %}
-        <i class="small material-icons red-text">block</i>
+        <i class="small material-icons blue-grey-text text-lighten-5">verified_user</i>
     {% endif %}
 {%- endmacro %}
+
+{% macro icon_active(state) -%}
+    {% if state %}
+        <i class="small material-icons light-blue-text">visibility</i>
+    {% else %}
+        <i class="small material-icons blue-grey-text text-lighten-5">visibility_off</i>
+    {% endif %}
+{%- endmacro %}
+
+{% macro gravatar(email) -%}
+    <img src="{{ email | gravatar }}" alt="" class="circle">
+{%- endmacro %}
+
 
 {% block page_title %}
 Users Overview
@@ -14,7 +27,7 @@ Users Overview
 
 {% block sub_menu %}
     <li>
-        <a href="{{url_for('admin.create_user')}}">Create new User Account</a>
+        <a href="{{url_for('admin.create_user')}}">New User</a>
     </li>
 {% endblock %}
 
@@ -27,6 +40,7 @@ Users Overview
     <table class="highlight">
         <thead>
             <tr>
+                <th style="width: 1em;"></th>
                 <th style="width: 20em;">Login</th>
                 <th style="width: 20em;">First Name</th>
                 <th style="width: 20em;">Last Name</th>
@@ -38,13 +52,14 @@ Users Overview
             <tbody >
             {% for user in users %}
             <tr>
+                <td>{{ gravatar(user.email) }}</td>
                 <td><a href="{{ url_for('admin.edit_user', user_id=user.id) }}">{{ user.login }}</a></td>
                 <td >{{ user.first_name | nonefilter }}</td>
                 <td>{{ user.last_name | nonefilter }}</td>
                 <td>{{ user.email | nonefilter }}</td>
                 <td>{{ user.created_at | digidate }}</td> 
-                <td>{{ checkbox(user.is_verified) }}</td>
-                <td>{{ checkbox(user.is_active) }}</td>
+                <td>{{ icon_verified(user.is_verified) }}</td>
+                <td>{{ icon_active(user.is_active) }}</td>
             </tr>
             {% endfor %}
             </tbody>

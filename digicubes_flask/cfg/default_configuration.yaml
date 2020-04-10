@@ -41,7 +41,7 @@ DIGICUBES_ACCOUNT_URL_PREFIX: "/account"
 DIGICUBES_DISPATCHER_VIEW: "account.home"
 DIGICUBES_DISPATCHER_HOMES:
     root: "account.index"
-    admin: "admin.index"
+    Admin: "admin.index"
 
 # If true, new users are verified automatically
 # after registration

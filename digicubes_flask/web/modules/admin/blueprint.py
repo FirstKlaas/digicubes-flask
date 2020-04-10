@@ -6,17 +6,17 @@ role 'admin'
 """
 import logging
 from datetime import date
-
+from typing import List
 from flask import Blueprint, render_template, abort, request, url_for, redirect
 
 from digicubes_flask import login_required, needs_right, digicubes, current_user, CurrentUser
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 
 from digicubes_common.exceptions import DigiCubeError
-from digicubes_client.client.proxy import UserProxy, SchoolProxy, CourseProxy
-from digicubes_client.client.service import SchoolService
+from digicubes_client.client.proxy import UserProxy, SchoolProxy, CourseProxy, RoleProxy
+from digicubes_client.client.service import SchoolService, UserService
 
-from .forms import CreateSchoolForm, CreateUserForm, CreateCourseForm
+from .forms import CreateSchoolForm, CreateUserForm, CreateCourseForm, UpdateUserForm
 
 admin_blueprint = Blueprint("admin", __name__, template_folder="templates")
 
@@ -47,16 +47,41 @@ def create_user():
     """Create a new user"""
     form = CreateUserForm()
     if form.validate_on_submit():
-        new_user = UserProxy(
-            login=form.login.data,
-            first_name=form.first_name.data,
-            last_name=form.last_name.data,
-            email=form.email.data,
-        )
-        digicubes.user.create(digicubes.token, new_user)
-        return redirect(url_for("admin.users"))
+        new_user = UserProxy()
+        form.populate_obj(new_user)
+        new_user = digicubes.user.create(digicubes.token, new_user)
+        return redirect(url_for("admin.edit_user", user_id=new_user.id))
 
     return render_template("admin/create_user.jinja", form=form)
+
+
+@admin_blueprint.route("/uuser/<int:user_id>/", methods=("GET", "POST"))
+@login_required
+def update_user(user_id: int):
+    service: UserService = digicubes.user
+    token = digicubes.token
+    form = UpdateUserForm()
+
+    if form.validate_on_submit():
+        user_proxy = UserProxy(id=user_id)
+        form.populate_obj(user_proxy)
+        digicubes.user.update(token, user_proxy)
+        return redirect(url_for("admin.edit_user", user_id=user_id))
+
+    user_proxy: UserProxy = service.get(token, user_id)
+    form.process(obj=user_proxy)
+
+    return render_template("admin/update_user.jinja", form=form, user=user_proxy)
+
+@admin_blueprint.route("/duser/<int:user_id>/")
+@login_required
+def delete_user(user_id: int):
+    """Delete an existing user"""
+    token = digicubes.token
+    # Gettting the school details from the server
+    # TODO: Was, wenn das Objekt nicht existiert?
+    digicubes.user.delete(token, user_id)
+    return redirect(url_for("admin.users"))
 
 
 @admin_blueprint.route("/euser/<int:user_id>/")
@@ -65,20 +90,20 @@ def edit_user(user_id: int):
     """Editing an existing user"""
     form = CreateUserForm()
 
-    token = digicubes.token
+    token = server.token
     # Gettting the user details from the server
     # TODO: Was, wenn der User nicht existiert?
-    user = digicubes.user.get(token, user_id)
+    user: UserProxy = server.user.get(token, user_id)
 
     # Proxy is needed to request the roles
     user_proxy = UserProxy(id=user_id)
 
     # Getting the user roles from the server
-    roles_list = digicubes.user.get_roles(token, user_proxy)
+    user_roles_names = [role.name for role in server.user.get_roles(token, user_proxy)]
+    all_roles = server.role.all(token)
 
-    # rights_list = account_manager.user.get_rights(token, user_proxy)
-
-    return render_template("admin/edit_user.jinja", user=user, roles=roles_list, form=form)
+    role_list = [(role, role.name in user_roles_names) for role in all_roles]
+    return render_template("admin/user.jinja", user=user, roles=role_list, form=form)
 
 
 @admin_blueprint.route("/panel/usertable/")
@@ -97,7 +122,6 @@ def panel_user_table():
 
 @admin_blueprint.route("/right_test/")
 @login_required
-@needs_right("test_right")
 def right_test():
     """
     This is just a test route to check, if the needs_right decorator works
@@ -107,7 +131,6 @@ def right_test():
 
 
 @admin_blueprint.route("/roles/")
-@needs_right("no_limits")
 def roles():
     """
     Display all roles
@@ -115,9 +138,25 @@ def roles():
     role_list = digicubes.role.all(digicubes.token)
     return render_template("admin/roles.jinja", roles=role_list)
 
+@admin_blueprint.route("/user/<int:user_id>/addrole/<int:role_id>")
+def add_user_role(user_id: int, role_id: int):
+    server.user.add_role(
+        server.token,
+        UserProxy(id=user_id),
+        RoleProxy(id=role_id, name="")
+    )
+    return redirect(url_for('admin.edit_user', user_id=user_id))
+
+@admin_blueprint.route("/user/<int:user_id>/removerole/<int:role_id>")
+def remove_user_role(user_id: int, role_id: int):
+    server.user.remove_role(
+        server.token,
+        UserProxy(id=user_id),
+        RoleProxy(id=role_id, name="")
+    )
+    return redirect(url_for('admin.edit_user', user_id=user_id))
 
 @admin_blueprint.route("/rights/")
-@needs_right("no_limits")
 def rights():
     """
     Display all roles
@@ -127,7 +166,6 @@ def rights():
 
 
 @admin_blueprint.route("/schools/")
-@needs_right("no_limits")
 def schools():
     """
     Display all schools
@@ -169,7 +207,7 @@ def update_school(school_id: int):
     service: SchoolService = digicubes.school
     token = digicubes.token
     form = CreateSchoolForm()
-    
+
     if form.validate_on_submit():
         digicubes.school.update(
             token,
@@ -187,7 +225,7 @@ def update_school(school_id: int):
     form.name.data = db_school.name
     form.description.data = db_school.description
     
-    return render_template("admin/edit_school.jinja", form=form, school=db_school)
+    return render_template("admin/update_school.jinja", form=form, school=db_school)
 
 
 @admin_blueprint.route("/dschool/<int:school_id>/")

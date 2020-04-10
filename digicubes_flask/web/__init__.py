@@ -11,6 +11,7 @@ from typing import Optional
 from flask import Flask, redirect, url_for, Response, request, Request
 from flask_moment import Moment
 import yaml
+from libgravatar import Gravatar
 from markdown import markdown
 
 from digicubes_client.client.proxy import RightProxy, RoleProxy
@@ -49,6 +50,17 @@ def create_app():
         logger.fatal("Error occurred. Going back to login page.")
         digicubes.logout()
         return redirect(url_for('account.login'))
+
+    @app.template_filter()
+    def gravatar(email: str) -> str:
+
+        default = url_for("static", filename='image/digibot_profile_40.png', _external=True)
+        print(default)
+        if not email:
+            return default
+
+        g: Gravatar = Gravatar(email)
+        return g.get_image(size=40, default="robohash")
 
     @app.template_filter()
     def digidate(dtstr):  # pylint: disable=unused-variable

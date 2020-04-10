@@ -1,12 +1,34 @@
 {% extends "admin/base.jinja" %}
 
+{% macro role_chip(role) -%}
+    {% if role[1] %}
+        <a href="{{ url_for('admin.remove_user_role', user_id=user.id, role_id=role[0].id) }}">
+        <div class="chip light-blue lighten-2">
+            {{role[0].name}}
+            <i class="close material-icons yellow-text text-accent-3">star</i>
+        </div>
+        </a>
+    {% else %}
+        <a href="{{ url_for('admin.add_user_role', user_id=user.id, role_id=role[0].id) }}">
+        <div class="chip blue-grey lighten-5">
+            {{role[0].name}}
+            <i class="close material-icons">star_border</i>
+        </div>
+        </a>
+    {% endif %}
+{%- endmacro %}
+
+
 {% block page_title %}
 Edit User Account
 {% endblock %}
 
 {% block sub_menu %}
     <li>
-        <a href="{{url_for('admin.create_user')}}">Delete User Account</a>
+        <a href="{{url_for('admin.update_user', user_id=user.id)}}">Edit</a>
+    </li>
+    <li>
+        <a href="{{url_for('admin.delete_user', user_id=user.id)}}">Delete</a>
     </li>
 {% endblock %}
 
@@ -53,20 +75,17 @@ Edit User Account
     </div>
     <div class="row">
         <div class="bold col s2 m1 dc-attr">Roles</div>
-        <div class="col s3 m3 dc-val">&nbsp;
+        <div class="col s9 m10">&nbsp;
         {% for role in roles %}
-            <div class="chip green lighten-2">{{role.name}}</div>
+            {{ role_chip(role) }}            
         {% endfor %}
         </div>
-        <div class="bold col s7 m8"></div>
+        <div class="bold col s1 m1"></div>
     </div>    
 </div>
 {% endblock %}
 
 {% block page_script %}
-
-
     $().ready(function() {
     });
-
 {% endblock %}

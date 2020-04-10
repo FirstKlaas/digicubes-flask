@@ -38,11 +38,11 @@ class CreateUserForm(FlaskForm):
         "The Account Name", widget=w.materialize_input, validators=[validators.InputRequired()]
     )
     password = PasswordField(
-        "Password", widget=w.materialize_input, validators=[validators.InputRequired()]
+        "Password", widget=w.materialize_password, validators=[validators.InputRequired()]
     )
     password2 = PasswordField(
         "Retype Password",
-        widget=w.materialize_input,
+        widget=w.materialize_password,
         validators=[
             validators.InputRequired(),
             validators.EqualTo("password", message="Passwords are not identical."),
@@ -50,6 +50,25 @@ class CreateUserForm(FlaskForm):
     )
     submit = SubmitField("Register", widget=w.materialize_submit)
 
+class UpdateUserForm(FlaskForm):
+    """
+    The update user form
+    """
+
+    first_name = StringField("First Name", widget=w.materialize_input)
+    last_name = StringField("Last Name", widget=w.materialize_input)
+    email = StringField(
+        "Email",
+        widget=w.materialize_input,
+        validators=[validators.Email(), validators.InputRequired()],
+    )
+    login = StringField(
+        "The Account Name", widget=w.materialize_input, validators=[validators.InputRequired()]
+    )
+    is_active = BooleanField("Active", widget=w.materialize_checkbox)
+    is_verified = BooleanField("Verified", widget=w.materialize_checkbox)
+
+    submit = SubmitField("Update", widget=w.materialize_submit)
 
 class CreateSchoolForm(FlaskForm):
     """
