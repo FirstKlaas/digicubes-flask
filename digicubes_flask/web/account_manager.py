@@ -52,30 +52,10 @@ class DigicubesAccountManager:
                 port=app.config.get("DIGICUBES_API_SERVER_PORT", 3000),
             )
 
-            def update_current_user(response: Response):
-                user = current_user
-                logger.debug("Setting token cookie %s", user.token)
-                # Get the action (or None as default)
-                action = session.get("digicubes.account.action", None)
-
-                clear_token = action == "logout"
-
-                # This session value is no longer needed and there we
-                # can savely remove it. Normally (the intended design)
-                # this key, value pair shoul'd never be send to the
-                # client.
-                if "digicubes.account.action" in session:
-                    session.pop("digicubes.account.action")
-
-                if clear_token:
-                    session.clear()
-
-                return response
-
             # At the end of each request the session
             # variables are updated. The token as well as the session id
             # are written to the session. Or removed if requested.
-            app.after_request(update_current_user)
+            #app.after_request(update_current_user)
 
             def has_right(user_id: int, right: str) -> bool:
                 # Villeicht nicht über den user_service machen, sondern
@@ -178,7 +158,7 @@ class DigicubesAccountManager:
         return abort(404)
 
     @property
-    def _cfg(self):
+    def config(self):
         app = current_app
         return app.config
 
@@ -191,6 +171,9 @@ class DigicubesAccountManager:
         :rtype: BearerTokenData
         :raises: DoesNotExist, ServerError
         """
+        if current_user.token is not None:
+            session.clear()
+            
         user: BearerTokenData = self._client.login(login, password)
         logger.debug("User %s logged in with token %s", user.user_id, user.bearer_token)
         current_user.token = user.bearer_token
@@ -213,7 +196,7 @@ class DigicubesAccountManager:
         """
         Marks the session for logout at the end of the request cycle
         """
-        session["digicubes.account.action"] = "logout"
+        session.clear()
 
     @property
     def user(self) -> UserService:

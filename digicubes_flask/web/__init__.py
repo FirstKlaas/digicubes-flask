@@ -55,12 +55,11 @@ def create_app():
     def gravatar(email: str) -> str:
 
         default = url_for("static", filename="image/digibot_profile_40.png", _external=True)
-        print(default)
         if not email:
             return default
 
-        g: Gravatar = Gravatar(email)
-        return g.get_image(size=40, default="retro")
+        gravatar: Gravatar = Gravatar(email)
+        return gravatar.get_image(size=40, default="retro")
 
     @app.template_filter()
     def digidate(dtstr):  # pylint: disable=unused-variable
@@ -99,10 +98,10 @@ def create_app():
     def nonefilter(value):  # pylint: disable=unused-variable
         return value if value is not None else "-"
 
-    @app.after_request
-    def after_request_func(response):  # pylint: disable=unused-variable
+    @app.before_request
+    def check_token():  # pylint: disable=unused-variable
         """
-        Nach jedem Request das Token aktualisieren, damit das Zeitfenster
+        Vor jedem Request das Token aktualisieren, damit das Zeitfenster
         der Gültigkeit des Tokens beu beginnt.
 
         Das wird somit eigentlich viel zu oft gemacht und frisst unnötig
@@ -112,7 +111,7 @@ def create_app():
         """
         if accm is not None:
             if accm.token is None:
-                logger.debug("No token in request. No new token will be generated.")
+                logger.debug("No user logged in. No new token will be generated.")
             else:
                 # TODO: Den call könnte man asynchron machen, weil die
                 # Aktuslisierung des Tokens für den aktuellen Request
@@ -120,12 +119,16 @@ def create_app():
                 # minimalen Performance Verlust bedeutet.
                 logger.debug("Refreshing token in 'at the end oth the request.")
                 accm.refresh_token()
-                logger.fatal("New token is %s", accm.token)
-        
-        else:
-            logger.info("No account manager in request scope found. Maybe not an issue.")
+                # TODO: Hier sollte eigentlich der Fall abgefangen werden, dass das
+                # alte Token abgelaufen ist.
 
-        return response
+                #TODO: ebenso könnte der UserProxy des eingeloggten users, sowie
+                # seine Rechte geladen werden, um sie im g Objekt abzulegen. Allerdings
+                # wäre das teuer, dies in jedem Request zu machen. Wir brauchen also
+                # einen intelligenten cache für diese daten.
+        else:
+            logger.info("No account manager in app scope found. Maybe not an issue.")
+
 
     # Load the default settings and then load the custom settings
     # THe default settings are stored in this package and have to be loaded

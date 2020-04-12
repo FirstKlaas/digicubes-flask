@@ -20,7 +20,7 @@ strong {
     cursor: pointer;
 }
 
-TBODY.vtop TD {
+TBODY.dc-vtop TD {
     vertical-align: top;
 }
 
