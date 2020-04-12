@@ -50,6 +50,7 @@ class CreateUserForm(FlaskForm):
     )
     submit = SubmitField("Register", widget=w.materialize_submit)
 
+
 class UpdateUserForm(FlaskForm):
     """
     The update user form
@@ -69,6 +70,7 @@ class UpdateUserForm(FlaskForm):
     is_verified = BooleanField("Verified", widget=w.materialize_checkbox)
 
     submit = SubmitField("Update", widget=w.materialize_submit)
+
 
 class CreateSchoolForm(FlaskForm):
     """

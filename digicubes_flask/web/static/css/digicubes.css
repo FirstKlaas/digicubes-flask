@@ -15,6 +15,14 @@ strong {
     font-family: 'Roboto', 'Ubuntu', sans-serif !important;
 }
 
+.dc-clickable {
+    cursor: pointer;
+}
+
+TBODY.vtop TD {
+    vertical-align: top;
+}
+
 .dc-attr {
     font-weight: 900;
     padding: 3px 0px !important;

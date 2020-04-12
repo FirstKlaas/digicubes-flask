@@ -1,18 +1,18 @@
 {% extends "admin/base.jinja" %}
 
-{% macro icon_verified(state) -%}
-    {% if state %}
-        <i class="small material-icons light-blue-text">verified_user</i>
+{% macro icon_verified(user) -%}
+    {% if user.is_verified %}
+        <td dc-user-id="{{user.id}}" dc-state="verified"></td>
     {% else %}
-        <i class="small material-icons blue-grey-text text-lighten-5">verified_user</i>
+        <td dc-user-id="{{user.id}}" dc-state="unverified"></td>
     {% endif %}
 {%- endmacro %}
 
-{% macro icon_active(state) -%}
-    {% if state %}
-        <i class="small material-icons light-blue-text">visibility</i>
+{% macro icon_active(user) -%}
+    {% if user.is_active %}
+        <td dc-user-id="{{user.id}}" dc-state="active"></td>
     {% else %}
-        <i class="small material-icons blue-grey-text text-lighten-5">visibility_off</i>
+        <td dc-user-id="{{user.id}}" dc-state="inactive"></td>
     {% endif %}
 {%- endmacro %}
 
@@ -20,6 +20,10 @@
     <img src="{{ email | gravatar }}" alt="" class="circle">
 {%- endmacro %}
 
+{% block html_head %}
+    <script src="{{ url_for('static', filename='js/admin/users.js') }}"></script>
+    {{ super() }}
+{% endblock %}
 
 {% block page_title %}
 Users Overview
@@ -41,9 +45,8 @@ Users Overview
         <thead>
             <tr>
                 <th style="width: 1em;"></th>
+                <th style="width: 20em;">Name</th>
                 <th style="width: 20em;">Login</th>
-                <th style="width: 20em;">First Name</th>
-                <th style="width: 20em;">Last Name</th>
                 <th style="width: 60em;">Email</th>
                 <th style="width: 20em;">Created at</th>
                 <th style="width: 1em;">Verified</th>
@@ -53,13 +56,12 @@ Users Overview
             {% for user in users %}
             <tr>
                 <td>{{ gravatar(user.email) }}</td>
-                <td><a href="{{ url_for('admin.edit_user', user_id=user.id) }}">{{ user.login }}</a></td>
-                <td >{{ user.first_name | nonefilter }}</td>
-                <td>{{ user.last_name | nonefilter }}</td>
+                <td ><a href="{{ url_for('admin.edit_user', user_id=user.id) }}">{{ user.first_name | nonefilter }} {{ user.last_name | nonefilter }}</a></td>
+                <td>{{ user.login }}</td>
                 <td>{{ user.email | nonefilter }}</td>
                 <td>{{ user.created_at | digidate }}</td> 
-                <td>{{ icon_verified(user.is_verified) }}</td>
-                <td>{{ icon_active(user.is_active) }}</td>
+                {{ icon_verified(user) }}
+                {{ icon_active(user) }}
             </tr>
             {% endfor %}
             </tbody>
@@ -67,3 +69,10 @@ Users Overview
     </table>   
 </div> 
 {% endblock %}        
+
+
+{% block page_script %}
+    $().ready(function() {
+        init();
+    });
+{% endblock %}

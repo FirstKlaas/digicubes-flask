@@ -17,6 +17,7 @@ from digicubes_client.client.proxy import UserProxy, SchoolProxy, CourseProxy, R
 from digicubes_client.client.service import SchoolService, UserService
 
 from .forms import CreateSchoolForm, CreateUserForm, CreateCourseForm, UpdateUserForm
+from .rfc import AdminRFC, RfcResponse, RfcRequest
 
 admin_blueprint = Blueprint("admin", __name__, template_folder="templates")
 
@@ -72,6 +73,7 @@ def update_user(user_id: int):
     form.process(obj=user_proxy)
 
     return render_template("admin/update_user.jinja", form=form, user=user_proxy)
+
 
 @admin_blueprint.route("/duser/<int:user_id>/")
 @login_required
@@ -138,23 +140,18 @@ def roles():
     role_list = digicubes.role.all(digicubes.token)
     return render_template("admin/roles.jinja", roles=role_list)
 
+
 @admin_blueprint.route("/user/<int:user_id>/addrole/<int:role_id>")
 def add_user_role(user_id: int, role_id: int):
-    server.user.add_role(
-        server.token,
-        UserProxy(id=user_id),
-        RoleProxy(id=role_id, name="")
-    )
-    return redirect(url_for('admin.edit_user', user_id=user_id))
+    server.user.add_role(server.token, UserProxy(id=user_id), RoleProxy(id=role_id, name=""))
+    return redirect(url_for("admin.edit_user", user_id=user_id))
+
 
 @admin_blueprint.route("/user/<int:user_id>/removerole/<int:role_id>")
 def remove_user_role(user_id: int, role_id: int):
-    server.user.remove_role(
-        server.token,
-        UserProxy(id=user_id),
-        RoleProxy(id=role_id, name="")
-    )
-    return redirect(url_for('admin.edit_user', user_id=user_id))
+    server.user.remove_role(server.token, UserProxy(id=user_id), RoleProxy(id=role_id, name=""))
+    return redirect(url_for("admin.edit_user", user_id=user_id))
+
 
 @admin_blueprint.route("/rights/")
 def rights():
@@ -210,21 +207,17 @@ def update_school(school_id: int):
 
     if form.validate_on_submit():
         digicubes.school.update(
-            token,
-            SchoolProxy(
-                id=school_id,
-                name=form.name.data,
-                description=form.description.data)
+            token, SchoolProxy(id=school_id, name=form.name.data, description=form.description.data)
         )
 
         return redirect(url_for("admin.school", school_id=school_id))
 
     # Gettting the school details from the server
     # TODO: Was, wenn die Schule nicht existiert?
-    db_school: SchoolProxy = service.get(token, school_id)    
+    db_school: SchoolProxy = service.get(token, school_id)
     form.name.data = db_school.name
     form.description.data = db_school.description
-    
+
     return render_template("admin/update_school.jinja", form=form, school=db_school)
 
 
@@ -272,7 +265,7 @@ def create_school_course(school_id: int):
                 from_date=from_date,
                 until_date=until_date,
                 created_by_id=user.id,
-            )
+            ),
         )
 
         return redirect(url_for("admin.school", school_id=school_id))
@@ -280,3 +273,19 @@ def create_school_course(school_id: int):
     token: str = server.token
     school_proxy: SchoolProxy = server.school.get(token, school_id)
     return render_template("admin/create_course.jinja", school=school_proxy, form=form)
+
+
+@admin_blueprint.route("/rfc/", methods=("GET", "POST", "PUT"))
+@login_required
+def rfc():
+
+    rfc_request = RfcRequest(
+        request.headers.get("x-digicubes-rfcname", None),
+        request.get_json()
+    )
+
+    response = AdminRFC.call(rfc_request)
+    return {
+        "status": response.status,
+        "text": response.text,
+        "data": response.data}

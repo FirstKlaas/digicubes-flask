@@ -50,6 +50,7 @@ def materialize_password(field: Field, **kwargs):
 
     return "".join(html)
 
+
 def materialize_input(field: Field, **kwargs):
     """
     A widget for the materialize input field.
@@ -173,17 +174,17 @@ def materialize_picker(field, **kwargs):
         </div>
     """
 
+
 def materialize_checkbox(field, **kwargs):
 
     field_id = kwargs.pop("id", field.id)
 
-    div_params = {
-        "class": f"switch col {kwargs.pop('grid', 's12')}"}
+    div_params = {"class": f"switch col {kwargs.pop('grid', 's12')}"}
     input_params = {
-        "id"    : field_id,
-        "name"  : field_id,
-        "type"  : "checkbox",
-        "class" : "filled-in", 
+        "id": field_id,
+        "name": field_id,
+        "type": "checkbox",
+        "class": "filled-in",
     }
     if field.data:
         input_params["checked"] = "checked"
@@ -196,6 +197,7 @@ def materialize_checkbox(field, **kwargs):
         </label>
     </div>
     """
+
 
 def materialize_submit(field, **kwargs):
     """

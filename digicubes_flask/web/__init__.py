@@ -49,18 +49,18 @@ def create_app():
     def handle_digicube_error(error):  # pylint: disable=unused-variable
         logger.fatal("Error occurred. Going back to login page.")
         digicubes.logout()
-        return redirect(url_for('account.login'))
+        return redirect(url_for("account.login"))
 
     @app.template_filter()
     def gravatar(email: str) -> str:
 
-        default = url_for("static", filename='image/digibot_profile_40.png', _external=True)
+        default = url_for("static", filename="image/digibot_profile_40.png", _external=True)
         print(default)
         if not email:
             return default
 
         g: Gravatar = Gravatar(email)
-        return g.get_image(size=40, default="robohash")
+        return g.get_image(size=40, default="retro")
 
     @app.template_filter()
     def digidate(dtstr):  # pylint: disable=unused-variable
@@ -78,11 +78,11 @@ def create_app():
         raise ValueError(f"Cannot convert given value. Unsupported type {type(dtstr)}")
 
     @app.template_filter()
-    def md(txt: str) -> str: # pylint: disable=unused-variable
+    def md(txt: str) -> str:  # pylint: disable=unused-variable
         return markdown(txt)
 
     @app.template_filter()
-    def digitime(dtstr): # pylint: disable=unused-variable
+    def digitime(dtstr):  # pylint: disable=unused-variable
         if dtstr is None:
             return ""
 

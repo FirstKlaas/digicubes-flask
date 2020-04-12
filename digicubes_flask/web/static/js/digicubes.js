@@ -91,3 +91,75 @@ DigiCubes.getUserTable = async function(offset = null, count = null) {
 
     return result;
 }
+
+DigiCubes.addUserRole = async function(user_id, role_id) {
+
+    data = {
+        "user_id" : user_id,
+        "role_id" : role_id
+    };
+
+    DigiCubes.rfc("PUT", "ADD_USER_ROLE", data).then((response) => {
+        return response.json();
+    })
+    .then((data) => {
+        console.log(data);
+    });
+}
+
+DigiCubes.toggleUserActiveState = async function(user_id) {
+    data = {
+        "user_id" : user_id
+    };
+
+    return DigiCubes.adminRFC("PUT", "USER_SET_ACTIVE_STATE", data)
+    .then((response_data) => {
+        return response_data.data;
+    });
+}
+
+DigiCubes.toggleUserVerifiedState = async function(user_id) {
+    data = {
+        "user_id" : user_id
+    };
+
+    return DigiCubes.adminRFC("PUT", "USER_SET_VERIFIED_STATE", data)
+    .then((response) => {
+        return response.data;
+    });
+}
+
+DigiCubes.getSchoolCoursesInfo = async function(school_id) {
+    console.log("Weired")
+    data = {
+        "school_id" : school_id 
+    }
+    return DigiCubes.adminRFC(
+        "PUT", "SCHOOL_GET_COURSE_INFO", data)
+    .then((response_data) => {
+        console.log(response_data)
+        return response_data.data
+    });
+}
+
+DigiCubes.adminRFC = async function(method, funcName, data) {
+    return fetch('/admin/rfc/', {
+        method: method,
+        mode: 'same-origin',
+        cache: 'default',
+        credentials: 'same-origin',
+        redirect: 'follow',
+        referrer: 'no-referrer',
+        headers: {
+            'x-digicubes-rfcname': funcName,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then((response) => {
+        if (response.ok) {
+            return response.json();
+        };
+        throw Error(response.statusText)
+    })
+}
