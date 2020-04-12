@@ -8,7 +8,7 @@ import logging
 from importlib.resources import open_text
 from typing import Optional
 
-from flask import Flask, redirect, url_for, Response, request, Request
+from flask import Flask, redirect, url_for, Response, request, Request, session
 from flask_moment import Moment
 import yaml
 from libgravatar import Gravatar
@@ -111,16 +111,17 @@ def create_app():
         neues Token sendet.
         """
         if accm is not None:
-            if not accm.token:
-                logger.debug("No token. Igoring response.")
+            if accm.token is None:
+                logger.debug("No token in request. No new token will be generated.")
             else:
                 # TODO: Den call könnte man asynchron machen, weil die
                 # Aktuslisierung des Tokens für den aktuellen Request
                 # nicht wichtig ist und der zusätzliche Call einen
                 # minimalen Performance Verlust bedeutet.
                 logger.debug("Refreshing token in 'at the end oth the request.")
-                new_token = accm.refresh_token()
-                current_user.token = new_token
+                accm.refresh_token()
+                logger.fatal("New token is %s", accm.token)
+        
         else:
             logger.info("No account manager in request scope found. Maybe not an issue.")
 

@@ -64,7 +64,6 @@ class AdminRFC:
 
     @staticmethod
     def rfc_school_get_course_info(data: DataType) -> RfcResponse:
-        print("--> exec rfc_school_get_course_info")
         school_id = data.get("school_id", None)
         assert (school_id is not None), "No school id provided"
         courses = server.school.get_courses(
@@ -74,7 +73,6 @@ class AdminRFC:
             # Kurse. Aber die Methode get_courses unterstützt das
         
         private_courses = list(filter(lambda c: c.is_private, courses))
-        print(f"Found {courses} in total and {private_courses} private courses.")
         return RfcResponse(
             data={
                 "count_courses" : len(courses),

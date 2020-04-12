@@ -182,33 +182,6 @@ class DigicubesAccountManager:
         app = current_app
         return app.config
 
-    def _get_token_from_cookie(self):
-        cookie_name = self._cfg.get("TOKEN_COOKIE_NAME", None)
-        return request.cookies.get(cookie_name, None)
-
-    def _get_token_from_header(self):
-        """
-        lookup the token in the `Authorization` header of the request.
-        The scheme has to be `Bearer`.
-        """
-        auth = request.headers.get("Authorization", None)
-        if auth is not None:
-            items = auth.strip().split(" ")
-            if len(items) == 2 and items[0].strip() == "Bearer":
-                return items[1].strip()
-        return None
-
-    def get_token(self):
-        """
-        Tries to lookup the token from the cookie store and from
-        the header. Returns `None` if the token couldn`t be found,
-        the token else.
-        """
-        token = self._get_token_from_cookie()
-        if token is None:
-            token = self._get_token_from_header()
-        return token
-
     def login(self, login: str, password: str) -> str:
         """
         Checks the credentials and, if successfully, adds
@@ -220,8 +193,8 @@ class DigicubesAccountManager:
         """
         user: BearerTokenData = self._client.login(login, password)
         logger.debug("User %s logged in with token %s", user.user_id, user.bearer_token)
-        session["digicubes.account.token"] = user.bearer_token
-        session["digicubes.account.id"] = user.user_id
+        current_user.token = user.bearer_token
+        current_user.id = user.user_id
         return user
 
     def generate_token_for(self, login: str, password: str) -> str:

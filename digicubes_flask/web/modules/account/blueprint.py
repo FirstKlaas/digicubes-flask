@@ -30,9 +30,6 @@ def home():
     my_roles = account_manager.user.get_my_roles(token, ["name"])
 
     homes = app.config["DIGICUBES_DISPATCHER_HOMES"]
-    print(homes)
-    print(my_roles)
-    print(len(my_roles))
     if len(my_roles) == 1:
         # Dispatch directly to the right homepage
         rolename = my_roles[0].name
@@ -40,7 +37,6 @@ def home():
         logger.debug(
             "User %s has only one role (%s). Redirecting immediately to %s", "me", rolename, url
         )
-        print(f"Redirecting to {url}")
         return redirect(url)
 
     homes_data = [(role.name, homes[role.name]) for role in my_roles]

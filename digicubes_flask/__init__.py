@@ -33,14 +33,39 @@ class CurrentUser:
     user instance.
     """
 
-    def __init__(self, token=None, user_id=None):
-        self.token = token
-        self.id = user_id
+    def __init__(self):
         self._dbuser = None
         self._rights = None  # Cached User rights
 
+    def reset(self):
+        session.pop("digicubes.account.token", None)
+        session.get("digicubes.account.id", None)
+
+    @property
+    def token(self):
+        return session.get("digicubes.account.token", None)
+
+    @token.setter
+    def token(self, value: str):
+        if value is None:
+            logger.warning("Expected token to be not None");
+        session["digicubes.account.token"] = value
+
+    @property
+    def id(self):
+        session.get("digicubes.account.id", None)
+
+    @id.setter
+    def id(self, value: str):
+        if value is None:
+            logger.warning("Expected id to be not None");
+        session["digicubes.account.id"] = value
+
     def __str__(self):
-        return self.id
+        return f"CurrentUser(id={self.id}, token={self.token}"
+
+    def __repr__(self):
+        return f"CurrentUser(id={self.id}, token={self.token}"
 
     def __eq__(self, other):
         return self.token == other
@@ -96,13 +121,7 @@ class CurrentUser:
 
 
 def _get_current_user():
-    """
-    Reads the corresponding attributes from the session and
-    returns a newly created CurrentUser instance.
-    """
-    token = session.get("digicubes.account.token", None)
-    user_id = session.get("digicubes.account.id", None)
-    return CurrentUser(token, user_id)
+    return CurrentUser()
 
 
 def _get_account_manager():
