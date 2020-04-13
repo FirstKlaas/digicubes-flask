@@ -37,6 +37,16 @@ TBODY.dc-vtop TD {
     padding: 3px 10px !important;
 }
 
+.dc-top {
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+.dc-bottom {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
 H1 {
     color: #03a9f4;
 }
@@ -47,7 +57,7 @@ H2 {
 }
 
 H5 {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: #90a4ae;
 }
 

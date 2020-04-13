@@ -2,7 +2,7 @@ from typing import Tuple, Dict, Any, Text, Union
 
 import attr
 
-from digicubes_client.client.proxy import UserProxy, SchoolProxy
+from digicubes_client.client.proxy import UserProxy, SchoolProxy, RoleProxy
 from digicubes_flask import digicubes, current_user, CurrentUser
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 
@@ -63,6 +63,45 @@ class AdminRFC:
         )
 
     @staticmethod
+    def rfc_user_toggle_role(data: DataType) -> RfcResponse:
+        user_id = data.get("user_id", None)
+        role_id = data.get("role_id", None)
+        operation = data.get("operation", "toggle")
+
+        assert (user_id is not None), "No user id provided"
+        assert (role_id is not None), "No role id provided"
+
+        if operation == "add":
+            server.user.add_role(
+                server.token,
+                UserProxy(id=user_id),
+                RoleProxy(id=role_id, name="xxx")
+            )
+            return RfcResponse(
+                data={
+                    "user_id" : user_id,
+                    "role_id" : role_id,
+                    "has_role" : True
+                }
+            )
+
+        if operation == "remove":
+            server.user.remove_role(
+                server.token,
+                UserProxy(id=user_id),
+                RoleProxy(id=role_id, name="xxx")
+            )
+            return RfcResponse(
+                data={
+                    "user_id" : user_id,
+                    "role_id" : role_id,
+                    "has_role" : False
+                }
+            )
+
+        raise ValueError(f"Unknown or unsupported operation '{operation}'")
+
+    @staticmethod
     def rfc_school_get_course_info(data: DataType) -> RfcResponse:
         school_id = data.get("school_id", None)
         assert (school_id is not None), "No school id provided"
@@ -71,15 +110,15 @@ class AdminRFC:
             SchoolProxy(id=school_id))
             # TODO: An dieser stelle brauche ich nicht alle Felder der
             # Kurse. Aber die Methode get_courses unterstützt das
-        
-        private_courses = list(filter(lambda c: c.is_private, courses))
+
+        private_courses = list([c.id for c in courses if c.is_private])
         return RfcResponse(
             data={
                 "count_courses" : len(courses),
                 "count_private_courses": len(private_courses)
             }
         )
-          
+
 
     @staticmethod
     def rfc_user_set_verified_state(data: DataType) -> RfcResponse:
@@ -87,7 +126,7 @@ class AdminRFC:
         assert (user_id is not None), "No user id provided"
 
         mode = data.get("mode", "toggle")
-        
+
         user = server.user.get(server.token, user_id, fields=['is_verified'])
         new_state = user.is_verified
 

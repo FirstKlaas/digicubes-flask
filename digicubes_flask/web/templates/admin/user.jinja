@@ -1,26 +1,7 @@
 {% extends "admin/base.jinja" %}
 
-{% macro role_chip(role) -%}
-    {% if role[1] %}
-        <a href="{{ url_for('admin.remove_user_role', user_id=user.id, role_id=role[0].id) }}">
-        <div class="chip light-blue lighten-2">
-            {{role[0].name}}
-            <i class="close material-icons yellow-text text-accent-3">star</i>
-        </div>
-        </a>
-    {% else %}
-        <a href="{{ url_for('admin.add_user_role', user_id=user.id, role_id=role[0].id) }}">
-        <div class="chip blue-grey lighten-5">
-            {{role[0].name}}
-            <i class="close material-icons">star_border</i>
-        </div>
-        </a>
-    {% endif %}
-{%- endmacro %}
-
-
 {% block page_title %}
-Edit User Account
+User Details
 {% endblock %}
 
 {% block sub_menu %}
@@ -35,57 +16,96 @@ Edit User Account
 {% block main_content %}
 <div class="section">
     <div class="row">
-        <h2>Details</h2>
-    </div>
-
-    <div class="row">
-        <div class="bold col s2 m1 dc-attr">Login</div>
-        <div class="light col s3 m3 dc-val">{{ user.login | nonefilter }}</div>
-        <div class="bold col s7 m8"></div>
-    </div>
-    <div class="row">
-        <div class="bold col s2 m1 dc-attr">First Name</div>
-        <div class="light col s3 m3 dc-val">{{ user.first_name | nonefilter }}</div>
-        <div class="bold col s7 m8"></div>
-    </div>
-    <div class="row">    
-        <div class="bold col s2 m1 dc-attr">Last Name</div>
-        <div class="light col s3 m3 dc-val">{{ user.last_name | nonefilter }}</div>
-        <div class="bold col s7 m8"></div>
-    </div>
-    <div class="row">
-        <div class="bold col s2 m1 dc-attr">Verified</div>
-        <div class="light col s3 m3 dc-val">{{ user.is_verified | nonefilter }}</div>
-        <div class="bold col s7 m8"></div>
-    </div>
-    <div class="row">
-        <div class="bold col s2 m1 dc-attr">Active</div>
-        <div class="light col s3 m3 dc-val">{{ user.is_active | nonefilter }}</div>
-        <div class="bold col s7 m8"></div>
-    </div>
-    <div class="row">
-        <div class="bold col s2 m1 dc-attr">Created at</div>
-        <div class="light col s3 m3 dc-val">{{ user.created_at | digidate }}</div>
-        <div class="bold col s7 m8"></div>
-    </div>
-    <div class="row">
-        <div class="bold col s2 m1 dc-attr">Last login at</div>
-        <div class="light col s3 m3 dc-val">{{ user.last_login_at | digidate }}&nbsp</div>
-        <div class="bold col s7 m8"></div>
-    </div>
-    <div class="row">
-        <div class="bold col s2 m1 dc-attr">Roles</div>
-        <div class="col s9 m10">&nbsp;
-        {% for role in roles %}
-            {{ role_chip(role) }}            
-        {% endfor %}
+        <div class="col s12">
+            <h1 class="dc-bottom">{{ user.login | nonefilter }}</h1>
+            <h5 class="flowtext dc-top">
+                {{ user.first_name | nonefilter }} {{ user.last_name | nonefilter }}
+                / Created at {{ user.created_at | digidate}} 
+                {% if user.last_login_at %}
+                / last login at {{ user.last_login_at | digidate}} 
+                {% else %}
+                / never logged in
+                {% endif %}
+            </h5>
         </div>
-        <div class="bold col s1 m1"></div>
+    </div>
+</div>
+
+<div class="section dc-top">
+    <div class="row">
+        <div class="col s12">
+            <h2 class="dc-top">Roles</h2>
+            <div>
+            {% for role in roles %}
+                <div 
+                    dc-role-name="{{role[0].name}}" 
+                    dc-role-id="{{role[0].id}}" 
+                    dc-in="{{role[1]}}" 
+                    class="chip blue-grey lighten-5 dc-clickable">...</div>            
+            {% endfor %}
+            </div>
+        </div>
     </div>    
 </div>
 {% endblock %}
 
 {% block page_script %}
+
+    var has_role_html = '<i class="material-icons yellow-text text-accent-3">star</i>';
+    var not_has_role_html = '<i class="material-icons">star_border</i>';
+
+    function updateChip( chip ) {
+        $elem = chip;
+        role_id = $elem.attr("dc-role-id");
+        role_name = $elem.attr("dc-role-name");
+        is_in = ($elem.attr("dc-in") == "True");         
+
+        if (is_in) {
+            $elem.html(role_name);
+            $elem.removeClass("blue-grey lighten-5");
+            $elem.addClass("light-blue white-text")
+        } else {
+            $elem.removeClass("light-blue white-text");
+            $elem.addClass("blue-grey lighten-5")
+            $elem.html(role_name);
+        }
+    }
+
+    function changeRole() {
+
+        $elem = $( this );
+        role_id = $elem.attr("dc-role-id");
+        role_name = $elem.attr("dc-role-name");
+        is_in = ($elem.attr("dc-in") == "True");         
+        
+        operation = is_in ? "remove" : "add"
+
+        console.log(operation);
+        
+        DigiCubes.toggleUserRole({{user.id}}, role_id, operation)
+        .then((data) => {
+            if (data.has_role) {
+                $(this ).attr("dc-in", "True")
+            } else {
+                $(this ).attr("dc-in", "False")
+            };
+            updateChip($( this ));
+            console.log(data);
+        });
+        
+    }
+
+    function init() {
+        $("div[dc-role-id").each(function( index ) {
+            $elem = $( this );
+            $elem.click(changeRole);
+            $elem.removeClass("close");
+            updateChip( $elem );
+        });
+    }
+
     $().ready(function() {
+        init();
     });
+
 {% endblock %}

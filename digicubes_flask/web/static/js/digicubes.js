@@ -130,14 +130,25 @@ DigiCubes.toggleUserVerifiedState = async function(user_id) {
 }
 
 DigiCubes.getSchoolCoursesInfo = async function(school_id) {
-    console.log("Weired")
     data = {
         "school_id" : school_id 
     }
     return DigiCubes.adminRFC(
         "PUT", "SCHOOL_GET_COURSE_INFO", data)
     .then((response_data) => {
-        console.log(response_data)
+        return response_data.data
+    });
+}
+
+DigiCubes.toggleUserRole = async function(user_id, role_id, operation = "toggle") {
+    return DigiCubes.adminRFC(
+        "PUT", "USER_TOGGLE_ROLE",
+        {
+            "user_id" : user_id,
+            "role_id" : role_id,
+            "operation" : operation
+        })
+    .then((response_data) => {
         return response_data.data
     });
 }
