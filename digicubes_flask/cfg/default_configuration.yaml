@@ -1,25 +1,24 @@
 secret: "djsjah67sh7/&)788hxcbxsh"
 
-TOKEN_COOKIE_NAME: "digicubes.token"
-TOKEN_SESSION_NAME: "digicubes.account"
-
-# Account space
-# -------------
-DIGICUBES_ACCOUNT_URL_PREFIX: "/account"
-
-# The route, that dispatches to the right homepage
-# if the user has more than one role. Otherwise
-# chains to the homepage for his role.  
-DIGICUBES_DISPATCHER_VIEW: "account.home"
+# Prefixes for the module blueprints
+# ----------------------------------
+account_prefix: "/account"
+admin_prefix: "/dcad"
+headmaster_prefix: "/dchm"
+teacher_prefix: "/dcte"
+student_prefix: "/dcst"
 
 # If true, new users are verified automatically
 # after registration
-DIGICUBES_ACCOUNT_AUTO_VERIFY: true
+auto_verify: true
 
-DIGICUBES_API_SERVER_PROTOCOL: "http"
-DIGICUBES_API_SERVER_HOSTNAME: "localhost"
-DIGICUBES_API_SERVER_PORT: 3000
+api_server_protocol: "http"
+api_server_host: "localhost"
+api_server_port: 3000
 
+# Information abaout the smtpserver
+# used to send verification and information
+# emails to user.
 smtp_host: !ENV ${DC_SMTP_HOST}
 smtp_port: !ENV ${DC_SMTP_PORT}
 smtp_use_ssl: true

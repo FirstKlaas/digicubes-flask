@@ -47,9 +47,9 @@ class DigicubesAccountManager:
             self.successful_logged_in_callback = lambda: redirect(url_for(index_view))
 
             self._client = DigiCubeClient(
-                protocol=app.config.get("DIGICUBES_API_SERVER_PROTOCOL", "http"),
-                hostname=app.config.get("DIGICUBES_API_SERVER_HOSTNAME", "localhost"),
-                port=app.config.get("DIGICUBES_API_SERVER_PORT", 3000),
+                protocol=app.config.get("api_server_protocol", "http"),
+                hostname=app.config.get("api_server_host", "localhost"),
+                port=app.config.get("api_server_port", 3000),
             )
 
             # At the end of each request the session
@@ -89,7 +89,7 @@ class DigicubesAccountManager:
         Returns the status of auto verify. If true, new users will
         automatically be verified, after creating an account.
         """
-        return current_app.config.get("DIGICUBES_ACCOUNT_AUTO_VERIFY", False)
+        return current_app.config.get("auto_verify", False)
 
     @property
     def token(self):

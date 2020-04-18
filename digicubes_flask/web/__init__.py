@@ -198,26 +198,26 @@ def create_app():
     # ---------------------------
 
     # Account blueprint
-    url_prefix = app.config.get("DIGICUBES_ACCOUNT_URL_PREFIX")
+    url_prefix = app.config.get("account_prefix", "/account")
     logger.debug("Register account blueprint at %s", url_prefix)
     app.register_blueprint(account_blueprint, url_prefix=url_prefix)
 
     # Admin blueprint
-    url_prefix = app.config.get("DIGICUBES_ADMIN_URL_PREFIX", "/dcad")
+    url_prefix = app.config.get("admin_prefix", "/dcad")
     logger.debug("Register admin blueprint at %s", url_prefix)
     app.register_blueprint(admin_blueprint, url_prefix=url_prefix)
 
     # Headmaster blueprint
-    url_prefix = app.config.get("DIGICUBES_HEADMASTER_URL_PREFIX", "/dchm")
+    url_prefix = app.config.get("headmaster_prefix", "/dchm")
     logger.debug("Register headmaster blueprint at %s", url_prefix)
     app.register_blueprint(headmaster_blueprint, url_prefix=url_prefix)
 
     # Teacher blueprint
-    url_prefix = app.config.get("DIGICUBES_TEACHER_URL_PREFIX", "/dcte")
+    url_prefix = app.config.get("teacher_prefix", "/dcte")
     logger.debug("Register teacher blueprint at %s", url_prefix)
     app.register_blueprint(teacher_blueprint, url_prefix=url_prefix)
 
-    url_prefix = app.config.get("DIGICUBES_STUDENT_URL_PREFIX", "/dcst")
+    url_prefix = app.config.get("student_prefix", "/dcst")
     logger.debug("Register student blueprint at %s", url_prefix)
     app.register_blueprint(student_blueprint, url_prefix=url_prefix)
 
