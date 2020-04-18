@@ -13,6 +13,8 @@ from digicubes_common.structures import BearerTokenData
 from digicubes_common.exceptions import DigiCubeError
 from digicubes_common.entities import RightEntity
 
+from .email.automailer import MailCube
+
 logger = logging.getLogger(__name__)
 
 # pylint: disable=unnecessary-lambda
@@ -48,7 +50,7 @@ class CurrentUser:
     @token.setter
     def token(self, value: str):
         if value is None:
-            logger.warning("Expected token to be not None");
+            logger.warning("Expected token to be not None")
         session["digicubes.account.token"] = value
 
     @property
@@ -58,7 +60,7 @@ class CurrentUser:
     @id.setter
     def id(self, value: str):
         if value is None:
-            logger.warning("Expected id to be not None");
+            logger.warning("Expected id to be not None")
         session["digicubes.account.id"] = value
 
     def __str__(self):

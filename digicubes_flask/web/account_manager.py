@@ -41,8 +41,8 @@ class DigicubesAccountManager:
         """
         if app is not None:
             app.digicubes_account_manager = self
-            login_view = app.config.get("DIGICUBES_ACCOUNT_LOGIN_VIEW")
-            index_view = app.config.get("DIGICUBES_ACCOUNT_INDEX_VIEW")
+            login_view = app.config.get("DIGICUBES_ACCOUNT_LOGIN_VIEW", "account.login")
+            index_view = app.config.get("DIGICUBES_ACCOUNT_INDEX_VIEW", "account.index")
             self.unauthorized_callback = lambda: redirect(url_for(login_view))
             self.successful_logged_in_callback = lambda: redirect(url_for(index_view))
 
@@ -55,7 +55,7 @@ class DigicubesAccountManager:
             # At the end of each request the session
             # variables are updated. The token as well as the session id
             # are written to the session. Or removed if requested.
-            #app.after_request(update_current_user)
+            # app.after_request(update_current_user)
 
             def has_right(user_id: int, right: str) -> bool:
                 # Villeicht nicht über den user_service machen, sondern
@@ -173,7 +173,7 @@ class DigicubesAccountManager:
         """
         if current_user.token is not None:
             session.clear()
-            
+
         user: BearerTokenData = self._client.login(login, password)
         logger.debug("User %s logged in with token %s", user.user_id, user.bearer_token)
         current_user.token = user.bearer_token

@@ -3,8 +3,10 @@ flask
 flask_wtf
 flask_moment
 
+pyjwt
 requests
 markdown
 Markupsafe
+python-dotoenv
 
 digicubes-pyclient

@@ -27,20 +27,18 @@ def index():
 def home():
     """Routing to the right home url"""
     token = account_manager.token
-    my_roles = account_manager.user.get_my_roles(token, ["name"])
+    my_roles = account_manager.user.get_my_roles(token, ["name, home_route"])
 
-    homes = app.config["DIGICUBES_DISPATCHER_HOMES"]
     if len(my_roles) == 1:
         # Dispatch directly to the right homepage
         rolename = my_roles[0].name
-        url = url_for(homes[rolename])
+        url = url_for(my_roles[0].home_route)
         logger.debug(
             "User %s has only one role (%s). Redirecting immediately to %s", "me", rolename, url
         )
         return redirect(url)
-
-    homes_data = [(role.name, homes[role.name]) for role in my_roles]
-    return render_template("account/home.jinja", data=homes_data)
+    # TODO: Filter the roles, that don't have a home route.
+    return render_template("account/home.jinja", roles=my_roles)
 
 
 @account_service.route("/logout", methods=["GET"])
@@ -71,10 +69,9 @@ def login():
         return abort(500)
 
     # If user is already authenticated, then
-    # redirect him directly to the configured
-    # starting page.
+    # logout first.
     if account_manager.authenticated:
-        return account_manager.successful_logged_in()
+        account_manager.logout()
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -82,7 +79,7 @@ def login():
             user_login = form.login.data
             password = form.password.data
             account_manager.login(user_login, password)
-            return account_manager.successful_logged_in()
+            return home()
         except DigiCubeError:
             return account_manager.unauthorized()
 
@@ -107,9 +104,7 @@ def register():
             # Need root rights for this
             # FIXME: don't put root credentials in code
             bearer_token: BearerTokenData = account_manager.generate_token_for("root", "digicubes")
-            logger.debug("#" * 20)
             token = bearer_token.bearer_token
-            logger.debug("#" * 20)
 
             autoverify = account_manager.auto_verify
 

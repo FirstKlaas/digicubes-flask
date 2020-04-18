@@ -5,19 +5,22 @@ All routes should be only accessible by users, who have the
 role 'admin'
 """
 import logging
-from datetime import date
-from typing import List
-from flask import Blueprint, render_template, abort, request, url_for, redirect
+from datetime import date, timedelta, datetime
+
+import jwt
+
+from flask import current_app, Blueprint, render_template, abort, request, url_for, redirect
 
 from digicubes_flask import login_required, needs_right, digicubes, current_user, CurrentUser
 from digicubes_flask.web.account_manager import DigicubesAccountManager
+from digicubes_flask.email import mail_cube
 
 from digicubes_common.exceptions import DigiCubeError
 from digicubes_client.client.proxy import UserProxy, SchoolProxy, CourseProxy, RoleProxy
 from digicubes_client.client.service import SchoolService, UserService
 
 from .forms import CreateSchoolForm, CreateUserForm, CreateCourseForm, UpdateUserForm
-from .rfc import AdminRFC, RfcResponse, RfcRequest
+from .rfc import AdminRFC, RfcRequest
 
 admin_blueprint = Blueprint("admin", __name__, template_folder="templates")
 
@@ -25,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 server: DigicubesAccountManager = digicubes
 user: CurrentUser = current_user
+
 
 
 @admin_blueprint.route("/")
@@ -50,10 +54,49 @@ def create_user():
     if form.validate_on_submit():
         new_user = UserProxy()
         form.populate_obj(new_user)
+
+        if current_app.config.get("auto_verify", False):
+            new_user.is_verified = True
+
+        new_user.is_active = True
         new_user = digicubes.user.create(digicubes.token, new_user)
+
+
+        try:
+            mail_cube.send_verification_email(new_user)
+        except DigiCubeError:
+            logger.exception("Sending a verification email failed.")
+
         return redirect(url_for("admin.edit_user", user_id=new_user.id))
 
     return render_template("admin/create_user.jinja", form=form)
+
+@admin_blueprint.route("/verify/<token>/")
+def verify(token: str):
+    try:
+        # Das geht so nicht hier. Der gerade verifizierte User ist gar nicht
+        # eingelogged. Also gibt es auch kein Token, um mit dem Server zu sprechen
+        # Und selbst wenn, dann hätte der aktuelle USer nicht das Recht, seinen
+        # verified Status zu ändern.
+        # Die Lösung besteht wohl darin, das Token zur Verifikation auf dem Server
+        # generieren zu lassen und mit diesem Token einen Request an den Server zu
+        # schicken. Muss ich drüber nachdenken. Wenn das aber so ist, dann kann
+        # der neue User auch gleich eingelogged werden und ein Kommunikations-
+        # token für ihn generiert werden.
+        #
+        # TODO: CRITICAL Lösung muss gefunden werden
+        data = mail_cube.decode_verification_token(token)
+        user = digicubes.user.update(
+            digicubes.token,
+            UserProxy(
+                id=data["user_id"],
+                is_verified=True
+            )
+        )
+        return render_template("admin/verified.jinja", user=user)
+    except:
+        logger.exception("Could not verify your account.")
+        abort(500)
 
 
 @admin_blueprint.route("/uuser/<int:user_id>/", methods=("GET", "POST"))
@@ -279,13 +322,7 @@ def create_school_course(school_id: int):
 @login_required
 def rfc():
 
-    rfc_request = RfcRequest(
-        request.headers.get("x-digicubes-rfcname", None),
-        request.get_json()
-    )
+    rfc_request = RfcRequest(request.headers.get("x-digicubes-rfcname", None), request.get_json())
 
     response = AdminRFC.call(rfc_request)
-    return {
-        "status": response.status,
-        "text": response.text,
-        "data": response.data}
+    return {"status": response.status, "text": response.text, "data": response.data}

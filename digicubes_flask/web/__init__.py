@@ -4,10 +4,13 @@ as a quickstart module.
 """
 import datetime
 import logging
+import os
+import re
 
 from importlib.resources import open_text
 from typing import Optional
 
+from dotenv import load_dotenv
 from flask import Flask, redirect, url_for, Response, request, Request, session
 from flask_moment import Moment
 import yaml
@@ -39,6 +42,9 @@ def create_app():
     from digicubes_flask.web.modules import (
         account_blueprint,
         admin_blueprint,
+        headmaster_blueprint,
+        teacher_blueprint,
+        student_blueprint,
     )  # pylint: disable=import-outside-toplevel
 
     app = Flask(__name__)
@@ -122,19 +128,53 @@ def create_app():
                 # TODO: Hier sollte eigentlich der Fall abgefangen werden, dass das
                 # alte Token abgelaufen ist.
 
-                #TODO: ebenso könnte der UserProxy des eingeloggten users, sowie
+                # TODO: ebenso könnte der UserProxy des eingeloggten users, sowie
                 # seine Rechte geladen werden, um sie im g Objekt abzulegen. Allerdings
                 # wäre das teuer, dies in jedem Request zu machen. Wir brauchen also
                 # einen intelligenten cache für diese daten.
         else:
             logger.info("No account manager in app scope found. Maybe not an issue.")
 
+    def parse_config(data=None, tag='!ENV'):
+        pattern = re.compile(".*?\${(\w+)}.*?") #pylint: disable=anomalous-backslash-in-string
+        loader = yaml.SafeLoader
+        loader.add_implicit_resolver(tag, pattern, None)
+
+        def constructor_env_variables(loader, node):
+            """
+            Extracts the environment variable from the node's value
+            :param yaml.Loader loader: the yaml loader
+            :param node: the current node in the yaml
+            :return: the parsed string that contains the value of the environment
+            variable
+            """
+            value = loader.construct_scalar(node)
+            match = pattern.findall(value)  # to find all env variables in line
+            if match:
+                full_value = value
+                for g in match:
+                    full_value = full_value.replace(
+                        f'${{{g}}}', os.environ.get(g, g)
+                    )
+                return full_value
+            return value
+
+        loader.add_constructor(tag, constructor_env_variables)
+        return yaml.load(data, Loader=loader)
+
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # C O N F I G U R A T I O N
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # First, load the .env file, wich adds environment variables to the
+    # the program.
+    load_dotenv(verbose=True)
 
     # Load the default settings and then load the custom settings
-    # THe default settings are stored in this package and have to be loaded
+    # The default settings are stored in this package and have to be loaded
     # as a ressource.
     with open_text("digicubes_flask.cfg", "default_configuration.yaml") as f:
-        settings = yaml.safe_load(f)
+        settings = parse_config(f)
         app.config.update(settings)
 
     # Loading the logging configuration. If no logging configuration
@@ -153,18 +193,6 @@ def create_app():
     the_account_manager = DigicubesAccountManager()
     the_account_manager.init_app(app)
 
-    # ----------------------------------------
-    # Now check, if we have the basic entities
-    # ----------------------------------------
-    core_roles = app.config["DIGICUBES_SYS_ROLES"]
-
-    # Create a list of unique right_names
-    rights = []
-    for role in core_roles:
-        for right in role["rights"]:
-            if right not in rights:
-                rights.append(right)
-
     # ---------------------------
     # Now register the blueprints
     # ---------------------------
@@ -175,9 +203,23 @@ def create_app():
     app.register_blueprint(account_blueprint, url_prefix=url_prefix)
 
     # Admin blueprint
-    url_prefix = app.config.get("DIGICUBES_ADMIN_URL_PREFIX", "/admin")
+    url_prefix = app.config.get("DIGICUBES_ADMIN_URL_PREFIX", "/dcad")
     logger.debug("Register admin blueprint at %s", url_prefix)
     app.register_blueprint(admin_blueprint, url_prefix=url_prefix)
+
+    # Headmaster blueprint
+    url_prefix = app.config.get("DIGICUBES_HEADMASTER_URL_PREFIX", "/dchm")
+    logger.debug("Register headmaster blueprint at %s", url_prefix)
+    app.register_blueprint(headmaster_blueprint, url_prefix=url_prefix)
+
+    # Teacher blueprint
+    url_prefix = app.config.get("DIGICUBES_TEACHER_URL_PREFIX", "/dcte")
+    logger.debug("Register teacher blueprint at %s", url_prefix)
+    app.register_blueprint(teacher_blueprint, url_prefix=url_prefix)
+
+    url_prefix = app.config.get("DIGICUBES_STUDENT_URL_PREFIX", "/dcst")
+    logger.debug("Register student blueprint at %s", url_prefix)
+    app.register_blueprint(student_blueprint, url_prefix=url_prefix)
 
     logger.info("Static folder is %s", app.static_folder)
     return app
