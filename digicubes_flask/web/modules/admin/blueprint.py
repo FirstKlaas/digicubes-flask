@@ -270,7 +270,11 @@ def delete_school(school_id: int):
 
 @admin_blueprint.route("/school/<int:school_id>/dcourse/<int:course_id>/")
 def delete_course(school_id: int, course_id: int):
-    """Delete an existing course"""
+    """
+    Delete an existing course.
+
+    
+    """
     token = digicubes.token
     service: SchoolService = digicubes.school
 
