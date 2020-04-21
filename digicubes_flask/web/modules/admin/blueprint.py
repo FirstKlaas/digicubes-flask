@@ -11,6 +11,7 @@ import jwt
 
 from flask import current_app, Blueprint, render_template, abort, request, url_for, redirect
 
+
 from digicubes_flask import login_required, needs_right, digicubes, current_user, CurrentUser
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 from digicubes_flask.email import mail_cube
@@ -19,7 +20,7 @@ from digicubes_common.exceptions import DigiCubeError
 from digicubes_client.client.proxy import UserProxy, SchoolProxy, CourseProxy, RoleProxy
 from digicubes_client.client.service import SchoolService, UserService
 
-from .forms import CreateSchoolForm, CreateUserForm, CreateCourseForm, UpdateUserForm
+from .forms import *
 from .rfc import AdminRFC, RfcRequest
 
 admin_blueprint = Blueprint("admin", __name__, template_folder="templates")
@@ -29,6 +30,10 @@ logger = logging.getLogger(__name__)
 server: DigicubesAccountManager = digicubes
 user: CurrentUser = current_user
 
+# Utility function to convert strig values to dates
+def create_date_from_string(d: str) -> date:
+    values = d.split(".")
+    return date(int(values[2]), int(values[1]), int(values[0]))
 
 
 @admin_blueprint.route("/")
@@ -61,38 +66,26 @@ def create_user():
         new_user.is_active = True
         new_user = digicubes.user.create(digicubes.token, new_user)
 
-
-        try:
-            mail_cube.send_verification_email(new_user)
-        except DigiCubeError:
-            logger.exception("Sending a verification email failed.")
+        if not new_user.is_verified:
+            """
+            Newly created user is not verified. Now sending him an 
+            email with a verification link.
+            """
+            try:
+                mail_cube.send_verification_email(new_user)
+            except DigiCubeError:
+                logger.exception("Sending a verification email failed.")
 
         return redirect(url_for("admin.edit_user", user_id=new_user.id))
 
     return render_template("admin/create_user.jinja", form=form)
 
+
 @admin_blueprint.route("/verify/<token>/")
 def verify(token: str):
+    service: UserService = digicubes.user
     try:
-        # Das geht so nicht hier. Der gerade verifizierte User ist gar nicht
-        # eingelogged. Also gibt es auch kein Token, um mit dem Server zu sprechen
-        # Und selbst wenn, dann hätte der aktuelle USer nicht das Recht, seinen
-        # verified Status zu ändern.
-        # Die Lösung besteht wohl darin, das Token zur Verifikation auf dem Server
-        # generieren zu lassen und mit diesem Token einen Request an den Server zu
-        # schicken. Muss ich drüber nachdenken. Wenn das aber so ist, dann kann
-        # der neue User auch gleich eingelogged werden und ein Kommunikations-
-        # token für ihn generiert werden.
-        #
-        # TODO: CRITICAL Lösung muss gefunden werden
-        data = mail_cube.decode_verification_token(token)
-        user = digicubes.user.update(
-            digicubes.token,
-            UserProxy(
-                id=data["user_id"],
-                is_verified=True
-            )
-        )
+        user = service.verify_user(token)
         return render_template("admin/verified.jinja", user=user)
     except:
         logger.exception("Could not verify your account.")
@@ -248,10 +241,11 @@ def update_school(school_id: int):
     token = digicubes.token
     form = CreateSchoolForm()
 
+    # What about the creation date and the modofied date?
     if form.validate_on_submit():
-        digicubes.school.update(
-            token, SchoolProxy(id=school_id, name=form.name.data, description=form.description.data)
-        )
+        upschool = SchoolProxy()
+        form.populate_obj(upschool)
+        digicubes.school.update(token, school)
 
         return redirect(url_for("admin.school", school_id=school_id))
 
@@ -264,7 +258,7 @@ def update_school(school_id: int):
     return render_template("admin/update_school.jinja", form=form, school=db_school)
 
 
-@admin_blueprint.route("/dschool/<int:school_id>/")
+@admin_blueprint.route("/dschool/<int:school_id>/", methods=["DELETE"])
 @login_required
 def delete_school(school_id: int):
     """Delete an existing school"""
@@ -274,31 +268,89 @@ def delete_school(school_id: int):
     digicubes.school.delete(token, school_id)
     return redirect(url_for("admin.schools"))
 
+@admin_blueprint.route("/school/<int:school_id>/dcourse/<int:course_id>/")
+def delete_course(school_id: int, course_id: int):
+    """Delete an existing course"""
+    token = digicubes.token
+    service: SchoolService = digicubes.school
+
+    # Deleteing the course
+    # TODO: catch 404
+    service.delete_course(token, course_id)
+    return redirect(url_for("admin.school", school_id=school_id))
+
+@admin_blueprint.route("/school/<int:school_id>/ucourse/<int:course_id>/", methods=["GET", "POST"])
+@login_required
+def update_school_course(school_id: int, course_id: int):
+    service: SchoolService = digicubes.school
+    token = digicubes.token
+    form = UpdateCourseForm()
+
+    # First get the course to be updated
+    service.get_courses()
+
+    # if method is post and all fields are valid,
+    # create the new course.
+    if form.validate_on_submit():
+
+        course = CourseProxy()
+        form.populate_obj(course)
+
+        # converting the strings to valid dates
+        course.from_date = (
+            date.today()
+            if not form.from_date.data
+            else create_date_from_string(form.from_date.data)
+        )
+
+        # converting the strings to valid dates
+        form.until_date = (
+            date.today()
+            if not form.until_date.data
+            else create_date_from_string(form.until_date.data)
+        )
+        service.update_course(token, course)
+        return redirect(url_for("admin.school", school_id=school_id))
+
 
 @admin_blueprint.route("/school/<int:school_id>/ccourse/", methods=("GET", "POST"))
 @login_required
 def create_school_course(school_id: int):
-    """Create a new course for the school"""
+    """
+        Create a new course for the school
 
-    def create_date_from_string(d: str) -> date:
-        values = d.split(".")
-        return date(int(values[2]), int(values[1]), int(values[0]))
+        The method GET will render the creation form, while
+        the method POST will validate the form and create the
+        course, if possible.
 
-    form = CreateCourseForm()
+        If any errors occure during the validation of the form,
+        the form will be rerendered.
+    """
+
+    # Create the form instance
+    form: CreateCourseForm = CreateCourseForm()
+
+    # if method is post and all fields are valid,
+    # create the new course.
     if form.validate_on_submit():
+
+        # converting the strings to valid dates
         from_date = (
             date.today()
             if not form.from_date.data
             else create_date_from_string(form.from_date.data)
         )
 
+        # converting the strings to valid dates
         until_date = (
             date.today()
             if not form.until_date.data
             else create_date_from_string(form.until_date.data)
         )
 
-        course = server.school.create_course(
+        # Create the course.
+        # TODO: Errors may occoure and have to be handled in a proper way. 
+        server.school.create_course(
             server.token,
             SchoolProxy(id=school_id),
             CourseProxy(
@@ -311,12 +363,14 @@ def create_school_course(school_id: int):
             ),
         )
 
+        # After succesfully creating the course go back to
+        # the administration page of the school.
         return redirect(url_for("admin.school", school_id=school_id))
 
+    # Get the school proxy from the server and render out the form.
     token: str = server.token
     school_proxy: SchoolProxy = server.school.get(token, school_id)
     return render_template("admin/create_course.jinja", school=school_proxy, form=form)
-
 
 @admin_blueprint.route("/rfc/", methods=("GET", "POST", "PUT"))
 @login_required

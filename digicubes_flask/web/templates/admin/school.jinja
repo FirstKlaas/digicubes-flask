@@ -50,7 +50,7 @@ School
                     <td>{{ course.until_date | digidate }}</td>
                     <td>{{ course.created_at | digidate }}</td> 
                     <td class="right-align dc-icon-column">
-                        <a href="#">
+                        <a href="{{ url_for('admin.delete_course', school_id=school.id, course_id=course.id) }}">
                             <i class="material-icons red-text text-darken-3">delete</i>
                         </a>
                     </td>

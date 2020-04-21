@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "venv/bin/python",
+    "python.pythonPath": "${workspaceRoot}/venv/bin/python",
     "restructuredtext.confPath": "${workspaceRoot}/",
     "python.formatting.provider": "black",
     "python.linting.enabled": true,

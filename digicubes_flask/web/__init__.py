@@ -19,6 +19,7 @@ from markdown import markdown
 
 from digicubes_client.client.proxy import RightProxy, RoleProxy
 from digicubes_flask import account_manager as accm, current_user
+from digicubes_flask.email import MailCube
 from digicubes_common.exceptions import DigiCubeError
 
 from .account_manager import DigicubesAccountManager
@@ -29,7 +30,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 digicubes: DigicubesAccountManager = accm
 
-# moment = Moment()
+mail_cube = MailCube()
+the_account_manager = DigicubesAccountManager()
 
 
 def create_app():
@@ -135,8 +137,8 @@ def create_app():
         else:
             logger.info("No account manager in app scope found. Maybe not an issue.")
 
-    def parse_config(data=None, tag='!ENV'):
-        pattern = re.compile(".*?\${(\w+)}.*?") #pylint: disable=anomalous-backslash-in-string
+    def parse_config(data=None, tag="!ENV"):
+        pattern = re.compile(".*?\${(\w+)}.*?")  # pylint: disable=anomalous-backslash-in-string
         loader = yaml.SafeLoader
         loader.add_implicit_resolver(tag, pattern, None)
 
@@ -153,9 +155,7 @@ def create_app():
             if match:
                 full_value = value
                 for g in match:
-                    full_value = full_value.replace(
-                        f'${{{g}}}', os.environ.get(g, g)
-                    )
+                    full_value = full_value.replace(f"${{{g}}}", os.environ.get(g, g))
                 return full_value
             return value
 
@@ -190,8 +190,9 @@ def create_app():
 
     # Initalizes the account manager extension, wich is responsible for the the
     # login and logout procedure.
-    the_account_manager = DigicubesAccountManager()
     the_account_manager.init_app(app)
+
+    mail_cube.init_app(app)
 
     # ---------------------------
     # Now register the blueprints

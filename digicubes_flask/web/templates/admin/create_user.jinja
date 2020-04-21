@@ -12,10 +12,9 @@ Create new User
     <div class="col s12" id="dc_main">
       <form method="POST" action="{{ url_for('admin.create_user') }}">
           {{ form.csrf_token }}
-          {{ forms.row(form, "login") }}
+          {{ forms.row_two_columns(form, "login", "password") }}
           {{ forms.row_two_columns(form, "first_name", "last_name") }}
           {{ forms.row(form, "email") }}
-          {{ forms.row_two_columns(form, "password", "password2") }}
           {{ forms.submit(form) }}
       </form>
     </div>

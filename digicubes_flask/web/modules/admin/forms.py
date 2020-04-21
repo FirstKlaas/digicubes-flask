@@ -11,17 +11,20 @@ from wtforms import (
     validators,
     TextAreaField,
     HiddenField,
-    DateField,
     BooleanField,
 )
-
-from digicubes_client.client.proxy import CourseProxy
 
 import digicubes_flask.web.wtforms_widgets as w
 
 logger = logging.getLogger(__name__)
 
-
+__ALL__ = [
+    'CreateUserForm',
+    'UpdateUserForm',
+    'CreateSchoolForm',
+    'CreateCourseForm',
+    'UpdateCourseForm'
+]
 class CreateUserForm(FlaskForm):
     """
     The create user form
@@ -38,17 +41,9 @@ class CreateUserForm(FlaskForm):
         "The Account Name", widget=w.materialize_input, validators=[validators.InputRequired()]
     )
     password = PasswordField(
-        "Password", widget=w.materialize_password, validators=[validators.InputRequired()]
+        "Password", widget=w.materialize_password
     )
-    password2 = PasswordField(
-        "Retype Password",
-        widget=w.materialize_password,
-        validators=[
-            validators.InputRequired(),
-            validators.EqualTo("password", message="Passwords are not identical."),
-        ],
-    )
-    submit = SubmitField("Register", widget=w.materialize_submit)
+    submit = SubmitField("Create", widget=w.materialize_submit)
 
 
 class UpdateUserForm(FlaskForm):
@@ -95,3 +90,17 @@ class CreateCourseForm(FlaskForm):
     until_date = StringField("Ending at", widget=w.materialize_picker)
     is_private = BooleanField("Private", widget=w.materialize_switch)
     submit = SubmitField("Create", widget=w.materialize_submit)
+
+class UpdateCourseForm(FlaskForm):
+    """
+    Update existing course form
+    """
+
+    school_id = HiddenField()
+    name = StringField("Name", widget=w.materialize_input, validators=[validators.InputRequired()])
+
+    description = TextAreaField("Description", widget=w.materialize_textarea)
+    from_date = StringField("Starting from", widget=w.materialize_picker)
+    until_date = StringField("Ending at", widget=w.materialize_picker)
+    is_private = BooleanField("Private", widget=w.materialize_switch)
+    submit = SubmitField("Update", widget=w.materialize_submit)
