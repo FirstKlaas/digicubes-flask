@@ -2,6 +2,7 @@
 Some forms to be used with the wtforms package.
 """
 import logging
+from datetime import date
 
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -12,6 +13,7 @@ from wtforms import (
     TextAreaField,
     HiddenField,
     BooleanField,
+    DateField,
 )
 
 import digicubes_flask.web.wtforms_widgets as w
@@ -19,12 +21,14 @@ import digicubes_flask.web.wtforms_widgets as w
 logger = logging.getLogger(__name__)
 
 __ALL__ = [
-    'CreateUserForm',
-    'UpdateUserForm',
-    'CreateSchoolForm',
-    'CreateCourseForm',
-    'UpdateCourseForm'
+    "CreateUserForm",
+    "UpdateUserForm",
+    "CreateSchoolForm",
+    "CreateCourseForm",
+    "UpdateCourseForm",
 ]
+
+
 class CreateUserForm(FlaskForm):
     """
     The create user form
@@ -40,9 +44,7 @@ class CreateUserForm(FlaskForm):
     login = StringField(
         "The Account Name", widget=w.materialize_input, validators=[validators.InputRequired()]
     )
-    password = PasswordField(
-        "Password", widget=w.materialize_password
-    )
+    password = PasswordField("Password", widget=w.materialize_password)
     submit = SubmitField("Create", widget=w.materialize_submit)
 
 
@@ -77,7 +79,7 @@ class CreateSchoolForm(FlaskForm):
     submit = SubmitField("Create", widget=w.materialize_submit)
 
 
-class CreateCourseForm(FlaskForm):
+class CourseForm(FlaskForm):
     """
     Create new Course Form
     """
@@ -86,21 +88,7 @@ class CreateCourseForm(FlaskForm):
     name = StringField("Name", widget=w.materialize_input, validators=[validators.InputRequired()])
 
     description = TextAreaField("Description", widget=w.materialize_textarea)
-    from_date = StringField("Starting from", widget=w.materialize_picker)
-    until_date = StringField("Ending at", widget=w.materialize_picker)
+    from_date = DateField("Starting from", default=date.today(), format='%d.%m.%Y',widget=w.materialize_picker)
+    until_date = DateField("Ending at", default=date.today(), format='%d.%m.%Y', widget=w.materialize_picker)
     is_private = BooleanField("Private", widget=w.materialize_switch)
     submit = SubmitField("Create", widget=w.materialize_submit)
-
-class UpdateCourseForm(FlaskForm):
-    """
-    Update existing course form
-    """
-
-    school_id = HiddenField()
-    name = StringField("Name", widget=w.materialize_input, validators=[validators.InputRequired()])
-
-    description = TextAreaField("Description", widget=w.materialize_textarea)
-    from_date = StringField("Starting from", widget=w.materialize_picker)
-    until_date = StringField("Ending at", widget=w.materialize_picker)
-    is_private = BooleanField("Private", widget=w.materialize_switch)
-    submit = SubmitField("Update", widget=w.materialize_submit)

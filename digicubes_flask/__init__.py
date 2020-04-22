@@ -8,7 +8,8 @@ from flask import abort, current_app, request, Response, redirect, Flask, url_fo
 from flask_wtf.csrf import CSRFError
 from werkzeug.local import LocalProxy
 
-from digicubes_client.client import DigiCubeClient, RoleService, UserService
+from digicubes_client.client import DigiCubeClient, service
+
 from digicubes_common.structures import BearerTokenData
 from digicubes_common.exceptions import DigiCubeError
 from digicubes_common.entities import RightEntity

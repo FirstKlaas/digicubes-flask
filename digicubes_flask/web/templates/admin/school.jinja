@@ -44,7 +44,7 @@ School
                 <tbody class="dc-vtop">
             {% for course in courses %}
                 <tr>
-                    <td>{{ course.name | nonefilter }}</td>
+                    <td><a href="{{ url_for('admin.update_school_course', school_id=school.id, course_id=course.id) }}">{{ course.name | nonefilter }}</a></td>
                     <td>{{ course.description | md }}</td>
                     <td>{{ course.from_date | digidate }}</td>
                     <td>{{ course.until_date | digidate }}</td>

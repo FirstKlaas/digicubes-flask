@@ -1,6 +1,6 @@
 {% import "macros/forms.jinja" as forms %}
 
-<form method="POST" action="{{ url_for('admin.update_school_course', school_id=school.id) }}">
+<form method="POST" action="{{ url_for('admin.update_school_course', school_id=school.id, course_id=course.id) }}">
     {{ form.csrf_token }}
     {{ form.school_id(value=school.id) }}
     {{ forms.row(form, "name") }}

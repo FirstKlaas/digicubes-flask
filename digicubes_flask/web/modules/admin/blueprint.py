@@ -5,20 +5,16 @@ All routes should be only accessible by users, who have the
 role 'admin'
 """
 import logging
-from datetime import date, timedelta, datetime
-
-import jwt
+from datetime import date, datetime
 
 from flask import current_app, Blueprint, render_template, abort, request, url_for, redirect
-
 
 from digicubes_flask import login_required, needs_right, digicubes, current_user, CurrentUser
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 from digicubes_flask.email import mail_cube
 
-from digicubes_common.exceptions import DigiCubeError
-from digicubes_client.client.proxy import UserProxy, SchoolProxy, CourseProxy, RoleProxy
-from digicubes_client.client.service import SchoolService, UserService
+from digicubes_common import exceptions as ex
+from digicubes_client.client import proxy, service as srv
 
 from .forms import *
 from .rfc import AdminRFC, RfcRequest
@@ -29,12 +25,6 @@ logger = logging.getLogger(__name__)
 
 server: DigicubesAccountManager = digicubes
 user: CurrentUser = current_user
-
-# Utility function to convert strig values to dates
-def create_date_from_string(d: str) -> date:
-    values = d.split(".")
-    return date(int(values[2]), int(values[1]), int(values[0]))
-
 
 @admin_blueprint.route("/")
 @login_required
@@ -57,7 +47,7 @@ def create_user():
     """Create a new user"""
     form = CreateUserForm()
     if form.validate_on_submit():
-        new_user = UserProxy()
+        new_user = proxy.UserProxy()
         form.populate_obj(new_user)
 
         if current_app.config.get("auto_verify", False):
@@ -73,7 +63,7 @@ def create_user():
             """
             try:
                 mail_cube.send_verification_email(new_user)
-            except DigiCubeError:
+            except ex.DigiCubeError:
                 logger.exception("Sending a verification email failed.")
 
         return redirect(url_for("admin.edit_user", user_id=new_user.id))
@@ -83,10 +73,9 @@ def create_user():
 
 @admin_blueprint.route("/verify/<token>/")
 def verify(token: str):
-    service: UserService = digicubes.user
+    service: srv.UserService = digicubes.user
     try:
-        user = service.verify_user(token)
-        return render_template("admin/verified.jinja", user=user)
+        return render_template("admin/verified.jinja", user=service.verify_user(token))
     except:
         logger.exception("Could not verify your account.")
         abort(500)
@@ -95,17 +84,17 @@ def verify(token: str):
 @admin_blueprint.route("/uuser/<int:user_id>/", methods=("GET", "POST"))
 @login_required
 def update_user(user_id: int):
-    service: UserService = digicubes.user
+    service: srv.UserService = digicubes.user
     token = digicubes.token
     form = UpdateUserForm()
 
     if form.validate_on_submit():
-        user_proxy = UserProxy(id=user_id)
+        user_proxy = proxy.UserProxy(id=user_id)
         form.populate_obj(user_proxy)
         digicubes.user.update(token, user_proxy)
         return redirect(url_for("admin.edit_user", user_id=user_id))
 
-    user_proxy: UserProxy = service.get(token, user_id)
+    user_proxy: proxy.UserProxy = service.get(token, user_id)
     form.process(obj=user_proxy)
 
     return render_template("admin/update_user.jinja", form=form, user=user_proxy)
@@ -131,10 +120,10 @@ def edit_user(user_id: int):
     token = server.token
     # Gettting the user details from the server
     # TODO: Was, wenn der User nicht existiert?
-    user: UserProxy = server.user.get(token, user_id)
+    user: proxy.UserProxy = server.user.get(token, user_id)
 
     # Proxy is needed to request the roles
-    user_proxy = UserProxy(id=user_id)
+    user_proxy = proxy.UserProxy(id=user_id)
 
     # Getting the user roles from the server
     user_roles_names = [role.name for role in server.user.get_roles(token, user_proxy)]
@@ -154,7 +143,7 @@ def panel_user_table():
     try:
         user_list = digicubes.user.all(token, offset=offset, count=count)
         return render_template("admin/panel/user_table.jinja", users=user_list)
-    except DigiCubeError:
+    except ex.DigiCubeError:
         abort(500)
 
 
@@ -179,13 +168,19 @@ def roles():
 
 @admin_blueprint.route("/user/<int:user_id>/addrole/<int:role_id>")
 def add_user_role(user_id: int, role_id: int):
-    server.user.add_role(server.token, UserProxy(id=user_id), RoleProxy(id=role_id, name=""))
+    server.user.add_role(
+        server.token,
+        proxy.UserProxy(id=user_id), 
+        proxy.RoleProxy(id=role_id, name=""))
     return redirect(url_for("admin.edit_user", user_id=user_id))
 
 
 @admin_blueprint.route("/user/<int:user_id>/removerole/<int:role_id>")
 def remove_user_role(user_id: int, role_id: int):
-    server.user.remove_role(server.token, UserProxy(id=user_id), RoleProxy(id=role_id, name=""))
+    server.user.remove_role(
+        server.token,
+        proxy.UserProxy(id=user_id),
+        proxy.RoleProxy(id=role_id, name=""))
     return redirect(url_for("admin.edit_user", user_id=user_id))
 
 
@@ -214,7 +209,7 @@ def create_school():
     # token = digicubes.token
     form = CreateSchoolForm()
     if form.validate_on_submit():
-        new_school = SchoolProxy(name=form.name.data, description=form.description.data,)
+        new_school = proxy.SchoolProxy(name=form.name.data, description=form.description.data,)
         digicubes.school.create(digicubes.token, new_school)
         return redirect(url_for("admin.schools"))
 
@@ -225,7 +220,7 @@ def create_school():
 @login_required
 def school(school_id: int):
     """Schow details of an existing school"""
-    service: SchoolService = digicubes.school
+    service: srv.SchoolService = digicubes.school
     token = digicubes.token
     # Gettting the school details from the server
     # TODO: Was, wenn die Schule nicht existiert?
@@ -237,13 +232,13 @@ def school(school_id: int):
 @admin_blueprint.route("/uschool/<int:school_id>/", methods=("GET", "POST"))
 @login_required
 def update_school(school_id: int):
-    service: SchoolService = digicubes.school
+    service: srv.SchoolService = digicubes.school
     token = digicubes.token
     form = CreateSchoolForm()
 
     # What about the creation date and the modofied date?
     if form.validate_on_submit():
-        upschool = SchoolProxy()
+        upschool = proxy.SchoolProxy()
         form.populate_obj(upschool)
         digicubes.school.update(token, school)
 
@@ -251,7 +246,7 @@ def update_school(school_id: int):
 
     # Gettting the school details from the server
     # TODO: Was, wenn die Schule nicht existiert?
-    db_school: SchoolProxy = service.get(token, school_id)
+    db_school: proxy.SchoolProxy = service.get(token, school_id)
     form.name.data = db_school.name
     form.description.data = db_school.description
 
@@ -268,54 +263,54 @@ def delete_school(school_id: int):
     digicubes.school.delete(token, school_id)
     return redirect(url_for("admin.schools"))
 
+
 @admin_blueprint.route("/school/<int:school_id>/dcourse/<int:course_id>/")
 def delete_course(school_id: int, course_id: int):
     """
     Delete an existing course.
-
-    
     """
     token = digicubes.token
-    service: SchoolService = digicubes.school
+    service: srv.SchoolService = digicubes.school
 
     # Deleteing the course
     # TODO: catch 404
-    service.delete_course(token, course_id)
+    try:
+        service.delete_course(token, course_id)
+    except ex.NotAuthenticated:
+        return redirect(url_for("admin.login"))
+
     return redirect(url_for("admin.school", school_id=school_id))
+
 
 @admin_blueprint.route("/school/<int:school_id>/ucourse/<int:course_id>/", methods=["GET", "POST"])
 @login_required
 def update_school_course(school_id: int, course_id: int):
-    service: SchoolService = digicubes.school
+    service: srv.SchoolService = digicubes.school
     token = digicubes.token
-    form = UpdateCourseForm()
+    form = CourseForm()
 
     # First get the course to be updated
-    service.get_courses()
+    service.get_courses(token, proxy.SchoolProxy(id=school_id))
 
     # if method is post and all fields are valid,
     # create the new course.
     if form.validate_on_submit():
 
-        course = CourseProxy()
+        course = proxy.CourseProxy()
         form.populate_obj(course)
-
-        # converting the strings to valid dates
-        course.from_date = (
-            date.today()
-            if not form.from_date.data
-            else create_date_from_string(form.from_date.data)
-        )
-
-        # converting the strings to valid dates
-        form.until_date = (
-            date.today()
-            if not form.until_date.data
-            else create_date_from_string(form.until_date.data)
-        )
+        course.school_id = int(course.school_id)
+        course.id = int(course_id)  
         service.update_course(token, course)
         return redirect(url_for("admin.school", school_id=school_id))
 
+    school: proxy.SchoolProxy = service.get(token, school_id)
+    course: proxy.CourseProxy = service.get_course(token, course_id)
+    form.submit.label.text = "Update"
+    return render_template(
+        "admin/update_course.jinja",
+        school=school,
+        course=course,
+        form=CourseForm(obj=course))
 
 @admin_blueprint.route("/school/<int:school_id>/ccourse/", methods=("GET", "POST"))
 @login_required
@@ -332,39 +327,21 @@ def create_school_course(school_id: int):
     """
 
     # Create the form instance
-    form: CreateCourseForm = CreateCourseForm()
-
+    form: CourseForm = CourseForm()
+    
     # if method is post and all fields are valid,
     # create the new course.
     if form.validate_on_submit():
 
-        # converting the strings to valid dates
-        from_date = (
-            date.today()
-            if not form.from_date.data
-            else create_date_from_string(form.from_date.data)
-        )
-
-        # converting the strings to valid dates
-        until_date = (
-            date.today()
-            if not form.until_date.data
-            else create_date_from_string(form.until_date.data)
-        )
-
+        new_course = proxy.CourseProxy(created_by_id=user.id)
+        form.populate_obj(new_course)
+        
         # Create the course.
-        # TODO: Errors may occoure and have to be handled in a proper way. 
+        # TODO: Errors may occoure and have to be handled in a proper way.
         server.school.create_course(
             server.token,
-            SchoolProxy(id=school_id),
-            CourseProxy(
-                name=form.name.data,
-                description=form.description.data,
-                is_private=form.is_private.data,
-                from_date=from_date,
-                until_date=until_date,
-                created_by_id=user.id,
-            ),
+            proxy.SchoolProxy(id=school_id),
+            new_course
         )
 
         # After succesfully creating the course go back to
@@ -373,8 +350,10 @@ def create_school_course(school_id: int):
 
     # Get the school proxy from the server and render out the form.
     token: str = server.token
-    school_proxy: SchoolProxy = server.school.get(token, school_id)
+    school_proxy: proxy.SchoolProxy = server.school.get(token, school_id)
+    form.submit.label.text = "Create"
     return render_template("admin/create_course.jinja", school=school_proxy, form=form)
+
 
 @admin_blueprint.route("/rfc/", methods=("GET", "POST", "PUT"))
 @login_required
