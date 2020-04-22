@@ -12,7 +12,6 @@ from typing import Optional
 
 from dotenv import load_dotenv
 from flask import Flask, redirect, url_for, Response, request, Request, session
-from flask_moment import Moment
 import yaml
 from libgravatar import Gravatar
 from markdown import markdown
@@ -51,7 +50,6 @@ def create_app():
 
     app = Flask(__name__)
     app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # TODO: Set via configuration
-    # moment.init_app(app)
 
     @app.errorhandler(DigiCubeError)
     def handle_digicube_error(error):  # pylint: disable=unused-variable
