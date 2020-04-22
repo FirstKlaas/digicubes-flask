@@ -6,6 +6,7 @@ import datetime
 import logging
 import os
 import re
+from logging.config import dictConfig  # pylint: disable=import-outside-toplevel
 
 from importlib.resources import open_text
 from typing import Optional
@@ -16,10 +17,17 @@ import yaml
 from libgravatar import Gravatar
 from markdown import markdown
 
+from digicubes_common.exceptions import DigiCubeError
 from digicubes_client.client.proxy import RightProxy, RoleProxy
 from digicubes_flask import account_manager as accm, current_user
 from digicubes_flask.email import MailCube
-from digicubes_common.exceptions import DigiCubeError
+from digicubes_flask.web.modules import (
+    account_blueprint,
+    admin_blueprint,
+    headmaster_blueprint,
+    teacher_blueprint,
+    student_blueprint,
+)
 
 from .account_manager import DigicubesAccountManager
 
@@ -39,14 +47,6 @@ def create_app():
     Flask will automatically detect the method
     on `flask run`.
     """
-    from logging.config import dictConfig  # pylint: disable=import-outside-toplevel
-    from digicubes_flask.web.modules import (
-        account_blueprint,
-        admin_blueprint,
-        headmaster_blueprint,
-        teacher_blueprint,
-        student_blueprint,
-    )  # pylint: disable=import-outside-toplevel
 
     app = Flask(__name__)
     app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # TODO: Set via configuration

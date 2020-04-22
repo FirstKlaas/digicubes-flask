@@ -88,7 +88,11 @@ class CourseForm(FlaskForm):
     name = StringField("Name", widget=w.materialize_input, validators=[validators.InputRequired()])
 
     description = TextAreaField("Description", widget=w.materialize_textarea)
-    from_date = DateField("Starting from", default=date.today(), format='%d.%m.%Y',widget=w.materialize_picker)
-    until_date = DateField("Ending at", default=date.today(), format='%d.%m.%Y', widget=w.materialize_picker)
+    from_date = DateField(
+        "Starting from", default=date.today(), format="%d.%m.%Y", widget=w.materialize_picker
+    )
+    until_date = DateField(
+        "Ending at", default=date.today(), format="%d.%m.%Y", widget=w.materialize_picker
+    )
     is_private = BooleanField("Private", widget=w.materialize_switch)
     submit = SubmitField("Create", widget=w.materialize_submit)

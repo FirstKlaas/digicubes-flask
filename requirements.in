@@ -7,5 +7,6 @@ requests
 markdown
 Markupsafe
 python-dotenv
+libgravatar
 
 digicubes-pyclient

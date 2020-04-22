@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 server: DigicubesAccountManager = digicubes
 user: CurrentUser = current_user
 
+
 @admin_blueprint.route("/")
 @login_required
 def index():
@@ -169,18 +170,16 @@ def roles():
 @admin_blueprint.route("/user/<int:user_id>/addrole/<int:role_id>")
 def add_user_role(user_id: int, role_id: int):
     server.user.add_role(
-        server.token,
-        proxy.UserProxy(id=user_id), 
-        proxy.RoleProxy(id=role_id, name=""))
+        server.token, proxy.UserProxy(id=user_id), proxy.RoleProxy(id=role_id, name="")
+    )
     return redirect(url_for("admin.edit_user", user_id=user_id))
 
 
 @admin_blueprint.route("/user/<int:user_id>/removerole/<int:role_id>")
 def remove_user_role(user_id: int, role_id: int):
     server.user.remove_role(
-        server.token,
-        proxy.UserProxy(id=user_id),
-        proxy.RoleProxy(id=role_id, name=""))
+        server.token, proxy.UserProxy(id=user_id), proxy.RoleProxy(id=role_id, name="")
+    )
     return redirect(url_for("admin.edit_user", user_id=user_id))
 
 
@@ -299,7 +298,7 @@ def update_school_course(school_id: int, course_id: int):
         course = proxy.CourseProxy()
         form.populate_obj(course)
         course.school_id = int(course.school_id)
-        course.id = int(course_id)  
+        course.id = int(course_id)
         service.update_course(token, course)
         return redirect(url_for("admin.school", school_id=school_id))
 
@@ -307,10 +306,9 @@ def update_school_course(school_id: int, course_id: int):
     course: proxy.CourseProxy = service.get_course(token, course_id)
     form.submit.label.text = "Update"
     return render_template(
-        "admin/update_course.jinja",
-        school=school,
-        course=course,
-        form=CourseForm(obj=course))
+        "admin/update_course.jinja", school=school, course=course, form=CourseForm(obj=course)
+    )
+
 
 @admin_blueprint.route("/school/<int:school_id>/ccourse/", methods=("GET", "POST"))
 @login_required
@@ -328,21 +326,17 @@ def create_school_course(school_id: int):
 
     # Create the form instance
     form: CourseForm = CourseForm()
-    
+
     # if method is post and all fields are valid,
     # create the new course.
     if form.validate_on_submit():
 
         new_course = proxy.CourseProxy(created_by_id=user.id)
         form.populate_obj(new_course)
-        
+
         # Create the course.
         # TODO: Errors may occoure and have to be handled in a proper way.
-        server.school.create_course(
-            server.token,
-            proxy.SchoolProxy(id=school_id),
-            new_course
-        )
+        server.school.create_course(server.token, proxy.SchoolProxy(id=school_id), new_course)
 
         # After succesfully creating the course go back to
         # the administration page of the school.
