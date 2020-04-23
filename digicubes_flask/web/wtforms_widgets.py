@@ -3,6 +3,8 @@ Some form widgets.
 """
 import logging
 
+from datetime import date
+
 from wtforms import Field
 from wtforms.widgets import html_params
 
@@ -165,12 +167,20 @@ def materialize_picker(field, **kwargs):
 
     field_id = kwargs.pop("id", field.id)
 
-    attributes = {"id": field_id, "name": field_id, "type": "text", "class": "datepicker"}
+    date_value: date = field.data
+    
+    attributes = {
+        "id": field_id,
+        "name": field_id,
+        "type": "text",
+        "value": date_value.strftime("%d.%m.%Y"),
+        "class": "datepicker",
+    }
 
     return f"""
         <div {html_params(**outer_params)}>
         <label for='{field_id}'>{ field.label }</label>
-        <input {html_params(**attributes)}>
+        <input {html_params(**attributes)}></input>
         </div>
     """
 
@@ -192,7 +202,7 @@ def materialize_checkbox(field, **kwargs):
     return f"""
     <div {html_params(**div_params)}>    
         <label>
-            <input {html_params(**input_params)} />
+            <input {html_params(**input_params)} ></input>
             <span>{field.label}</span>
         </label>
     </div>

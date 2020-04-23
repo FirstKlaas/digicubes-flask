@@ -302,11 +302,19 @@ def update_school_course(school_id: int, course_id: int):
         service.update_course(token, course)
         return redirect(url_for("admin.school", school_id=school_id))
 
-    school: proxy.SchoolProxy = service.get(token, school_id)
+    school_proxy: proxy.SchoolProxy = service.get(token, school_id)
     course: proxy.CourseProxy = service.get_course(token, course_id)
+    action_url = url_for(
+        "admin.update_school_course", school_id=school_proxy.id, course_id=course.id
+    )
+    form = CourseForm(obj=course)
     form.submit.label.text = "Update"
     return render_template(
-        "admin/update_course.jinja", school=school, course=course, form=CourseForm(obj=course)
+        "admin/update_course.jinja",
+        school=school_proxy,
+        course=course,
+        form=form,
+        action=action_url,
     )
 
 
@@ -346,7 +354,13 @@ def create_school_course(school_id: int):
     token: str = server.token
     school_proxy: proxy.SchoolProxy = server.school.get(token, school_id)
     form.submit.label.text = "Create"
-    return render_template("admin/create_course.jinja", school=school_proxy, form=form)
+    action_url = url_for("admin.create_school_course", school_id=school_proxy.id)
+    return render_template(
+        "admin/create_course.jinja",
+        school=school_proxy,
+        form=form,
+        action=action_url,
+    )
 
 
 @admin_blueprint.route("/rfc/", methods=("GET", "POST", "PUT"))

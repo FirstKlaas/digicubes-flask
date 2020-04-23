@@ -95,4 +95,4 @@ class CourseForm(FlaskForm):
         "Ending at", default=date.today(), format="%d.%m.%Y", widget=w.materialize_picker
     )
     is_private = BooleanField("Private", widget=w.materialize_switch)
-    submit = SubmitField("Create", widget=w.materialize_submit)
+    submit = SubmitField("Ok", widget=w.materialize_submit)
