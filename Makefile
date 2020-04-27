@@ -30,7 +30,7 @@ docs:
 	sphinx-build -E -b html source_client build_client
 
 ci:	check
-	pylint --errors-only $(checkfiles)
+	#pylint --errors-only $(checkfiles)
 	nose2 -v digicubes
 
 nose: deps

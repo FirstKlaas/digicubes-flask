@@ -13,8 +13,7 @@ RUN mkdir -p data
 
 RUN pip install --no-cache-dir wheel
 RUN pip install --upgrade pip
-COPY dist/*.whl .
-RUN pip install --no-cache-dir digicubes_flask-0.0.2-py3-none-any.whl
+RUN pip install --no-cache-dir digicubes-flask
 COPY wsgi.py .
 
 #RUN pip install digicubes-server
