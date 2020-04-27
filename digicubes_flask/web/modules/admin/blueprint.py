@@ -356,10 +356,7 @@ def create_school_course(school_id: int):
     form.submit.label.text = "Create"
     action_url = url_for("admin.create_school_course", school_id=school_proxy.id)
     return render_template(
-        "admin/create_course.jinja",
-        school=school_proxy,
-        form=form,
-        action=action_url,
+        "admin/create_course.jinja", school=school_proxy, form=form, action=action_url,
     )
 
 

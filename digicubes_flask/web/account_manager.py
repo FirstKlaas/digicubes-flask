@@ -46,10 +46,12 @@ class DigicubesAccountManager:
             self.unauthorized_callback = lambda: redirect(url_for(login_view))
             self.successful_logged_in_callback = lambda: redirect(url_for(index_view))
 
+            api_server = app.config["api_server"]
+
             self._client = DigiCubeClient(
-                protocol=app.config.get("api_server_protocol", "http"),
-                hostname=app.config.get("api_server_host", "localhost"),
-                port=app.config.get("api_server_port", 3000),
+                protocol=api_server.get("protocol", "http"),
+                hostname=api_server.get("host", "localhost"),
+                port=api_server.get("port", 3000),
             )
 
             # At the end of each request the session

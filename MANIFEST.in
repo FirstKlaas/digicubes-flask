@@ -1,0 +1,1 @@
+recursive-include digicubes_flask *.jinja *.yaml *.css *.js *.svg *.png

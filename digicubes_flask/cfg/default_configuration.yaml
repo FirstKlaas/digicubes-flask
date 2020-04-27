@@ -12,9 +12,10 @@ student_prefix: "/dcst"
 # after registration
 auto_verify: false
 
-api_server_protocol: "http"
-api_server_host: "localhost"
-api_server_port: 3000
+api_server:
+  protocol: !ENV ${DC_API_SERVER_PROTOCOL}
+  host: !ENV ${DC_API_SERVER_HOST}
+  port: !ENV ${DC_API_SERVER_PORT}
 
 # Information abaout the smtpserver
 # used to send verification and information

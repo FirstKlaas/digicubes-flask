@@ -168,7 +168,7 @@ def materialize_picker(field, **kwargs):
     field_id = kwargs.pop("id", field.id)
 
     date_value: date = field.data
-    
+
     attributes = {
         "id": field_id,
         "name": field_id,

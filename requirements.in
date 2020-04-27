@@ -7,6 +7,9 @@ requests
 markdown
 Markupsafe
 python-dotenv
+gunicorn
 libgravatar
+pyaml
+email-validator
 
 digicubes-pyclient

@@ -10,6 +10,7 @@ from logging.config import dictConfig  # pylint: disable=import-outside-toplevel
 
 from importlib.resources import open_text
 from typing import Optional
+from pathlib import Path
 
 from dotenv import load_dotenv
 from flask import Flask, redirect, url_for, Response, request, Request, session
@@ -165,8 +166,9 @@ def create_app():
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # First, load the .env file, wich adds environment variables to the
-    # the program.
-    load_dotenv(verbose=True)
+    # the program. Together with the pyaml parser extension these variables
+    # can be used in the yaml configuration
+    load_dotenv(verbose=False)
 
     # Load the default settings and then load the custom settings
     # The default settings are stored in this package and have to be loaded
@@ -177,14 +179,19 @@ def create_app():
 
     # Loading the logging configuration. If no logging configuration
     # is found, it will fall back to logging.basicConfiguration
-    with open_text("digicubes_flask.cfg", "logging.yaml") as f:
-        settings = yaml.safe_load(f)
-        try:
-            dictConfig(settings)
-            logger.info("Configured logging")
-        except ValueError:
-            logging.basicConfig(level=logging.DEBUG)
-            logger.fatal("Could not configure logging.", exc_info=True)
+    logging.basicConfig(level=logging.DEBUG)
+    """
+    try:
+        with open_text("digicubes_flask.cfg", "logging.yaml") as f:
+            settings = yaml.safe_load(f)
+            try:
+                dictConfig(settings)
+                logger.info("Configured logging")
+            except ValueError:
+                logging.basicConfig(level=logging.DEBUG)
+                logger.fatal("Could not configure logging.", exc_info=True)
+    except:
+    """
 
     # Initalizes the account manager extension, wich is responsible for the the
     # login and logout procedure.
