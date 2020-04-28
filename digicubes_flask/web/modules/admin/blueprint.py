@@ -212,7 +212,11 @@ def create_school():
         digicubes.school.create(digicubes.token, new_school)
         return redirect(url_for("admin.schools"))
 
-    return render_template("admin/create_school.jinja", form=form)
+    form.submit.label.ttext = "Create"
+    return render_template(
+        "admin/create_school.jinja",
+        form=form,
+        action=url_for("admin.create_school"))
 
 
 @admin_blueprint.route("/school/<int:school_id>/")
@@ -239,7 +243,8 @@ def update_school(school_id: int):
     if form.validate_on_submit():
         upschool = proxy.SchoolProxy()
         form.populate_obj(upschool)
-        digicubes.school.update(token, school)
+        upschool.id = school_id
+        digicubes.school.update(token, upschool)
 
         return redirect(url_for("admin.school", school_id=school_id))
 
@@ -247,9 +252,14 @@ def update_school(school_id: int):
     # TODO: Was, wenn die Schule nicht existiert?
     db_school: proxy.SchoolProxy = service.get(token, school_id)
     form.name.data = db_school.name
+    form.submit.label.text = "Update"
     form.description.data = db_school.description
 
-    return render_template("admin/update_school.jinja", form=form, school=db_school)
+    return render_template(
+        "admin/update_school.jinja",
+        form=form,
+        school=db_school,
+        action=url_for("admin.update_school", school_id=db_school.id))
 
 
 @admin_blueprint.route("/dschool/<int:school_id>/", methods=["DELETE"])

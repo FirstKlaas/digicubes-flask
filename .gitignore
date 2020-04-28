@@ -11,9 +11,6 @@ logs/
 # databases
 db/
 
-# Environmen Files
-.env
-
 # C extensions
 *.so
 .idea
