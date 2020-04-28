@@ -58,6 +58,10 @@ def create_app():
         digicubes.logout()
         return redirect(url_for("account.login"))
 
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return redirect(url_for("account.login"))
+
     @app.template_filter()
     def gravatar(email: str) -> str:
 
