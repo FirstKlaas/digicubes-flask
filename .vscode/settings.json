@@ -3,6 +3,5 @@
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
-    "restructuredtext.sphinxBuildPath": "${workspaceRoot}/docs/source",
     "restructuredtext.confPath": "${workspaceFolder}/docs/source",
 }
