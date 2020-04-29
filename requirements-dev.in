@@ -33,3 +33,5 @@ sphinx_rtd_theme
 doc8
 
 pybadges
+sphinxcontrib-httpdomain
+rstcheck

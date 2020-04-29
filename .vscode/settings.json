@@ -1,7 +1,8 @@
 {
     "python.pythonPath": "${workspaceRoot}/venv/bin/python",
-    "restructuredtext.confPath": "${workspaceRoot}/",
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
-    "python.linting.pylintEnabled": true
+    "python.linting.pylintEnabled": true,
+    "restructuredtext.sphinxBuildPath": "${workspaceRoot}/docs/source",
+    "restructuredtext.confPath": "${workspaceFolder}/docs/source",
 }

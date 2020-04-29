@@ -8,7 +8,7 @@ attrs==19.3.0             # via cattrs, digicubes-common, digicubes-pyclient
 cattrs==1.0.0             # via digicubes-common, digicubes-pyclient
 certifi==2020.4.5.1       # via digicubes-pyclient, requests
 chardet==3.0.4            # via digicubes-pyclient, requests
-click==7.1.1              # via flask
+click==7.1.2              # via flask
 digicubes-common==0.1.3   # via digicubes-pyclient
 digicubes-pyclient==0.1.6  # via -r requirements.in
 dnspython==1.16.0         # via email-validator

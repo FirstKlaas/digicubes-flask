@@ -23,11 +23,10 @@ lint: deps
 	pylint $(checkfiles)
 
 checkdocs:
-	doc8 source/
+	doc8 docs/source/
 
-docs:
-	sphinx-build -E -b html source build
-	sphinx-build -E -b html source_client build_client
+docs: checkdocs
+	sphinx-build -E -b html docs/source docs/build
 
 ci:	check
 	#pylint --errors-only $(checkfiles)
