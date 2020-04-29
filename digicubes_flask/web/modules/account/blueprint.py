@@ -106,24 +106,26 @@ def register():
             bearer_token: BearerTokenData = account_manager.generate_token_for("root", "digicubes")
             token = bearer_token.bearer_token
 
-            autoverify = account_manager.auto_verify
+            new_user = UserProxy()
+            form.populate_obj(new_user)
+            new_user.is_active = True
+            new_user.id = None # Just du be shure, we don't have an id in the form accidently
+                               # and do an update instead of an creation
+            new_user.is_verified = account_manager.auto_verify
 
-            user = UserProxy(
-                login=form.login.data,
-                first_name=form.first_name.data,
-                last_name=form.last_name.data,
-                email=form.email.data,
-                is_verified=autoverify,
-                is_active=True,
-            )
             # Create a new user in behalf of root
-            user = account_manager.user.create(token, user)
+            new_user = account_manager.user.create(token, new_user)
 
             # Also setting the password in behalf of root
-            account_manager.user.set_password(token, user.id, form.password.data)
+            account_manager.user.set_password(token, new_user.id, form.password.data)
+
+            # If the user has been auto verified, we can directly proceed to the login page.
+            # Otherwise we have to show an information to check his email inbox
+            # TODO: Pay respect to both situations.
             return account_manager.successful_logged_in()
+
         except DigiCubeError as e:
             logger.exception("Could not create new account.", exc_info=e)
+            abort(500)
 
-    logger.debug("Validation of the form failed")
-    return render_template("root/register.jinja", form=form)
+    return render_template("account/register.jinja", form=form)
