@@ -1,21 +1,5 @@
 secret: "djsjah67sh7/&)788hxcbxsh"
-
-# Prefixes for the module blueprints
-# ----------------------------------
-account_prefix: "/account"
-admin_prefix: "/dcad"
-headmaster_prefix: "/dchm"
-teacher_prefix: "/dcte"
-student_prefix: "/dcst"
-
-# If true, new users are verified automatically
-# after registration
 auto_verify: false
-
-api_server:
-  protocol: !ENV ${DC_API_SERVER_PROTOCOL}
-  host: !ENV ${DC_API_SERVER_HOST}
-  port: !ENV ${DC_API_SERVER_PORT}
 
 # Information abaout the smtpserver
 # used to send verification and information
@@ -24,10 +8,3 @@ api_server:
 mail_cube:
   number_of_tries: 10
   number_of_workers: 1 
-  smtp_host: !ENV ${DC_SMTP_HOST}
-  smtp_port: !ENV ${DC_SMTP_PORT}
-  smtp_use_ssl: true
-  smtp_username: !ENV ${DC_SMTP_USERNAME}
-  smtp_password: !ENV ${DC_SMTP_PASSWORD}
-  smtp_from_email_addr: !ENV ${DC_FROM_EMAIL_ADDR}
-  smtp_from_display_name: !ENV ${DC_FROM_DISPLAY_NAME}

@@ -17,21 +17,22 @@ from wtforms import (
 )
 
 import digicubes_flask.web.wtforms_widgets as w
+from digicubes_flask import digicubes
 
 logger = logging.getLogger(__name__)
 
 __ALL__ = [
-    "CreateUserForm",
-    "UpdateUserForm",
-    "CreateSchoolForm",
-    "CreateCourseForm",
-    "UpdateCourseForm",
+    "UserForm",
+    "SchoolForm",
+    "CourseForm",
+    "CourseForm",
 ]
 
 
-class CreateUserForm(FlaskForm):
+class UserForm(FlaskForm):
     """
-    The create user form
+    The user form that is used by the admin to create or update
+    users.
     """
 
     first_name = StringField("First Name", widget=w.materialize_input)
@@ -45,38 +46,27 @@ class CreateUserForm(FlaskForm):
         "The Account Name", widget=w.materialize_input, validators=[validators.InputRequired()]
     )
     password = PasswordField("Password", widget=w.materialize_password)
-    submit = SubmitField("Create", widget=w.materialize_submit)
-
-
-class UpdateUserForm(FlaskForm):
-    """
-    The update user form
-    """
-
-    first_name = StringField("First Name", widget=w.materialize_input)
-    last_name = StringField("Last Name", widget=w.materialize_input)
-    email = StringField(
-        "Email",
-        widget=w.materialize_input,
-        validators=[validators.Email(), validators.InputRequired()],
-    )
-    login = StringField(
-        "The Account Name", widget=w.materialize_input, validators=[validators.InputRequired()]
-    )
     is_active = BooleanField("Active", widget=w.materialize_checkbox)
     is_verified = BooleanField("Verified", widget=w.materialize_checkbox)
 
     submit = SubmitField("Update", widget=w.materialize_submit)
 
+    def validate_login(self, field):
+        """
+        Checks, if the login already exists, as is has to be unique
+        """
+        digicubes.user.get_by_login(digicubes.token, field.data)
+        # raise ValueError("Login already exists.")
 
-class CreateSchoolForm(FlaskForm):
+
+class SchoolForm(FlaskForm):
     """
     Create school form
     """
 
     name = StringField("Name", widget=w.materialize_input)
     description = TextAreaField("Description", widget=w.materialize_textarea)
-    submit = SubmitField("Create", widget=w.materialize_submit)
+    submit = SubmitField("Ok", widget=w.materialize_submit)
 
 
 class CourseForm(FlaskForm):

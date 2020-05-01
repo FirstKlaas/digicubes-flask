@@ -14,7 +14,7 @@ services:
     container_name: digicubes_web
     image: "firstklaas/digicubes-web:latest"
     ports:
-        - "80:5000"
+        - "5000:5000"
     environment: 
         DC_API_SERVER_PROTOCOL: http
         DC_API_SERVER_HOST: digicubes-rest

@@ -2,12 +2,10 @@
 The main extension module
 """
 import logging
-from typing import List
+import os
 
-from flask import abort, current_app, request, Response, redirect, Flask, url_for, session
+from flask import abort, current_app, redirect, Flask, url_for, session
 from flask_wtf.csrf import CSRFError
-
-from digicubes_flask import account_manager, current_user
 
 from digicubes_client.client import (
     DigiCubeClient,
@@ -17,6 +15,8 @@ from digicubes_client.client import (
     SchoolService,
 )
 from digicubes_common.structures import BearerTokenData
+
+from digicubes_flask import account_manager, current_user
 
 logger = logging.getLogger(__name__)
 
@@ -46,12 +46,10 @@ class DigicubesAccountManager:
             self.unauthorized_callback = lambda: redirect(url_for(login_view))
             self.successful_logged_in_callback = lambda: redirect(url_for(index_view))
 
-            api_server = app.config["api_server"]
-
             self._client = DigiCubeClient(
-                protocol=api_server.get("protocol", "http"),
-                hostname=api_server.get("host", "localhost"),
-                port=api_server.get("port", 3000),
+                protocol=os.environ.get("DC_API_SERVER_PROTOCOL", "http"),
+                hostname=os.environ.get("DC_API_SERVER_HOST", "localhost"),
+                port=os.environ.get("DC_API_SERVER_PORT", 3000),
             )
 
             # At the end of each request the session
@@ -60,9 +58,9 @@ class DigicubesAccountManager:
             # app.after_request(update_current_user)
 
             def has_right(user_id: int, right: str) -> bool:
-                # Villeicht nicht über den user_service machen, sondern
+                # Vielleicht nicht über den user_service machen, sondern
                 # über den account manager. Dann hätte man die Möglichkeit,
-                # die Rechte zumindest im g  Scope zu sichern.
+                # die Rechte zumindest im g Scope zu sichern.
                 rights = self.user.get_rights(self.token, user_id)
                 return "no_limits" in rights or right in rights
 

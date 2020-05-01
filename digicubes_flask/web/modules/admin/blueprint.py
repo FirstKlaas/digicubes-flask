@@ -46,30 +46,38 @@ def users():
 @login_required
 def create_user():
     """Create a new user"""
-    form = CreateUserForm()
+    form = UserForm()
     if form.validate_on_submit():
         new_user = proxy.UserProxy()
         form.populate_obj(new_user)
 
-        if current_app.config.get("auto_verify", False):
-            new_user.is_verified = True
-
-        new_user.is_active = True
+        # When users are created by an admin,
+        # he decides, whether the user is verified or not.
+        # if current_app.config.get("auto_verify", False):
+        #    new_user.is_verified = True
         new_user = digicubes.user.create(digicubes.token, new_user)
 
         if not new_user.is_verified:
             """
-            Newly created user is not verified. Now sending him an 
+            Newly created user is not verified. Now sending him an
             email with a verification link.
             """
-            try:
-                mail_cube.send_verification_email(new_user)
-            except ex.DigiCubeError:
-                logger.exception("Sending a verification email failed.")
+            if mail_cube.is_enabled:
+                try:
+                    mail_cube.send_verification_email(new_user)
+                except ex.DigiCubeError:
+                    logger.exception("Sending a verification email failed.")
+            else:
+                link = mail_cube.create_verification_link(new_user)
+                return render_template(
+                    "admin/send_verification_link.jinja", user=new_user, link=link
+                )
 
         return redirect(url_for("admin.edit_user", user_id=new_user.id))
 
-    return render_template("admin/create_user.jinja", form=form)
+    form.submit.label.text = "Create"
+    action = url_for("admin.create_user")
+    return render_template("admin/create_user.jinja", form=form, action=action)
 
 
 @admin_blueprint.route("/verify/<token>/")
@@ -87,7 +95,7 @@ def verify(token: str):
 def update_user(user_id: int):
     service: srv.UserService = digicubes.user
     token = digicubes.token
-    form = UpdateUserForm()
+    form = UserForm()
 
     if form.validate_on_submit():
         user_proxy = proxy.UserProxy(id=user_id)
@@ -98,7 +106,12 @@ def update_user(user_id: int):
     user_proxy: proxy.UserProxy = service.get(token, user_id)
     form.process(obj=user_proxy)
 
-    return render_template("admin/update_user.jinja", form=form, user=user_proxy)
+    return render_template(
+        "admin/update_user.jinja",
+        form=form,
+        user=user_proxy,
+        action=url_for("admin.update_user", user_id=user_id),
+    )
 
 
 @admin_blueprint.route("/duser/<int:user_id>/")
@@ -116,7 +129,7 @@ def delete_user(user_id: int):
 @login_required
 def edit_user(user_id: int):
     """Editing an existing user"""
-    form = CreateUserForm()
+    form = UserForm()
 
     token = server.token
     # Gettting the user details from the server
@@ -206,7 +219,7 @@ def schools():
 def create_school():
     """Create a new school"""
     # token = digicubes.token
-    form = CreateSchoolForm()
+    form = SchoolForm()
     if form.validate_on_submit():
         new_school = proxy.SchoolProxy(name=form.name.data, description=form.description.data,)
         digicubes.school.create(digicubes.token, new_school)
@@ -214,9 +227,8 @@ def create_school():
 
     form.submit.label.ttext = "Create"
     return render_template(
-        "admin/create_school.jinja",
-        form=form,
-        action=url_for("admin.create_school"))
+        "admin/create_school.jinja", form=form, action=url_for("admin.create_school")
+    )
 
 
 @admin_blueprint.route("/school/<int:school_id>/")
@@ -237,7 +249,7 @@ def school(school_id: int):
 def update_school(school_id: int):
     service: srv.SchoolService = digicubes.school
     token = digicubes.token
-    form = CreateSchoolForm()
+    form = SchoolForm()
 
     # What about the creation date and the modofied date?
     if form.validate_on_submit():
@@ -259,7 +271,8 @@ def update_school(school_id: int):
         "admin/update_school.jinja",
         form=form,
         school=db_school,
-        action=url_for("admin.update_school", school_id=db_school.id))
+        action=url_for("admin.update_school", school_id=db_school.id),
+    )
 
 
 @admin_blueprint.route("/dschool/<int:school_id>/", methods=["DELETE"])

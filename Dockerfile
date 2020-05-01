@@ -26,6 +26,8 @@ VOLUME /digicubes/data
 ENV DIGICUBES_SECRET b3j6casjk7d8szeuwz00hdhuw4ohwDu9o
 ENV FLASK_ENV production
 ENV FLASK_APP digicubes_flask.web
+ENV DC_SMTP_HOST=None
+
 
 #CMD ["python", "docker.py"]
 

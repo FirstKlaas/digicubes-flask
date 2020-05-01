@@ -2,7 +2,7 @@
 The Admin Blueprint
 """
 import logging
-from flask import Blueprint, render_template, abort, current_app as app, redirect, url_for
+from flask import Blueprint, render_template, abort, redirect, url_for
 
 from digicubes_client.client import UserProxy
 from digicubes_common.exceptions import DigiCubeError
@@ -109,8 +109,8 @@ def register():
             new_user = UserProxy()
             form.populate_obj(new_user)
             new_user.is_active = True
-            new_user.id = None # Just du be shure, we don't have an id in the form accidently
-                               # and do an update instead of an creation
+            new_user.id = None  # Just du be shure, we don't have an id in the form accidently
+            # and do an update instead of an creation
             new_user.is_verified = account_manager.auto_verify
 
             # Create a new user in behalf of root

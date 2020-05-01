@@ -54,7 +54,7 @@ def create_app():
 
     @app.errorhandler(DigiCubeError)
     def handle_digicube_error(error):  # pylint: disable=unused-variable
-        logger.fatal("Error occurred. Going back to login page.")
+        logger.exception("Error occurred. Going back to login page.")
         digicubes.logout()
         return redirect(url_for("account.login"))
 
@@ -113,12 +113,14 @@ def create_app():
     def check_token():  # pylint: disable=unused-variable
         """
         Vor jedem Request das Token aktualisieren, damit das Zeitfenster
-        der Gültigkeit des Tokens beu beginnt.
+        der Gültigkeit des Tokens neu beginnt.
 
         Das wird somit eigentlich viel zu oft gemacht und frisst unnötig
         Ressourccen, ist aber der einfachste weg. Alternativ müsste der
-        Client umgebaut werden, da er bereits in jedem Response ein
-        neues Token sendet.
+        Client umgebaut werden, da der server bereits in jedem Response ein
+        neues Token sendet. Villeicht kann man da noch mit Werkzeug locals
+        arbeiten, so dass das neue token auch ermittelt werden kann, ohne
+        die Methodensignatur ändern zu müssen.
         """
         if accm is not None:
             if accm.token is None:
@@ -141,6 +143,11 @@ def create_app():
             logger.info("No account manager in app scope found. Maybe not an issue.")
 
     def parse_config(data=None, tag="!ENV"):
+        """
+        Add a new token to the yaml parser. If we have an !ENV ${xyz} string in the yaml file,
+        xyz will be replaced by the corresonding environment variable if availabe or by the string
+        xyz else.
+        """
         pattern = re.compile(".*?\${(\w+)}.*?")  # pylint: disable=anomalous-backslash-in-string
         loader = yaml.SafeLoader
         loader.add_implicit_resolver(tag, pattern, None)
@@ -208,26 +215,30 @@ def create_app():
     # ---------------------------
 
     # Account blueprint
-    url_prefix = app.config.get("account_prefix", "/account")
+    url_prefix = "/account"
     logger.debug("Register account blueprint at %s", url_prefix)
     app.register_blueprint(account_blueprint, url_prefix=url_prefix)
 
+    @app.route("/")
+    def home():
+        return redirect(url_for("account.login"))
+
     # Admin blueprint
-    url_prefix = app.config.get("admin_prefix", "/dcad")
+    url_prefix = "/dcad"
     logger.debug("Register admin blueprint at %s", url_prefix)
     app.register_blueprint(admin_blueprint, url_prefix=url_prefix)
 
     # Headmaster blueprint
-    url_prefix = app.config.get("headmaster_prefix", "/dchm")
+    url_prefix = "/dchm"
     logger.debug("Register headmaster blueprint at %s", url_prefix)
     app.register_blueprint(headmaster_blueprint, url_prefix=url_prefix)
 
     # Teacher blueprint
-    url_prefix = app.config.get("teacher_prefix", "/dcte")
+    url_prefix = "/dcte"
     logger.debug("Register teacher blueprint at %s", url_prefix)
     app.register_blueprint(teacher_blueprint, url_prefix=url_prefix)
 
-    url_prefix = app.config.get("student_prefix", "/dcst")
+    url_prefix = "/dcst"
     logger.debug("Register student blueprint at %s", url_prefix)
     app.register_blueprint(student_blueprint, url_prefix=url_prefix)
 

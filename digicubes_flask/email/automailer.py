@@ -1,6 +1,7 @@
 import smtplib
 import threading
 import logging
+import os
 from queue import Queue
 
 from email.message import EmailMessage
@@ -28,42 +29,35 @@ class MailCube:
 
     @property
     def smtp_host(self):
-        assert "smtp_host" in self.config, "SMTP host not configured"
-        assert self.config["smtp_host"] is not None, "SMTP host is None"
+        return os.environ.get("DC_SMTP_HOST", None)
 
-        return self.config["smtp_host"]
+    @property
+    def is_enabled(self):
+        """
+        Flag, to indicate, wether the mail add on is enabled or not.
+        Currently only the existence of the SMTP host is tested.
+        """
+        return self.smtp_host is not None
 
     @property
     def smtp_port(self):
-        return self.config.get("smtp_port", 465)
+        return os.environ.get("DC_SMTP_PORT", 465)
 
     @property
     def smtp_username(self):
-        assert "smtp_username" in self.config, "SMTP username not configured"
-        assert self.config["smtp_username"] is not None, "SMTP username is None"
-
-        return self.config["smtp_username"]
+        return os.environ.get("DC_SMTP_USERNAME", None)
 
     @property
     def smtp_password(self):
-        assert "smtp_password" in self.config, "SMTP password not configured"
-        assert self.config["smtp_password"] is not None, "SMTP password is None"
-
-        return self.config["smtp_password"]
+        return os.environ.get("DC_SMTP_PASSWORD", None)
 
     @property
     def smtp_from_email_addr(self):
-        assert "smtp_from_email_addr" in self.config, "SMTP from address not configured"
-        assert self.config["smtp_from_email_addr"] is not None, "SMTP from address is None"
-
-        return self.config["smtp_from_email_addr"]
+        return os.environ.get("DC_FROM_EMAIL_ADDR", None)
 
     @property
     def smtp_from_display_name(self):
-        assert "smtp_from_display_name" in self.config, "SMTP from display name not configured"
-        assert self.config["smtp_from_display_name"] is not None, "SMTP from display name is None"
-
-        return self.config["smtp_from_display_name"]
+        return os.environ.get("DC_FROM_EMAIL_ADDR", None)
 
     @property
     def number_of_workers(self):
@@ -77,6 +71,7 @@ class MailCube:
 
         self.queue = Queue()
         self.workers = []
+        self.enabled = False
 
         self.jinja = Environment(
             loader=PackageLoader("digicubes_flask.email", "templates"),
@@ -158,8 +153,19 @@ class MailCube:
             finally:
                 self.queue.task_done()
 
-    def send_verification_email(self, recipient: proxy.UserProxy):
+    def create_verification_link(self, recipient: proxy.UserProxy):
         from digicubes_flask import digicubes  # pylint: disable=import-outside-toplevel
+
+        token = digicubes.user.get_verification_token(recipient.id)
+        return url_for("admin.verify", token=token, _external=True)
+
+    def send_verification_email(self, recipient: proxy.UserProxy):
+
+        if not self.is_enabled:
+            logger.warning(
+                "Cannot send verification email, because the email module is not activated."
+            )
+            return
 
         if recipient is None:
             raise ValueError("No recipient provided. Cannot send email.")
@@ -167,6 +173,5 @@ class MailCube:
         if not recipient.email:
             raise ValueError("Recipient has no email address. Cannot send email.")
 
-        token = digicubes.user.get_verification_token(recipient.id)
-        url = url_for("admin.verify", token=token, _external=True)
+        url = self.create_verification_link(recipient)
         self.queue.put({"recipient": recipient, "verification_address": url})
