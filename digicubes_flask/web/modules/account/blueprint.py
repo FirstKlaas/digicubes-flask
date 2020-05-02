@@ -7,7 +7,7 @@ from flask import Blueprint, render_template, abort, redirect, url_for
 from digicubes_client.client import UserProxy
 from digicubes_common.exceptions import DigiCubeError
 from digicubes_common.structures import BearerTokenData
-from digicubes_flask import login_required, account_manager
+from digicubes_flask import login_required, account_manager, request
 from .forms import LoginForm, RegisterForm
 
 account_service = Blueprint("account", __name__)
@@ -83,7 +83,9 @@ def login():
         except DigiCubeError:
             return account_manager.unauthorized()
 
-    logger.debug("Validation of the form failed")
+    if request.method == "POST":
+        logger.debug("Validation of the form failed")
+        
     return render_template("account/login.jinja", form=form)
 
 
