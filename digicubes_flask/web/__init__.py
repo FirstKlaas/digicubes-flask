@@ -28,6 +28,7 @@ from digicubes_flask.web.modules import (
     headmaster_blueprint,
     teacher_blueprint,
     student_blueprint,
+    blockly_blueprint,
 )
 
 from .account_manager import DigicubesAccountManager
@@ -221,7 +222,11 @@ def create_app():
 
     @app.route("/")
     def home():
+        #pylint: disable=unused-variable
         return redirect(url_for("account.login"))
+
+    # Blockly Blueprint
+    app.register_blueprint(blockly_blueprint, url_prefix="/blockly")
 
     # Admin blueprint
     url_prefix = "/dcad"

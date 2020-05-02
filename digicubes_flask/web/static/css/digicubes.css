@@ -99,3 +99,19 @@ div[contenteditable=true] {
 div[contenteditable=false] {
     background-color: lightblue;
 }
+
+.blockly-workspace {
+    height: 800px;
+    margin-left: 15px;
+}
+
+.blocklyHtmlInput {
+    background-color: white !important;
+    border-bottom: none !important;
+    height: auto !important;
+    font-family: sans-serif !important;
+}
+
+#blocklyCode {
+    font-family: monospace;    
+}
