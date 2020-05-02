@@ -25,8 +25,6 @@ EXPOSE 5000/tcp
 VOLUME /digicubes/data
 
 ENV DIGICUBES_SECRET b3j6casjk7d8szeuwz00hdhuw4ohwDu9o
-ENV FLASK_ENV production
-ENV FLASK_APP digicubes_flask.web
 
 
 #CMD ["python", "docker.py"]
