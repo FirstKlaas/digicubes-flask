@@ -29,5 +29,5 @@ ENV DIGICUBES_SECRET b3j6casjk7d8szeuwz00hdhuw4ohwDu9o
 
 #CMD ["python", "docker.py"]
 
-#CMD ["gunicorn", "-b 0.0.0.0:5000", "wsgi:app"]
-CMD ["python", "wsgi.py"]
+CMD ["gunicorn", "-b 0.0.0.0:5000", "wsgi:app"]
+#CMD ["python", "wsgi.py"]
