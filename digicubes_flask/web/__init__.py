@@ -222,7 +222,7 @@ def create_app():
 
     @app.route("/")
     def home():
-        #pylint: disable=unused-variable
+        # pylint: disable=unused-variable
         return redirect(url_for("account.login"))
 
     # Blockly Blueprint

@@ -85,7 +85,7 @@ def login():
 
     if request.method == "POST":
         logger.debug("Validation of the form failed")
-        
+
     return render_template("account/login.jinja", form=form)
 
 
