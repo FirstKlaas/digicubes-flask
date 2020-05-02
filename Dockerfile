@@ -32,4 +32,4 @@ ENV FLASK_APP digicubes_flask.web
 #CMD ["python", "docker.py"]
 
 #CMD ["gunicorn", "-b 0.0.0.0:5000", "wsgi:app"]
-CMD ["python", "wsgi:app"]
+CMD ["python", "wsgi.py"]
