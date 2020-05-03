@@ -54,8 +54,8 @@ def create_app():
     """
 
     app = Flask(__name__)
-    app.config["SESSION_TYPE"] = "redis"
-    flaskSession.init_app(app)
+    #app.config["SESSION_TYPE"] = "redis"
+    #flaskSession.init_app(app)
     app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # TODO: Set via configuration
 
     @app.errorhandler(DigiCubeError)
