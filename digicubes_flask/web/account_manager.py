@@ -16,7 +16,7 @@ from digicubes_client.client import (
 )
 from digicubes_common.structures import BearerTokenData
 
-from digicubes_flask import account_manager, current_user
+from digicubes_flask import account_manager, current_user, get_version_string
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +75,7 @@ class DigicubesAccountManager:
                     "current_user": current_user,
                     "has_right": has_right,
                     "is_root": is_root,
+                    "version": get_version_string(),
                 }
             )
 

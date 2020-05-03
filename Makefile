@@ -48,7 +48,7 @@ pack: ci
 	#python setup_client.py sdist bdist_wheel
 	python setup.py sdist bdist_wheel
 
-publish: pack
+publish: up deps style pack
 	twine check ./dist/*
 	twine upload ./dist/*
 

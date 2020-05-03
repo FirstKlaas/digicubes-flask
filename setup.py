@@ -2,12 +2,14 @@
 Setup file for the digicubes package
 """
 from setuptools import setup, find_namespace_packages
+from digicubes_flask import get_version_string
+
 
 def version() -> str:
     """
     Returns the current version of the digicubes server
     """
-    return "0.0.8"
+    return get_version_string()
 
 def requirements() -> list:
     """

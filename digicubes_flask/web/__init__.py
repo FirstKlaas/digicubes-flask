@@ -125,8 +125,6 @@ def create_app():
     @app.before_request
     def check_digitoken():
         token = request.cookies.get("digicubes", None)
-        logger.fatal("*" * 60)
-        logger.fatal("Checking for token. Token is %s", token)
 
         if token is not None:
             current_user.token = token

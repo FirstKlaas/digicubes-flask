@@ -25,6 +25,16 @@ current_user = LocalProxy(lambda: _get_current_user())
 
 DIGICUBES_ACCOUNT_ATTRIBUTE_NAME = "digicubes_account_manager"
 
+version = [0, 0, 9]
+
+
+def increase_minor_version():
+    version[2] = version[2] + 1
+
+
+def get_version_string():
+    return f"{version[0]}.{version[1]}.{version[2]}"
+
 
 class CurrentUser:
     """
