@@ -38,7 +38,7 @@ def home():
             "User %s has only one role (%s). Redirecting immediately to %s", "me", rolename, url
         )
         return redirect(url)
-        
+
     # TODO: Filter the roles, that don't have a home route.
     return render_template("account/home.jinja", roles=my_roles)
 

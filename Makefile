@@ -28,12 +28,11 @@ checkdocs:
 docs: checkdocs
 	sphinx-build -E -b html docs/source docs/build
 
-ci:	check
+ci:	check nose
 	#pylint --errors-only $(checkfiles)
-	nose2 -v digicubes
 
 nose: deps
-	nose2 -v digicubes
+	nose2 -v digicubes_flask
 
 check: deps
 	black -l 100 --check $(checkfiles)

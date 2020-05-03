@@ -43,6 +43,7 @@ digicubes: DigicubesAccountManager = accm
 mail_cube = MailCube()
 the_account_manager = DigicubesAccountManager()
 
+
 def create_app():
     """
     Factory function to create the flask server.
@@ -112,7 +113,7 @@ def create_app():
         return value if value is not None else "-"
 
     @app.after_request
-    def after_request_func(response): # pylint: disable=unused-variable
+    def after_request_func(response):  # pylint: disable=unused-variable
 
         if current_user.token is not None:
             response.set_cookie("digicubes", current_user.token, samesite="Lax")
@@ -121,17 +122,16 @@ def create_app():
 
         return response
 
-
     @app.before_request
     def check_digitoken():
         token = request.cookies.get("digicubes", None)
-        logger.fatal('*'*60)
+        logger.fatal("*" * 60)
         logger.fatal("Checking for token. Token is %s", token)
 
         if token is not None:
             current_user.token = token
 
-    #@app.before_request
+    # @app.before_request
     def check_token():  # pylint: disable=unused-variable
         """
         Vor jedem Request das Token aktualisieren, damit das Zeitfenster
@@ -144,10 +144,12 @@ def create_app():
         arbeiten, so dass das neue token auch ermittelt werden kann, ohne
         die Methodensignatur ändern zu müssen.
         """
-        
+
         if accm is not None:
             r: Request = request
-            logger.debug("Docker Cookie before request: %s", r.cookies.get("digidocker", "No docker coookie"))
+            logger.debug(
+                "Docker Cookie before request: %s", r.cookies.get("digidocker", "No docker coookie")
+            )
 
             if accm.token is None:
                 logger.debug("No user logged in. No new token will be generated.")
