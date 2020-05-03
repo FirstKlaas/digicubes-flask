@@ -13,8 +13,7 @@ from typing import Optional
 from pathlib import Path
 
 from dotenv import load_dotenv
-from flask import Flask, redirect, url_for, Response, request, Request, session
-from flask_session import Session as FlaskSession
+from flask import Flask, redirect, url_for, Response, request, Request
 
 import yaml
 from libgravatar import Gravatar
@@ -44,8 +43,6 @@ digicubes: DigicubesAccountManager = accm
 mail_cube = MailCube()
 the_account_manager = DigicubesAccountManager()
 
-flaskSession = FlaskSession()
-
 def create_app():
     """
     Factory function to create the flask server.
@@ -54,9 +51,8 @@ def create_app():
     """
 
     app = Flask(__name__)
-    #app.config["SESSION_TYPE"] = "redis"
-    #flaskSession.init_app(app)
     app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # TODO: Set via configuration
+    app.config["DC_COOKIE_NAME"] = "digitoken"
 
     @app.errorhandler(DigiCubeError)
     def handle_digicube_error(error):  # pylint: disable=unused-variable
@@ -116,14 +112,24 @@ def create_app():
         return value if value is not None else "-"
 
     @app.after_request
-    def after_request_func(response):
-        if accm is not None and accm.token is not None:
-            response.set_cookie("digidocker", accm.token, samesite="Lax")
+    def after_request_func(response): # pylint: disable=unused-variable
+
+        if current_user.token is not None:
+            response.set_cookie("digicubes", current_user.token, samesite="Lax")
         else:
-            response.set_cookie("digidocker", "Cookie Monster", samesite="Lax")
-        
+            response.set_cookie("digicubes", "", samesite="Lax", expires=0)
+
         return response
 
+
+    @app.before_request
+    def check_digitoken():
+        token = request.cookies.get("digicubes", None)
+        logger.fatal('*'*60)
+        logger.fatal("Checking for token. Token is %s", token)
+
+        if token is not None:
+            current_user.token = token
 
     #@app.before_request
     def check_token():  # pylint: disable=unused-variable

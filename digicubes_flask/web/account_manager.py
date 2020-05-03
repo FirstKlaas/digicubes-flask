@@ -4,7 +4,7 @@ The main extension module
 import logging
 import os
 
-from flask import abort, current_app, redirect, Flask, url_for, session, request
+from flask import abort, current_app, redirect, Flask, url_for, request, g
 from flask_wtf.csrf import CSRFError
 
 from digicubes_client.client import (
@@ -114,7 +114,7 @@ class DigicubesAccountManager:
         """
         Setting the handler that is called, after a user
         has succesfully logged in. This callback is used by
-        the `login` route.
+        the `login` route.def login
 
         The callback must return the response, like any route.
 
@@ -177,7 +177,6 @@ class DigicubesAccountManager:
         user: BearerTokenData = self._client.login(login, password)
         logger.debug("User %s logged in with token %s", user.user_id, user.bearer_token)
         current_user.token = user.bearer_token
-        current_user.id = user.user_id
         return user
 
     def generate_token_for(self, login: str, password: str) -> str:
@@ -194,9 +193,9 @@ class DigicubesAccountManager:
 
     def logout(self):
         """
-        Marks the session for logout at the end of the request cycle
+        Logs the current user out
         """
-        session.clear()
+        logger.fatal("I HAVE TO DECIDE, WHAT TO DO HERE")
 
     @property
     def user(self) -> UserService:

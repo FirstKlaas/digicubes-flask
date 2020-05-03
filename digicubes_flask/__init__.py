@@ -4,7 +4,7 @@ The main extension module
 import logging
 from functools import wraps
 
-from flask import abort, current_app, request, Response, redirect, Flask, url_for, session
+from flask import abort, current_app, request, Response, redirect, Flask, url_for, g
 from flask_wtf.csrf import CSRFError
 from werkzeug.local import LocalProxy
 
@@ -37,44 +37,18 @@ class CurrentUser:
     """
 
     def __init__(self):
-        self._dbuser = None
         self._rights = None  # Cached User rights
+        self._dbuser = None
+        self.token = None
 
     def reset(self):
-        session.pop("digicubes.account.token", None)
-        session.get("digicubes.account.id", None)
-
-    @property
-    def token(self):
-        return session.get("digicubes.account.token", None)
-
-    @token.setter
-    def token(self, value: str):
-        if value is None:
-            logger.warning("Expected token to be not None")
-        session["digicubes.account.token"] = value
-
-    @property
-    def id(self):
-        session.get("digicubes.account.id", None)
-
-    @id.setter
-    def id(self, value: str):
-        if value is None:
-            logger.warning("Expected id to be not None")
-        session["digicubes.account.id"] = value
+        g.pop("digiuser", None)
 
     def __str__(self):
         return f"CurrentUser(id={self.id}, token={self.token}"
 
     def __repr__(self):
         return f"CurrentUser(id={self.id}, token={self.token}"
-
-    def __eq__(self, other):
-        return self.token == other
-
-    def __ne__(self, value):
-        return self.token != value
 
     @property
     def dbuser(self):
@@ -87,7 +61,7 @@ class CurrentUser:
         """
         if self._dbuser is None:
             self._dbuser = account_manager.user.me(self.token)
-            logger.debug("Loaded db user %s: %s", self.id, self._dbuser.login)
+            logger.debug("Loaded db user %s: %s", self._dbuser.id, self._dbuser.login)
         return self._dbuser
 
     def has_right(self, right):
@@ -109,9 +83,11 @@ class CurrentUser:
         Getting the lazy loaded rights for the current
         user.
         """
+        if self.token is None:
+            return []
+
         if self._rights is None:
             self._rights = [str(r) for r in account_manager.user.get_my_rights(self.token)]
-            logger.debug("Requested rights from api server are %s", self._rights)
 
         return self._rights
 
@@ -124,7 +100,9 @@ class CurrentUser:
 
 
 def _get_current_user():
-    return CurrentUser()
+    if "digiuser" not in g:
+        g.digiuser = CurrentUser()
+    return g.digiuser
 
 
 def _get_account_manager():
