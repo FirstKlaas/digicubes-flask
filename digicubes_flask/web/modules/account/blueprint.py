@@ -31,12 +31,14 @@ def home():
 
     if len(my_roles) == 1:
         # Dispatch directly to the right homepage
-        rolename = my_roles[0].name
-        url = url_for(my_roles[0].home_route)
+        my_only_role = my_roles[0]
+        rolename = my_only_role.name
+        url = url_for(my_only_role.home_route)
         logger.debug(
             "User %s has only one role (%s). Redirecting immediately to %s", "me", rolename, url
         )
         return redirect(url)
+        
     # TODO: Filter the roles, that don't have a home route.
     return render_template("account/home.jinja", roles=my_roles)
 

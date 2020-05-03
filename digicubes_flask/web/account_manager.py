@@ -4,7 +4,7 @@ The main extension module
 import logging
 import os
 
-from flask import abort, current_app, redirect, Flask, url_for, session
+from flask import abort, current_app, redirect, Flask, url_for, session, request
 from flask_wtf.csrf import CSRFError
 
 from digicubes_client.client import (
@@ -172,7 +172,7 @@ class DigicubesAccountManager:
         :raises: DoesNotExist, ServerError
         """
         if current_user.token is not None:
-            session.clear()
+            self.logout()
 
         user: BearerTokenData = self._client.login(login, password)
         logger.debug("User %s logged in with token %s", user.user_id, user.bearer_token)

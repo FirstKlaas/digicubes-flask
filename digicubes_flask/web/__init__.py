@@ -14,6 +14,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from flask import Flask, redirect, url_for, Response, request, Request, session
+from flask_session import Session as FlaskSession
+
 import yaml
 from libgravatar import Gravatar
 from markdown import markdown
@@ -42,6 +44,7 @@ digicubes: DigicubesAccountManager = accm
 mail_cube = MailCube()
 the_account_manager = DigicubesAccountManager()
 
+flaskSession = FlaskSession()
 
 def create_app():
     """
@@ -51,6 +54,8 @@ def create_app():
     """
 
     app = Flask(__name__)
+    app.config["SESSION_TYPE"] = "redis"
+    flaskSession.init_app(app)
     app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # TODO: Set via configuration
 
     @app.errorhandler(DigiCubeError)
@@ -110,7 +115,17 @@ def create_app():
     def nonefilter(value):  # pylint: disable=unused-variable
         return value if value is not None else "-"
 
-    @app.before_request
+    @app.after_request
+    def after_request_func(response):
+        if accm is not None and accm.token is not None:
+            response.set_cookie("digidocker", accm.token, samesite="Lax")
+        else:
+            response.set_cookie("digidocker", "Cookie Monster", samesite="Lax")
+        
+        return response
+
+
+    #@app.before_request
     def check_token():  # pylint: disable=unused-variable
         """
         Vor jedem Request das Token aktualisieren, damit das Zeitfenster
@@ -123,7 +138,11 @@ def create_app():
         arbeiten, so dass das neue token auch ermittelt werden kann, ohne
         die Methodensignatur ändern zu müssen.
         """
+        
         if accm is not None:
+            r: Request = request
+            logger.debug("Docker Cookie before request: %s", r.cookies.get("digidocker", "No docker coookie"))
+
             if accm.token is None:
                 logger.debug("No user logged in. No new token will be generated.")
             else:

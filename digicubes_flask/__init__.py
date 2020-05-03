@@ -46,7 +46,6 @@ class CurrentUser:
 
     @property
     def token(self):
-        print(session.get("digicubes.account.token", "### No Token"))
         return session.get("digicubes.account.token", None)
 
     @token.setter
