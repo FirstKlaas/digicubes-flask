@@ -3,6 +3,8 @@ The main extension module
 """
 import logging
 from functools import wraps
+from datetime import datetime, timedelta
+from typing import Optional, List
 
 from flask import abort, current_app, request, Response, redirect, Flask, url_for, g
 from flask_wtf.csrf import CSRFError
@@ -25,7 +27,7 @@ current_user = LocalProxy(lambda: _get_current_user())
 
 DIGICUBES_ACCOUNT_ATTRIBUTE_NAME = "digicubes_account_manager"
 
-version = [0, 0, 9]
+version = [0, 0, 14]
 
 
 def increase_minor_version():
@@ -47,18 +49,62 @@ class CurrentUser:
     """
 
     def __init__(self):
-        self._rights = None  # Cached User rights
+        self._rights: List[str] = None  # Cached User rights
         self._dbuser = None
-        self.token = None
+        self._token = None
+        self._lifetime = None
+        self._expires_at = None
+
+    def set_data(self, data: BearerTokenData):
+        self._token = data.bearer_token
+        self._lifetime = data.lifetime
+        self._expires_at = data.expires_at
 
     def reset(self):
+        """
+        Resets all internal fields and removes it from
+        the global request context.
+        """
         g.pop("digiuser", None)
+        self._dbuser = None
+        self._rights = None
+        self._lifetime = None
+        self._expires_at = None
+
+    @property
+    def token(self) -> str:
+        return self._token
+
+    @token.setter
+    def token(self, value: str):
+        self._token = value
+
+    @property
+    def lifetime(self) -> int:
+        """
+        Returns the lifetime (max age) of the token in seconds
+        """
+        return self._lifetime
+
+    @property
+    def expires_at(self) -> datetime:
+        """
+        Returns the expiration date as an datetime object
+        """
+        return self._expires_at
 
     def __str__(self):
         return f"CurrentUser(id={self.id}, token={self.token}"
 
     def __repr__(self):
         return f"CurrentUser(id={self.id}, token={self.token}"
+
+    @property
+    def id(self):
+        if self.token is None:
+            return None
+
+        return self.dbuser.id
 
     @property
     def dbuser(self):
@@ -69,6 +115,9 @@ class CurrentUser:
         So multiple calls during one request will be faster.
         The instance is valid for the lifetime of a request.
         """
+        if self.token is None:
+            return None
+
         if self._dbuser is None:
             self._dbuser = account_manager.user.me(self.token)
             logger.debug("Loaded db user %s: %s", self._dbuser.id, self._dbuser.login)
@@ -101,16 +150,9 @@ class CurrentUser:
 
         return self._rights
 
-    def __getattr__(self, name):
-        logger.debug("Requesting user attribute [%s]", name)
-
-        # if self.dbuser is None:
-        #    raise DigiCubeError("There is no database user.")
-        return getattr(self._dbuser, name)
-
 
 def _get_current_user():
-    if "digiuser" not in g:
+    if "digiuser" not in g or g.digiuser is None:
         g.digiuser = CurrentUser()
     return g.digiuser
 
@@ -206,7 +248,6 @@ def login_required(f):
 
         # Check if we can find the token
         token = current_user.token
-        logger.debug("Looking up the token. Found %s", token)
 
         if token is not None:
             # We have a token

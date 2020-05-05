@@ -14,6 +14,7 @@ from digicubes_client.client import (
     RightService,
     SchoolService,
 )
+
 from digicubes_common.structures import BearerTokenData
 
 from digicubes_flask import account_manager, current_user, get_version_string
@@ -175,10 +176,12 @@ class DigicubesAccountManager:
         if current_user.token is not None:
             self.logout()
 
-        user: BearerTokenData = self._client.login(login, password)
-        logger.debug("User %s logged in with token %s", user.user_id, user.bearer_token)
-        current_user.token = user.bearer_token
-        return user
+        data: BearerTokenData = self._client.login(login, password)
+        current_user.set_data(data)
+        logger.debug("Requested login data for user %s succesfully", login)
+        logger.debug("data is: %r", data)
+        logger.debug("Current token is: %s", current_user.token)
+        return data
 
     def generate_token_for(self, login: str, password: str) -> str:
         """
@@ -196,7 +199,7 @@ class DigicubesAccountManager:
         """
         Logs the current user out
         """
-        logger.fatal("I HAVE TO DECIDE, WHAT TO DO HERE")
+        current_user.reset()
 
     @property
     def user(self) -> UserService:
@@ -216,6 +219,5 @@ class DigicubesAccountManager:
     def school(self) -> SchoolService:
         return self._client.school_service
 
-    def refresh_token(self) -> str:
-        if current_user.token is not None:
-            current_user.token = self._client.refresh_token(current_user.token)
+    def refresh_token(self, token) -> BearerTokenData:
+        return self._client.refresh_token(token)

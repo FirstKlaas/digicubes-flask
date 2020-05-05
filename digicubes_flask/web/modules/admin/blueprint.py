@@ -275,7 +275,7 @@ def update_school(school_id: int):
     )
 
 
-@admin_blueprint.route("/dschool/<int:school_id>/", methods=["DELETE"])
+@admin_blueprint.route("/dschool/<int:school_id>/")
 @login_required
 def delete_school(school_id: int):
     """Delete an existing school"""

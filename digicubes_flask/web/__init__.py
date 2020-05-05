@@ -13,13 +13,13 @@ from typing import Optional
 from pathlib import Path
 
 from dotenv import load_dotenv
-from flask import Flask, redirect, url_for, Response, request, Request
+from flask import Flask, redirect, url_for, Response, request, Request, g
 
 import yaml
 from libgravatar import Gravatar
 from markdown import markdown
 
-from digicubes_common.exceptions import DigiCubeError
+from digicubes_common.exceptions import DigiCubeError, TokenExpired
 from digicubes_client.client.proxy import RightProxy, RoleProxy
 from digicubes_flask import account_manager as accm, current_user
 from digicubes_flask.email import MailCube
@@ -34,9 +34,9 @@ from digicubes_flask.web.modules import (
 
 from .account_manager import DigicubesAccountManager
 
-logger = logging.getLogger(__name__)
 
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 digicubes: DigicubesAccountManager = accm
 
@@ -115,58 +115,51 @@ def create_app():
     @app.after_request
     def after_request_func(response):  # pylint: disable=unused-variable
 
-        if current_user.token is not None:
-            response.set_cookie("digicubes", current_user.token, samesite="Lax")
+        if not g.digitoken_received:
+            # No token in request found
+            if current_user.token is not None:
+                # We have a token, so a user must have logged in successfully
+                # We write the token to the response
+                response.set_cookie(
+                    "digicubes", current_user.token, samesite="Lax", expires=current_user.expires_at
+                )
+            else:
+                # No token received and non created. So do nothing
+                logger.debug("Not sending a token. (No Token)")
         else:
-            response.set_cookie("digicubes", "", samesite="Lax", expires=0)
+            if current_user.token is not None:
+                # We reveived a token and it still exists.
+                # So we just send it
+                # We do this because a new token is created at the
+                # beginnig of the request
+                response.set_cookie(
+                    "digicubes", current_user.token, samesite="Lax", expires=current_user.expires_at
+                )
+            else:
+                # We received a cookie, but user has been logged out.
+                # (Or the token has expired)
+                # So we send an cookie which immediately exires. The browser
+                # deletes the cookie.
+                response.set_cookie("digicubes", "", samesite="Lax", expires=0)
+                logger.debug("Deleting digicubes cookie")
 
         return response
 
     @app.before_request
-    def check_digitoken():
+    def check_digitoken():  # pylint: disable=unused-variable
         token = request.cookies.get("digicubes", None)
+        g.digitoken_received = False
 
         if token is not None:
-            current_user.token = token
-
-    # @app.before_request
-    def check_token():  # pylint: disable=unused-variable
-        """
-        Vor jedem Request das Token aktualisieren, damit das Zeitfenster
-        der Gültigkeit des Tokens neu beginnt.
-
-        Das wird somit eigentlich viel zu oft gemacht und frisst unnötig
-        Ressourccen, ist aber der einfachste weg. Alternativ müsste der
-        Client umgebaut werden, da der server bereits in jedem Response ein
-        neues Token sendet. Villeicht kann man da noch mit Werkzeug locals
-        arbeiten, so dass das neue token auch ermittelt werden kann, ohne
-        die Methodensignatur ändern zu müssen.
-        """
-
-        if accm is not None:
-            r: Request = request
-            logger.debug(
-                "Docker Cookie before request: %s", r.cookies.get("digidocker", "No docker coookie")
-            )
-
-            if accm.token is None:
-                logger.debug("No user logged in. No new token will be generated.")
-            else:
-                # TODO: Den call könnte man asynchron machen, weil die
-                # Aktuslisierung des Tokens für den aktuellen Request
-                # nicht wichtig ist und der zusätzliche Call einen
-                # minimalen Performance Verlust bedeutet.
-                logger.debug("Refreshing token in 'at the end oth the request.")
-                accm.refresh_token()
-                # TODO: Hier sollte eigentlich der Fall abgefangen werden, dass das
-                # alte Token abgelaufen ist.
-
-                # TODO: ebenso könnte der UserProxy des eingeloggten users, sowie
-                # seine Rechte geladen werden, um sie im g Objekt abzulegen. Allerdings
-                # wäre das teuer, dies in jedem Request zu machen. Wir brauchen also
-                # einen intelligenten cache für diese daten.
-        else:
-            logger.info("No account manager in app scope found. Maybe not an issue.")
+            # So we have a token. Not lets refresh it
+            try:
+                data = accm.refresh_token(token)
+                # current_user.token = token
+                current_user.set_data(data)
+                g.digitoken_received = True
+            except TokenExpired:
+                current_user.reset()
+                logger.warning("Token was send by the client, but it is expired on the server.")
 
     def parse_config(data=None, tag="!ENV"):
         """

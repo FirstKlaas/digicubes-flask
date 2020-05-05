@@ -12,7 +12,7 @@ School
         <a href="{{ url_for('admin.create_school_course', school_id=school.id) }}">New Course</a>
     </li>
     <li>
-        <a href="#">Delete</a>
+        <a href="{{ url_for('admin.delete_school', school_id=school.id) }}">Delete</a>
     </li>
 {% endblock %}
 
