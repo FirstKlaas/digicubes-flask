@@ -29,6 +29,23 @@ School
 <div class="section">
     <div class="row">
         <div class="col s12">
+            <h2>Teacher</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            {% if teacher %}
+                {{ teacher }}
+            {% else %}
+                No Teacher
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="row">
+        <div class="col s12">
             <h2>Courses</h2>
             {% if courses %}
             <table class="highlight">

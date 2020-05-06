@@ -5,15 +5,10 @@ def increase_build_version():
     data = None
     with open("digicubes_flask/version.json") as f:
         data = json.load(f)
-    
-    print(data)
+
     data["version"][2] += 1
-    print(data)
     with open("digicubes_flask/version.json", "w") as f:
-        json.dump(data, f, indent=2)
+        json.dump(data, f, indent=2)    
 
-    
-
-
-if __name__=="__main__":
+if __name__ == "__main__":
     increase_build_version()

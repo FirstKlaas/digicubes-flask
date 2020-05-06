@@ -241,7 +241,8 @@ def school(school_id: int):
     # TODO: Was, wenn die Schule nicht existiert?
     db_school = service.get(token, school_id)
     courses = service.get_courses(digicubes.token, db_school)
-    return render_template("admin/school.jinja", school=db_school, courses=courses)
+    teacher = service.get_school_teacher(digicubes.token, school_id)
+    return render_template("admin/school.jinja", school=db_school, courses=courses, teacher=teacher)
 
 
 @admin_blueprint.route("/uschool/<int:school_id>/", methods=("GET", "POST"))
