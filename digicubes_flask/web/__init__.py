@@ -135,6 +135,7 @@ def create_app():
                 response.set_cookie(
                     "digicubes", current_user.token, samesite="Lax", expires=current_user.expires_at
                 )
+                logger.debug("Updating digicubes cookie")
             else:
                 # We received a cookie, but user has been logged out.
                 # (Or the token has expired)

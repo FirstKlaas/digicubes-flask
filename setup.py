@@ -1,13 +1,17 @@
 """
 Setup file for the digicubes package
 """
+import json
+
 from setuptools import setup, find_namespace_packages
 
 def version() -> str:
     """
     Returns the current version of the digicubes server
     """
-    return "0.0.15"
+    with open("digicubes_flask/version.json") as f:
+        data = json.load(f)
+        return ".".join(str(n) for n in data["version"])
 
 def requirements() -> list:
     """

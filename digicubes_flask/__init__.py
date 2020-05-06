@@ -4,6 +4,8 @@ The main extension module
 import logging
 from functools import wraps
 from datetime import datetime, timedelta
+from importlib.resources import open_text
+import json
 from typing import Optional, List
 
 from flask import abort, current_app, request, Response, redirect, Flask, url_for, g
@@ -27,15 +29,12 @@ current_user = LocalProxy(lambda: _get_current_user())
 
 DIGICUBES_ACCOUNT_ATTRIBUTE_NAME = "digicubes_account_manager"
 
-version = [0, 0, 14]
-
-
-def increase_minor_version():
-    version[2] = version[2] + 1
-
 
 def get_version_string():
-    return f"{version[0]}.{version[1]}.{version[2]}"
+    """Returns the version string for this module"""
+    with open_text("digicubes_flask", "version.json") as f:
+        data = json.load(f)
+        return ".".join(str(n) for n in data["version"])
 
 
 class CurrentUser:

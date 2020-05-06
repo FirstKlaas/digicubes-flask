@@ -16,6 +16,10 @@ from wtforms import (
     DateField,
 )
 
+from wtforms.validators import ValidationError
+
+from digicubes_common import exceptions as ex
+
 import digicubes_flask.web.wtforms_widgets as w
 from digicubes_flask import digicubes
 
@@ -55,8 +59,14 @@ class UserForm(FlaskForm):
         """
         Checks, if the login already exists, as is has to be unique
         """
-        digicubes.user.get_by_login(digicubes.token, field.data)
-        # raise ValueError("Login already exists.")
+        try:
+            digicubes.user.get_by_login(digicubes.token, field.data)
+            # If we can find an account, we raise the ValidatioNerror to 
+            # signal, that this account is not available
+            raise ValidationError("Account already exists")
+        except ex.DoesNotExist:
+            pass # If we can not find the account, that's perfect.
+            
 
 
 class SchoolForm(FlaskForm):

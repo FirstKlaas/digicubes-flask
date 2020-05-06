@@ -173,9 +173,6 @@ class DigicubesAccountManager:
         :rtype: BearerTokenData
         :raises: DoesNotExist, ServerError
         """
-        if current_user.token is not None:
-            self.logout()
-
         data: BearerTokenData = self._client.login(login, password)
         current_user.set_data(data)
         logger.debug("Requested login data for user %s succesfully", login)

@@ -70,11 +70,6 @@ def login():
     if account_manager is None:
         return abort(500)
 
-    # If user is already authenticated, then
-    # logout first.
-    if account_manager.authenticated:
-        account_manager.logout()
-
     form = LoginForm()
     if form.validate_on_submit():
         try:

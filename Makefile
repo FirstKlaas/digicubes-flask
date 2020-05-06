@@ -46,10 +46,11 @@ badges: deps
 pack: ci
 	rm -fR dist/
 	#python setup_client.py sdist bdist_wheel
+	python version.py
 	python setup.py sdist bdist_wheel
 
 publish: pack
-	twine check ./dist/*
+	twine check ./dist/*	
 	twine upload ./dist/*
 
 run: export FLASK_ENV=development
