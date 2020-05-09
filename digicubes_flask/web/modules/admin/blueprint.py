@@ -71,10 +71,10 @@ def create_user():
                     return render_template(
                         "admin/send_verification_link.jinja", user=new_user, link=link
                     )
-                    
+
             return redirect(url_for("admin.edit_user", user_id=new_user.id))
 
-    # Form not submitted or validation failed.    
+    # Form not submitted or validation failed.
     form.submit.label.text = "Create"
     action = url_for("admin.create_user")
     return render_template("admin/create_user.jinja", form=form, action=action)
@@ -88,7 +88,7 @@ def verify(token: str):
     service: srv.UserService = digicubes.user
     try:
         return render_template("admin/verified.jinja", user=service.verify_user(token))
-    except: #pylint: disable=bare-except
+    except:  # pylint: disable=bare-except
         logger.exception("Could not verify your account.")
         abort(500)
 
@@ -227,7 +227,7 @@ def create_school():
     # token = digicubes.token
     form = SchoolForm()
     if form.is_submitted():
-        if form.validate({"name":[SchoolNameAvailable()]}):
+        if form.validate({"name": [SchoolNameAvailable()]}):
             new_school = proxy.SchoolProxy(name=form.name.data, description=form.description.data,)
             digicubes.school.create(digicubes.token, new_school)
             return redirect(url_for("admin.schools"))
@@ -262,7 +262,7 @@ def update_school(school_id: int):
 
     # What about the creation date and the modified date?
     if form.is_submitted():
-        if form.validate({"name":[SchoolNameAvailable(school_id=school_id)]}):
+        if form.validate({"name": [SchoolNameAvailable(school_id=school_id)]}):
             upschool = proxy.SchoolProxy()
             form.populate_obj(upschool)
             upschool.id = school_id
@@ -391,11 +391,13 @@ def create_school_course(school_id: int):
         "admin/create_course.jinja", school=school_proxy, form=form, action=action_url,
     )
 
+
 @admin_blueprint.route("/course/<int:course_id>/cunit/", methods=("GET", "POST"))
 @login_required
 def create_course_unit(school_id: int):
-    #TODO: Nothing implemented
+    # TODO: Nothing implemented
     pass
+
 
 @admin_blueprint.route("/rfc/", methods=("GET", "POST", "PUT"))
 @login_required

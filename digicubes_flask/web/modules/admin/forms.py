@@ -34,6 +34,7 @@ __ALL__ = [
     "CourseForm",
 ]
 
+
 class UserForm(FlaskForm):
     """
     The user form that is used by the admin to create or update
@@ -66,6 +67,10 @@ class UserForm(FlaskForm):
 
 
 class UserLoginAvailable:
+    """
+    Custom validator to check, if a user with the login name
+    from the field already exists and therefor cannot be used.
+    """
 
     def __init__(self, user_id: int = None):
         self.user_id = user_id
@@ -93,6 +98,7 @@ class SchoolNameAvailable:
     is the the same school. Aka, the name hasn't changed. This might
     be the case, when updating a school.
     """
+
     def __init__(self, school_id: int = None):
         self.school_id = school_id
 
@@ -116,17 +122,22 @@ class SchoolNameAvailable:
         except ex.DoesNotExist:
             pass  # If we can not find the account, that's perfect.
 
+
 class SchoolForm(FlaskForm):
     """
     Create or update school form
     """
-
-    name = StringField("Name", widget=w.materialize_input, validators=[validators.InputRequired("A name is required.")])
+    name = StringField(
+        "Name",
+        widget=w.materialize_input,
+        validators=[validators.InputRequired("A name is required.")],
+    )
     description = TextAreaField(
-        "Description", widget=w.materialize_textarea, validators=[validators.InputRequired("A description is required.")]
+        "Description",
+        widget=w.materialize_textarea,
+        validators=[validators.InputRequired("A description is required.")],
     )
     submit = SubmitField("Ok", widget=w.materialize_submit)
-
 
 
 class CourseForm(FlaskForm):
@@ -135,26 +146,32 @@ class CourseForm(FlaskForm):
     """
 
     school_id = HiddenField()
-    name = StringField("Name", widget=w.materialize_input, validators=[validators.InputRequired("A name is required")])
+    name = StringField(
+        "Name",
+        widget=w.materialize_input,
+        validators=[validators.InputRequired("A name is required")],
+    )
 
     description = TextAreaField(
-        "Description", widget=w.materialize_textarea, validators=[validators.InputRequired("A desciption is required")]
+        "Description",
+        widget=w.materialize_textarea,
+        validators=[validators.InputRequired("A desciption is required")],
     )
 
     from_date = DateField(
-        "Starting from", 
-        default=date.today(), 
-        format="%d.%m.%Y", 
+        "Starting from",
+        default=date.today(),
+        format="%d.%m.%Y",
         widget=w.materialize_picker,
-        validators=[validators.InputRequired("The course needs a starting date.")]
+        validators=[validators.InputRequired("The course needs a starting date.")],
     )
 
     until_date = DateField(
-        "Ending at", 
-        default=date.today(), 
-        format="%d.%m.%Y", 
+        "Ending at",
+        default=date.today(),
+        format="%d.%m.%Y",
         widget=w.materialize_picker,
-        validators=[validators.InputRequired("A course needs a ending date.")]
+        validators=[validators.InputRequired("A course needs a ending date.")],
     )
 
     is_private = BooleanField("Private", widget=w.materialize_switch)
