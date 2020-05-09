@@ -6,6 +6,7 @@ from datetime import date
 
 from flask_wtf import FlaskForm
 from wtforms import (
+    Field,
     PasswordField,
     StringField,
     SubmitField,
@@ -32,7 +33,6 @@ __ALL__ = [
     "CourseForm",
     "CourseForm",
 ]
-
 
 class UserForm(FlaskForm):
     """
@@ -64,17 +64,24 @@ class UserForm(FlaskForm):
 
     submit = SubmitField("Update", widget=w.materialize_submit)
 
-    def validate_login(self, field):
-        """
-        Checks, if the login already exists, as is has to be unique
-        """
+
+class UserLoginAvailable:
+
+    def __init__(self, user_id: int = None):
+        self.user_id = user_id
+
+    def __call__(self, form: UserForm, field: Field):
+        if not field.data:
+            raise ValidationError("Login may not be empty.")
+
         try:
-            digicubes.user.get_by_login(digicubes.token, field.data)
-            # If we can find an account, we raise the ValidatioNerror to
-            # signal, that this account is not available
-            raise ValidationError("Account already exists")
+            user_proxy: proxy.UserProxy = digicubes.user.get_by_login(digicubes.token, field.data)
+            if self.user_id is not None and self.user_id == user_proxy.id:
+                return
+
+            raise ValidationError("User already exists. Try a different login.")
         except ex.DoesNotExist:
-            pass  # If we can not find the account, that's perfect.
+            pass
 
 
 class SchoolNameAvailable:

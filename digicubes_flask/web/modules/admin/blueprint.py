@@ -5,18 +5,18 @@ All routes should be only accessible by users, who have the
 role 'admin'
 """
 import logging
-from datetime import date, datetime
 
-from flask import current_app, Blueprint, render_template, abort, request, url_for, redirect
-
-from digicubes_flask import login_required, needs_right, digicubes, current_user, CurrentUser
-from digicubes_flask.web.account_manager import DigicubesAccountManager
-from digicubes_flask.email import mail_cube
+from flask import Blueprint, render_template, abort, request, url_for, redirect
 
 from digicubes_common import exceptions as ex
 from digicubes_client.client import proxy, service as srv
 
-from .forms import *
+from digicubes_flask import login_required, digicubes, current_user, CurrentUser
+from digicubes_flask.web.account_manager import DigicubesAccountManager
+from digicubes_flask.email import mail_cube
+
+from .forms import SchoolForm, UserForm, CourseForm, SchoolNameAvailable, UserLoginAvailable
+
 from .rfc import AdminRFC, RfcRequest
 
 admin_blueprint = Blueprint("admin", __name__, template_folder="templates")
@@ -47,34 +47,34 @@ def users():
 def create_user():
     """Create a new user"""
     form = UserForm()
-    if form.validate_on_submit():
-        new_user = proxy.UserProxy()
-        form.populate_obj(new_user)
+    if form.is_submitted():
+        if form.validate({"login": [UserLoginAvailable()]}):
+            new_user = proxy.UserProxy()
+            form.populate_obj(new_user)
 
-        # When users are created by an admin,
-        # he decides, whether the user is verified or not.
-        # if current_app.config.get("auto_verify", False):
-        #    new_user.is_verified = True
-        new_user = digicubes.user.create(digicubes.token, new_user)
+            # When users are created by an admin,
+            # he decides, whether the user is verified or not.
+            # if current_app.config.get("auto_verify", False):
+            #    new_user.is_verified = True
+            new_user = digicubes.user.create(digicubes.token, new_user)
 
-        if not new_user.is_verified:
-            """
-            Newly created user is not verified. Now sending him an
-            email with a verification link.
-            """
-            if mail_cube.is_enabled:
-                try:
-                    mail_cube.send_verification_email(new_user)
-                except ex.DigiCubeError:
-                    logger.exception("Sending a verification email failed.")
-            else:
-                link = mail_cube.create_verification_link(new_user)
-                return render_template(
-                    "admin/send_verification_link.jinja", user=new_user, link=link
-                )
+            if not new_user.is_verified:
+                # Newly created user is not verified. Now sending him an
+                # email with a verification link.
+                if mail_cube.is_enabled:
+                    try:
+                        mail_cube.send_verification_email(new_user)
+                    except ex.DigiCubeError:
+                        logger.exception("Sending a verification email failed.")
+                else:
+                    link = mail_cube.create_verification_link(new_user)
+                    return render_template(
+                        "admin/send_verification_link.jinja", user=new_user, link=link
+                    )
+                    
+            return redirect(url_for("admin.edit_user", user_id=new_user.id))
 
-        return redirect(url_for("admin.edit_user", user_id=new_user.id))
-
+    # Form not submitted or validation failed.    
     form.submit.label.text = "Create"
     action = url_for("admin.create_user")
     return render_template("admin/create_user.jinja", form=form, action=action)
@@ -82,10 +82,13 @@ def create_user():
 
 @admin_blueprint.route("/verify/<token>/")
 def verify(token: str):
+    """
+    Route to verify a given verification token.
+    """
     service: srv.UserService = digicubes.user
     try:
         return render_template("admin/verified.jinja", user=service.verify_user(token))
-    except:
+    except: #pylint: disable=bare-except
         logger.exception("Could not verify your account.")
         abort(500)
 
@@ -93,6 +96,9 @@ def verify(token: str):
 @admin_blueprint.route("/uuser/<int:user_id>/", methods=("GET", "POST"))
 @login_required
 def update_user(user_id: int):
+    """
+    Route to update an existing user.
+    """
     service: srv.UserService = digicubes.user
     token = digicubes.token
     form = UserForm()
@@ -134,7 +140,7 @@ def edit_user(user_id: int):
     token = server.token
     # Gettting the user details from the server
     # TODO: Was, wenn der User nicht existiert?
-    user: proxy.UserProxy = server.user.get(token, user_id)
+    user_proxy: proxy.UserProxy = server.user.get(token, user_id)
 
     # Proxy is needed to request the roles
     user_proxy = proxy.UserProxy(id=user_id)
@@ -144,7 +150,7 @@ def edit_user(user_id: int):
     all_roles = server.role.all(token)
 
     role_list = [(role, role.name in user_roles_names) for role in all_roles]
-    return render_template("admin/user.jinja", user=user, roles=role_list, form=form)
+    return render_template("admin/user.jinja", user=user_proxy, roles=role_list, form=form)
 
 
 @admin_blueprint.route("/panel/usertable/")
@@ -269,7 +275,7 @@ def update_school(school_id: int):
         form = SchoolForm(obj=db_school)
 
     form.submit.label.text = "Update"
-    
+
     return render_template(
         "admin/update_school.jinja",
         form=form,
