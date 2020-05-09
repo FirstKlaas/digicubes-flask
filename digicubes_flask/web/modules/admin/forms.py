@@ -35,6 +35,23 @@ __ALL__ = [
 ]
 
 
+class SetPasswordForm(FlaskForm):
+    """
+    Form to set a new password.
+    """
+
+    password = PasswordField(
+        "New Password",
+        widget=w.materialize_password,
+        validators=[
+            validators.InputRequired(),
+            validators.EqualTo("confirm", message="Passwords must match"),
+        ],
+    )
+    confirm = PasswordField("Retype Password", widget=w.materialize_password)
+    submit = SubmitField("Update", widget=w.materialize_submit)
+
+
 class UserForm(FlaskForm):
     """
     The user form that is used by the admin to create or update
@@ -127,6 +144,7 @@ class SchoolForm(FlaskForm):
     """
     Create or update school form
     """
+
     name = StringField(
         "Name",
         widget=w.materialize_input,

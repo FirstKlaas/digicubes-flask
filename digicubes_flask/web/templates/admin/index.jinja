@@ -11,5 +11,18 @@ Welcome
         <a href="{{ url_for('account.logout') }}" class="waves-effect waves-light btn">Logout</a>
     </div>
 </div>
-{% endblock %}        
+{% endblock %}      
+
+{% block page_script %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                var message = '{{ message }}';
+                M.toast({html: message});
+            {% endfor %}
+        {% endif %}
+    {% endwith %}}
+    
+{% endblock %}
+
 

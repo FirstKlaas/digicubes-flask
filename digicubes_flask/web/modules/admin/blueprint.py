@@ -6,7 +6,7 @@ role 'admin'
 """
 import logging
 
-from flask import Blueprint, render_template, abort, request, url_for, redirect
+from flask import Blueprint, render_template, abort, request, url_for, redirect, flash
 
 from digicubes_common import exceptions as ex
 from digicubes_client.client import proxy, service as srv
@@ -15,7 +15,14 @@ from digicubes_flask import login_required, digicubes, current_user, CurrentUser
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 from digicubes_flask.email import mail_cube
 
-from .forms import SchoolForm, UserForm, CourseForm, SchoolNameAvailable, UserLoginAvailable
+from .forms import (
+    SchoolForm,
+    UserForm,
+    CourseForm,
+    SchoolNameAvailable,
+    UserLoginAvailable,
+    SetPasswordForm,
+)
 
 from .rfc import AdminRFC, RfcRequest
 
@@ -80,6 +87,15 @@ def create_user():
     return render_template("admin/create_user.jinja", form=form, action=action)
 
 
+@admin_blueprint.route("/verify/renew/<int:user_id>/")
+def verify_renew(user_id: int):
+    service: srv.UserService = digicubes.user
+    token = digicubes.token
+    user_proxy: proxy.UserProxy = service.get(token, user_id)
+    link = mail_cube.create_verification_link(user_proxy)
+    return render_template("admin/send_verification_link.jinja", user=user_proxy, link=link)
+
+
 @admin_blueprint.route("/verify/<token>/")
 def verify(token: str):
     """
@@ -87,10 +103,33 @@ def verify(token: str):
     """
     service: srv.UserService = digicubes.user
     try:
-        return render_template("admin/verified.jinja", user=service.verify_user(token))
+        user_proxy, token = service.verify_user(token)
+        current_user.token = token
+        form = SetPasswordForm()
+        action = url_for("admin.update_password")
+        return render_template("admin/verified.jinja", user=user_proxy, form=form, action=action)
     except:  # pylint: disable=bare-except
         logger.exception("Could not verify your account.")
         abort(500)
+
+
+@admin_blueprint.route("/user/updatepassword/", methods=("GET", "POST"))
+@login_required
+def update_password():
+
+    service: srv.UserService = digicubes.user
+    token = digicubes.token
+    form = SetPasswordForm()
+    action = url_for("admin.update_password")
+
+    if form.is_submitted():
+        if form.validate():
+            # Now change the users password
+            service.set_password(token, current_user.id, form.password.data)
+            flash("Password changed successfully")
+            return redirect(url_for("admin.index"))
+
+    return render_template("admin/change_password.jinja", form=form, action=action)
 
 
 @admin_blueprint.route("/uuser/<int:user_id>/", methods=("GET", "POST"))
@@ -102,15 +141,16 @@ def update_user(user_id: int):
     service: srv.UserService = digicubes.user
     token = digicubes.token
     form = UserForm()
-
-    if form.validate_on_submit():
-        user_proxy = proxy.UserProxy(id=user_id)
-        form.populate_obj(user_proxy)
-        digicubes.user.update(token, user_proxy)
-        return redirect(url_for("admin.edit_user", user_id=user_id))
-
     user_proxy: proxy.UserProxy = service.get(token, user_id)
-    form.process(obj=user_proxy)
+
+    if form.is_submitted():
+        if form.validate({"login": [UserLoginAvailable(user_id=user_id)]}):
+            user_proxy = proxy.UserProxy(id=user_id)
+            form.populate_obj(user_proxy)
+            digicubes.user.update(token, user_proxy)
+            return redirect(url_for("admin.edit_user", user_id=user_id))
+    else:
+        form.process(obj=user_proxy)
 
     return render_template(
         "admin/update_user.jinja",
@@ -134,23 +174,17 @@ def delete_user(user_id: int):
 @admin_blueprint.route("/euser/<int:user_id>/")
 @login_required
 def edit_user(user_id: int):
-    """Editing an existing user"""
-    form = UserForm()
-
+    """Display detaild information for an existing user"""
     token = server.token
-    # Gettting the user details from the server
-    # TODO: Was, wenn der User nicht existiert?
+    # Getting the user details from the server
     user_proxy: proxy.UserProxy = server.user.get(token, user_id)
-
-    # Proxy is needed to request the roles
-    user_proxy = proxy.UserProxy(id=user_id)
 
     # Getting the user roles from the server
     user_roles_names = [role.name for role in server.user.get_roles(token, user_proxy)]
     all_roles = server.role.all(token)
 
     role_list = [(role, role.name in user_roles_names) for role in all_roles]
-    return render_template("admin/user.jinja", user=user_proxy, roles=role_list, form=form)
+    return render_template("admin/user.jinja", user=user_proxy, roles=role_list)
 
 
 @admin_blueprint.route("/panel/usertable/")
@@ -165,16 +199,6 @@ def panel_user_table():
         return render_template("admin/panel/user_table.jinja", users=user_list)
     except ex.DigiCubeError:
         abort(500)
-
-
-@admin_blueprint.route("/right_test/")
-@login_required
-def right_test():
-    """
-    This is just a test route to check, if the needs_right decorator works
-    correctly.
-    """
-    return "YoLo"
 
 
 @admin_blueprint.route("/roles/")

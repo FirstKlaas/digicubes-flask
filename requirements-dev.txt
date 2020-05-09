@@ -23,7 +23,7 @@ coverage==5.1             # via coveralls, green, nose2
 coveralls==2.0.0          # via -r requirements-dev.in
 cryptography==2.9.2       # via secretstorage
 digicubes-common==0.1.6   # via -r requirements.txt, digicubes-pyclient
-digicubes-pyclient==0.1.17  # via -r requirements.txt
+digicubes-pyclient==0.1.18  # via -r requirements.txt
 distlib==0.3.0            # via virtualenv
 dnspython==1.16.0         # via -r requirements.txt, email-validator
 doc8==0.8.0               # via -r requirements-dev.in
