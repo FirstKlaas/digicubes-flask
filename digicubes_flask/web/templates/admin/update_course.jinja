@@ -1,0 +1,47 @@
+{# 
+  Update an existing course. 
+
+  Expected variables:
+    - form  : Instance of EditCourseForm
+    - school: Instance of SchoolProxy. The school, the course should be created
+              for.
+  
+  Author : FirstKlaas
+#}
+{% extends "admin/base.jinja" %}
+
+{% block page_title %}
+Edit Course for school {{ school.name }}
+{% endblock %}
+
+{% block sub_menu %}
+    <li>
+        <a href="{{url_for('admin.school', school_id=school.id)}}">Back</a>
+    </li>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+  <h2>Course Details</h2>
+  <div class="row">
+    <div class="col s6" id="dc_main">
+    {% include "admin/fragments/course_form.jinja" with context %}
+    </div>
+    <div class="col s6">
+    </div>
+  </div>
+</div>
+{% endblock %}   
+
+{% block page_script %}
+  M.AutoInit();
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.datepicker');
+    options = {
+        format: 'dd.mm.yyyy'
+    };
+    console.log(elems);
+    var instances = M.Datepicker.init(elems, options);
+  });
+        
+{% endblock %}   

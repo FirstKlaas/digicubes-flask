@@ -24,12 +24,10 @@ nose2
 # Pypi
 twine
 
-# Sample integrations
-#hypercorn;python_version>="3.6"
-#quart;python_version>="3.6"
-
 sphinx
 sphinx_rtd_theme
 doc8
 
 pybadges
+sphinxcontrib-httpdomain
+rstcheck

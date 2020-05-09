@@ -1,0 +1,78 @@
+{% extends "admin/base.jinja" %}
+
+{% macro icon_verified(user) -%}
+    {% if user.is_verified %}
+        <td dc-user-id="{{user.id}}" dc-state="verified"></td>
+    {% else %}
+        <td dc-user-id="{{user.id}}" dc-state="unverified"></td>
+    {% endif %}
+{%- endmacro %}
+
+{% macro icon_active(user) -%}
+    {% if user.is_active %}
+        <td dc-user-id="{{user.id}}" dc-state="active"></td>
+    {% else %}
+        <td dc-user-id="{{user.id}}" dc-state="inactive"></td>
+    {% endif %}
+{%- endmacro %}
+
+{% macro gravatar(email) -%}
+    <img src="{{ email | gravatar }}" alt="" class="circle">
+{%- endmacro %}
+
+{% block html_head %}
+    <script src="{{ url_for('static', filename='js/admin/users.js') }}"></script>
+    {{ super() }}
+{% endblock %}
+
+{% block page_title %}
+Users Overview
+{% endblock %}
+
+{% block sub_menu %}
+    <li>
+        <a href="{{url_for('admin.create_user')}}">New User</a>
+    </li>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+    <div class="row">
+        <h2>All Users</h2>
+    </div>
+
+    <table class="highlight">
+        <thead>
+            <tr>
+                <th style="width: 1em;"></th>
+                <th style="width: 20em;">Name</th>
+                <th style="width: 20em;">Login</th>
+                <th style="width: 60em;">Email</th>
+                <th style="width: 20em;">Created at</th>
+                <th style="width: 1em;">Verified</th>
+                <th style="width: 1em;">Activated</th>
+            </tr>
+            <tbody >
+            {% for user in users %}
+            <tr>
+                <td>{{ gravatar(user.email) }}</td>
+                <td ><a href="{{ url_for('admin.edit_user', user_id=user.id) }}">{{ user.first_name | nonefilter }} {{ user.last_name | nonefilter }}</a></td>
+                <td>{{ user.login }}</td>
+                <td>{{ user.email | nonefilter }}</td>
+                <td>{{ user.created_at | digidate }}</td> 
+                {{ icon_verified(user) }}
+                {{ icon_active(user) }}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </thead>
+    </table>   
+</div> 
+{% endblock %}        
+
+
+{% block page_script %}
+    $().ready(function() {
+        init();
+    });
+{% endblock %}

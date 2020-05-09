@@ -1,0 +1,45 @@
+{% extends "admin/base.jinja" %}
+
+{% block page_title %}
+Roles Overview
+{% endblock %}
+
+{% block sub_menu %}
+    <li>
+        <a href="#">New Role</a>
+    </li>
+{% endblock %}
+
+
+{% block main_content %}
+<div class="section">
+    <div class="row">
+        <h2>All Roles</h2>
+    </div>
+
+    <table class="highlight">
+        <thead>
+            <tr>
+            <th>Name</th>
+            <th>Home</th>
+            <th>Description</th>
+            <th style="width: 10em;">Angelegt am</th>
+            <th class="right-align" style="width: 1em;" colspan=2>Actions</th>
+        </tr>
+        <tbody>
+            {% for role in roles %}
+                <tr>
+                    <td><a href="#">{{ role.name }}</a></td> 
+                    <td ><a href="{{ url_for(role.home_route) }}">{{ role.home_route }}</a></td> 
+                    <td >{{ role.description | md }}</td> 
+                    <td >{{ role.created_at | digidate }}</td> 
+                    <td class="right-align" style="width: 1em;">
+                        <a href="#"><i class="material-icons red-text text-darken-3">delete</i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div> 
+{% endblock %}  
+

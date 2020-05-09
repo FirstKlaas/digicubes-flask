@@ -1,0 +1,14 @@
+{% import "macros/forms.jinja" as forms %}
+
+<form method="POST" action="{{ action }}">
+    {{ form.csrf_token }}
+    {{ form.school_id(value=school.id) }}
+    {{ forms.row(form, "name") }}
+    {{ forms.row(form, "description") }}
+    {{ forms.row(form, "from_date") }}
+    {{ forms.row(form, "until_date") }}
+    <div class="row">
+    {{ form.is_private(grid="s12", value="true", unchecked_label="Private", checked_label="Public") }}
+    </div>
+    {{ forms.submit(form) }} 
+</form>

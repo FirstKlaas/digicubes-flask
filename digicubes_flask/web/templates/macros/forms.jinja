@@ -1,0 +1,20 @@
+{% macro row(form, field_name) -%}
+    <div class="row">
+        {{ form[field_name](grid="s12") }}
+    </div>
+{%- endmacro %}
+
+{% macro row_two_columns(form, field_name_one, field_name_two) -%}
+    <div class="row">
+        {{ form[field_name_one](grid="s6") }}
+        {{ form[field_name_two](grid="s6") }}
+    </div>
+{%- endmacro %}
+
+{% macro submit(form) -%}
+    <div class="row">
+        <div class="col s12 right-align">{{ form.submit }}</div>
+    </div>
+{%- endmacro %}
+
+

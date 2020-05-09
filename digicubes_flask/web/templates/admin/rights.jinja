@@ -1,0 +1,36 @@
+{% extends "admin/base.jinja" %}
+
+{% block page_title %}
+Rights
+{% endblock %}
+
+
+{% block main_content %}
+<div class="section">
+    <div class="row">
+        <h2>All Rights</h2>
+    </div>
+
+    <table class="highlight">
+        <thead>
+            <tr>                
+                <th >Name</th>
+                <th >Created at</th>                
+                <th class="right-align">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for right in rights %}
+        <tr>
+            <td>{{ right.name }}</td>            
+            <td style="width: 10rem;">{{ right.created_at | digidate }}</td>            
+            <td class="right-align dc-icon-column">
+                <a href="#"><i class="material-icons red-text text-darken-3">delete</i></a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>   
+</div> 
+{% endblock %}        
+

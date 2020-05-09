@@ -1,0 +1,117 @@
+button, input, optgroup, select, textarea, BODY {
+    font-family: 'Exo 2', 'Roboto', 'Ubuntu', sans-serif !important;
+    color: #37474f;
+}
+
+p {
+    margin: 0px;
+    padding: 0px;
+}
+
+strong {
+    font-weight: bold;
+}
+
+.dc-brand {
+    font-family: 'Roboto', 'Ubuntu', sans-serif !important;
+}
+
+.dc-clickable {
+    cursor: pointer;
+}
+
+TBODY.dc-vtop TD {
+    vertical-align: top;
+}
+
+.dc-attr {
+    font-weight: 900;
+    padding: 3px 0px !important;
+    margin-right: 1rem;
+    white-space: nowrap;
+
+}
+
+.dc-val {
+    background-color: #eceff1;
+    padding: 3px 10px !important;
+}
+
+.dc-top {
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+.dc-bottom {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+H1 {
+    color: #03a9f4;
+}
+
+H2 {
+    font-size: 2rem;
+    color: #03a9f4;
+}
+
+H5 {
+    font-size: 1.2rem;
+    color: #90a4ae;
+}
+
+TH {
+    color: #37474f;
+}
+
+TBODY.dc-thin TD {
+    font-weight: 300 !important;
+    padding: 5px !important;
+}
+
+.dc-thin {
+    font-weight: 300 !important;
+}
+
+nav.dc-submenu {
+    height: 50px;
+    line-height: 50px;
+}
+
+.dc-submenu .brand-logo {
+    font-size: 1.9rem !important;
+}
+
+.dc-icon-column {
+    width: 1rem;
+}
+
+
+div[contenteditable] {
+    padding: 0.5rem !important;
+}
+
+div[contenteditable=true] {
+    background-color: #eceff1;
+}
+
+div[contenteditable=false] {
+    background-color: lightblue;
+}
+
+.blockly-workspace {
+    height: 800px;
+    margin-left: 15px;
+}
+
+.blocklyHtmlInput {
+    background-color: white !important;
+    border-bottom: none !important;
+    height: auto !important;
+    font-family: sans-serif !important;
+}
+
+#blocklyCode {
+    font-family: monospace;    
+}

@@ -1,0 +1,9 @@
+
+{% extends "page_base.jinja" %}
+
+{% block space_name %}Headmaster Space{% endblock %}
+
+{% block main_menu %}
+  <li><a href="{{ url_for('account.home') }}">Home</a></li>
+  <li><a href="{{ url_for('account.logout') }}">Logout</a></li>
+{% endblock %}

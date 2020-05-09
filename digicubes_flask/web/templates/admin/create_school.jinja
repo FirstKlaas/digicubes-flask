@@ -1,0 +1,24 @@
+{% extends "admin/base.jinja" %}
+
+{% block page_title %}
+Create new School
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+  <h2>New School</h2>
+  <div class="row">
+    <div class="col s12" id="dc_main">
+    {% include "admin/fragments/school_form.jinja" with context %}
+    </div>
+  </div>
+</div>
+{% endblock %}   
+
+{% block page_script %}
+
+  $(document).ready(function() {
+    M.updateTextFields();
+  });
+        
+{% endblock %}   

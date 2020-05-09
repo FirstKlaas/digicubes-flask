@@ -1,0 +1,10 @@
+secret: "djsjah67sh7/&)788hxcbxsh"
+auto_verify: false
+
+# Information abaout the smtpserver
+# used to send verification and information
+# emails to user.
+
+mail_cube:
+  number_of_tries: 10
+  number_of_workers: 1 

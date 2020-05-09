@@ -1,0 +1,65 @@
+{% extends "admin/base.jinja" %}
+
+{% block page_title %}
+Schools Overview
+{% endblock %}
+
+{% block sub_menu %}
+    <li>
+        <a href="{{url_for('admin.create_school')}}">New School</a>
+    </li>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+    <div class="row">
+        <h2>All Schools</h2>
+    </div>
+    {% if schools %}
+    <table class="highlight">
+        <thead>
+            <tr>
+                <th style="width: 20rem;">Name</th>
+                <th style="width: 60rem;">Description</th>
+                <th style="width: 10rem;">Created at</th>
+                <th class="right-align" style="width: 1rem;"></th>
+            </tr>
+            <tbody class="dc-vtop">
+            {% for school in schools %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('admin.school', school_id=school.id) }}">{{ school.name }}</a>
+                        <span class="badge" dc-school-id="{{school.id}}">-</span>
+                    </td> 
+                    <td>{{ school.description | md }}</td>                     
+                    <td>{{ school.created_at | digidate }}</td> 
+                    <td class="right-align dc-icon-column">
+                        <a href="{{ url_for('admin.delete_school', school_id=school.id) }}"><i class="material-icons red-text text-darken-3">delete</i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </thead>
+    </table>   
+    {% else %}
+        <a href="{{ url_for('admin.create_school') }}" class="waves-effect waves-light light-blue btn-large">Create your first school</a>
+    {% endif %}
+</div> 
+{% endblock %}        
+
+{% block page_script %}
+    $().ready(function() {
+
+        $( "span[dc-school-id]").each( function( index ) {
+            $container = $( this )
+            school_id = $container.attr("dc-school-id");
+            
+            DigiCubes.getSchoolCoursesInfo(school_id)
+            .then( (data) => {
+                $(this).text(data.count_courses + "/" + data.count_courses);
+            });
+
+                
+        })
+    });
+{% endblock %}

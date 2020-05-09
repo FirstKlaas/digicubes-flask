@@ -1,4 +1,4 @@
-checkfiles = digicubes/
+checkfiles = digicubes_flask/
 
 help:
 	@echo  "DigiCubes flask addon development makefile"
@@ -23,24 +23,22 @@ lint: deps
 	pylint $(checkfiles)
 
 checkdocs:
-	doc8 source/
+	doc8 docs/source/
 
-docs:
-	sphinx-build -E -b html source build
-	sphinx-build -E -b html source_client build_client
+docs: checkdocs
+	sphinx-build -E -b html docs/source docs/build
 
-ci:	check
-	pylint --errors-only $(checkfiles)
-	nose2 -v digicubes
+ci:	check nose
+	#pylint --errors-only $(checkfiles)
 
 nose: deps
-	nose2 -v digicubes
+	nose2 -v digicubes_flask
 
 check: deps
-	black -l 100 --check digicubes/
+	black -l 100 --check $(checkfiles)
 
 style:
-	black -l 100 digicubes/ 
+	black -l 100 $(checkfiles)
 
 badges: deps
 	python lintbadge.py
@@ -48,8 +46,14 @@ badges: deps
 pack: ci
 	rm -fR dist/
 	#python setup_client.py sdist bdist_wheel
+	python version.py
 	python setup.py sdist bdist_wheel
 
 publish: pack
-	twine check ./dist/*
+	twine check ./dist/*	
 	twine upload ./dist/*
+
+run: export FLASK_ENV=development
+run: export FLASK_APP=digicubes_flask.web
+run:
+	flask run

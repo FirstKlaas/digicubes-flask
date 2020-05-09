@@ -1,0 +1,15 @@
+{% extends "account/base.jinja" %}
+
+{% block main_menu %}
+  <li><a href="{{ url_for('account.logout') }}">Logout</a></li>
+  {% if current_user.dbuser.first_name is defined and current_user.dbuser.last_Name is defined %}
+    <li><a href="{{ url_for('account.logout') }}">Welcome {{ current_user.dbuser.first_name }} {{ current_user.dbuser.last_name }}</a></li>
+  {% else %}
+    <li><a href="{{ url_for('account.logout') }}">Welcome {{ current_user.dbuser.login }}</a></li>
+  {% endif %}
+{% endblock %}
+
+{% block main_content %}
+  Continue as: {{ data }}
+  (Not implemented so far.)
+{% endblock %}        
