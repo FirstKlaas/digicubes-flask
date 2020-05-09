@@ -1,7 +1,13 @@
 {
+<<<<<<< HEAD
+    "python.pythonPath": "venv/bin/python3",
+    "restructuredtext.confPath": "",
+    "python.linting.pylintEnabled": true
+=======
     "python.pythonPath": "${workspaceRoot}/venv/bin/python",
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
     "restructuredtext.confPath": "${workspaceFolder}/docs/source",
+>>>>>>> master
 }
