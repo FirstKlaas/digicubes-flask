@@ -220,10 +220,11 @@ def create_school():
     """Create a new school"""
     # token = digicubes.token
     form = SchoolForm()
-    if form.validate_on_submit():
-        new_school = proxy.SchoolProxy(name=form.name.data, description=form.description.data,)
-        digicubes.school.create(digicubes.token, new_school)
-        return redirect(url_for("admin.schools"))
+    if form.is_submitted():
+        if form.validate({"name":[SchoolNameAvailable()]}):
+            new_school = proxy.SchoolProxy(name=form.name.data, description=form.description.data,)
+            digicubes.school.create(digicubes.token, new_school)
+            return redirect(url_for("admin.schools"))
 
     form.submit.label.ttext = "Create"
     return render_template(
@@ -251,23 +252,24 @@ def update_school(school_id: int):
     service: srv.SchoolService = digicubes.school
     token = digicubes.token
     form = SchoolForm()
-
-    # What about the creation date and the modofied date?
-    if form.validate_on_submit():
-        upschool = proxy.SchoolProxy()
-        form.populate_obj(upschool)
-        upschool.id = school_id
-        digicubes.school.update(token, upschool)
-
-        return redirect(url_for("admin.school", school_id=school_id))
-
-    # Gettting the school details from the server
-    # TODO: Was, wenn die Schule nicht existiert?
     db_school: proxy.SchoolProxy = service.get(token, school_id)
-    form.name.data = db_school.name
-    form.submit.label.text = "Update"
-    form.description.data = db_school.description
 
+    # What about the creation date and the modified date?
+    if form.is_submitted():
+        if form.validate({"name":[SchoolNameAvailable(school_id=school_id)]}):
+            upschool = proxy.SchoolProxy()
+            form.populate_obj(upschool)
+            upschool.id = school_id
+            digicubes.school.update(token, upschool)
+
+            return redirect(url_for("admin.school", school_id=school_id))
+    else:
+        # This is the request to display the form with
+        # the current data ofthe school
+        form = SchoolForm(obj=db_school)
+
+    form.submit.label.text = "Update"
+    
     return render_template(
         "admin/update_school.jinja",
         form=form,
@@ -383,6 +385,11 @@ def create_school_course(school_id: int):
         "admin/create_course.jinja", school=school_proxy, form=form, action=action_url,
     )
 
+@admin_blueprint.route("/course/<int:course_id>/cunit/", methods=("GET", "POST"))
+@login_required
+def create_course_unit(school_id: int):
+    #TODO: Nothing implemented
+    pass
 
 @admin_blueprint.route("/rfc/", methods=("GET", "POST", "PUT"))
 @login_required
