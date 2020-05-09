@@ -20,7 +20,7 @@ idna==2.9                 # via digicubes-pyclient, email-validator, requests
 itsdangerous==1.1.0       # via flask, flask-wtf
 jinja2==2.11.2            # via flask
 libgravatar==0.2.3        # via -r requirements.in
-markdown==3.2.1           # via -r requirements.in
+markdown==3.2.2           # via -r requirements.in
 markupsafe==1.1.1         # via -r requirements.in, jinja2, wtforms
 pyaml==20.4.0             # via -r requirements.in
 pyjwt==1.7.1              # via -r requirements.in
