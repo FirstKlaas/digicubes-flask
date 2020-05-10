@@ -64,7 +64,7 @@ def create_user():
             # if current_app.config.get("auto_verify", False):
             #    new_user.is_verified = True
             new_user = digicubes.user.create(digicubes.token, new_user)
-
+            flash(f"User {new_user.login} successfully created")
             if not new_user.is_verified:
                 # Newly created user is not verified. Now sending him an
                 # email with a verification link.

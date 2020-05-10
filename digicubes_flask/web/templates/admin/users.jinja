@@ -29,10 +29,22 @@
 Users Overview
 {% endblock %}
 
+{% block space_name %}User{% endblock %}
+
+{% block main_menu %}
+  <li><a href="{{ url_for('account.home') }}">Home</a></li>
+  <li><a href="{{ url_for('admin.users') }}">User</a></li>
+  <li><a href="{{url_for('admin.create_user')}}">New User</a></li>
+{% endblock %}
+
+{% block mobile_menu %}
+  <li><a href="{{ url_for('account.home') }}">Home</a></li>
+  <li><a href="{{ url_for('admin.users') }}">User</a></li>
+  <li><a href="{{url_for('admin.create_user')}}">New User</a></li>
+{% endblock %}
+
 {% block sub_menu %}
-    <li>
-        <a href="{{url_for('admin.create_user')}}">New User</a>
-    </li>
+    
 {% endblock %}
 
 {% block main_content %}

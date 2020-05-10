@@ -6,22 +6,9 @@ Welcome
 
 
 {% block main_content %}
-<div class="section hide-on-med-and-up">
-    <div class="row">
-        <a href="{{ url_for('account.logout') }}" class="waves-effect waves-light btn">Logout</a>
-    </div>
-</div>
 {% endblock %}      
 
 {% block page_script %}
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                var message = '{{ message }}';
-                M.toast({html: message});
-            {% endfor %}
-        {% endif %}
-    {% endwith %}}
     
 {% endblock %}
 
