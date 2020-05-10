@@ -21,7 +21,7 @@
       <div class="card blue-grey darken-2">
         <div class="card-content white-text">
           <span class="card-title">{{ role.name }}</span>
-          <p>{{ role.description }}</p>
+          <p>{{ role.description | md }}</p>
         </div>
         <div class="card-action">
           <a href="{{ url_for(role.home_route) }}">continue</a>
