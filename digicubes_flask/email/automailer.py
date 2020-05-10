@@ -157,7 +157,7 @@ class MailCube:
         from digicubes_flask import digicubes  # pylint: disable=import-outside-toplevel
 
         token = digicubes.user.get_verification_token(recipient.id)
-        return url_for("admin.verify", token=token, _external=True)
+        return url_for("account.verify", token=token, _external=True)
 
     def send_verification_email(self, recipient: proxy.UserProxy):
 

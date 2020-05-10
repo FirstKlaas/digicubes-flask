@@ -2,17 +2,30 @@
 The Admin Blueprint
 """
 import logging
-from flask import Blueprint, render_template, abort, redirect, url_for
+from flask import Blueprint, render_template, abort, redirect, url_for, flash
 
-from digicubes_client.client import UserProxy
 from digicubes_common.exceptions import DigiCubeError
 from digicubes_common.structures import BearerTokenData
-from digicubes_flask import login_required, account_manager, request
-from .forms import LoginForm, RegisterForm
+from digicubes_client.client import proxy, service as srv
+from digicubes_flask import (
+    login_required,
+    account_manager,
+    request,
+    current_user,
+    digicubes,
+    CurrentUser,
+)
+from digicubes_flask.web.account_manager import DigicubesAccountManager
+
+
+from .forms import LoginForm, RegisterForm, SetPasswordForm
 
 account_service = Blueprint("account", __name__)
 
 logger = logging.getLogger(__name__)
+
+server: DigicubesAccountManager = digicubes
+user: CurrentUser = current_user
 
 
 @account_service.route("/")
@@ -27,7 +40,7 @@ def index():
 def home():
     """Routing to the right home url"""
     token = account_manager.token
-    my_roles = account_manager.user.get_my_roles(token, ["name, home_route"])
+    my_roles = account_manager.user.get_my_roles(token)
 
     if len(my_roles) == 1:
         # Dispatch directly to the right homepage
@@ -41,6 +54,41 @@ def home():
 
     # TODO: Filter the roles, that don't have a home route.
     return render_template("account/home.jinja", roles=my_roles)
+
+
+@account_service.route("/verify/<token>/")
+def verify(token: str):
+    """
+    Route to verify a given verification token.
+    """
+    service: srv.UserService = digicubes.user
+    try:
+        user_proxy, token = service.verify_user(token)
+        current_user.token = token
+        return render_template("account/verified.jinja", user=user_proxy)
+    except:  # pylint: disable=bare-except
+        logger.exception("Could not verify your account.")
+        abort(500)
+
+
+
+@account_service.route("/updatepassword", methods=("GET", "POST"))
+@login_required
+def update_password():
+
+    service: srv.UserService = digicubes.user
+    token = digicubes.token
+    form = SetPasswordForm()
+    action = url_for("account.update_password")
+
+    if form.is_submitted():
+        if form.validate():
+            # Now change the users password
+            service.set_password(token, current_user.id, form.password.data)
+            flash("Password changed successfully")
+            return redirect(url_for("account.home"))
+
+    return render_template("account/change_password.jinja", form=form, action=action)
 
 
 @account_service.route("/logout", methods=["GET"])
@@ -105,7 +153,7 @@ def register():
             bearer_token: BearerTokenData = account_manager.generate_token_for("root", "digicubes")
             token = bearer_token.bearer_token
 
-            new_user = UserProxy()
+            new_user = proxy.UserProxy()
             form.populate_obj(new_user)
             new_user.is_active = True
             new_user.id = None  # Just du be shure, we don't have an id in the form accidently

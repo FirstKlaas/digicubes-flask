@@ -59,21 +59,40 @@ class UserForm(FlaskForm):
     """
 
     first_name = StringField(
-        "First Name", widget=w.materialize_input, validators=[validators.InputRequired()]
+        "First Name",
+        widget=w.materialize_input,
+        validators=[
+            validators.InputRequired(),
+            validators.Length(max=20, message="Max size exceeded"),
+        ],
     )
 
     last_name = StringField(
-        "Last Name", widget=w.materialize_input, validators=[validators.InputRequired()]
+        "Last Name",
+        widget=w.materialize_input,
+        validators=[
+            validators.InputRequired(),
+            validators.Length(max=20, message="Max size exceeded"),
+        ],
     )
 
     email = StringField(
         "Email",
         widget=w.materialize_input,
-        validators=[validators.Email(), validators.InputRequired()],
+        validators=[
+            validators.Email(),
+            validators.InputRequired(),
+            validators.Length(max=60, message="Max size exceeded"),
+        ],
     )
 
     login = StringField(
-        "The Account Name", widget=w.materialize_input, validators=[validators.InputRequired()]
+        "The Account Name",
+        widget=w.materialize_input,
+        validators=[
+            validators.InputRequired(),
+            validators.Length(max=20, message="Max size exceeded"),
+        ],
     )
 
     password = PasswordField("Password", widget=w.materialize_password)

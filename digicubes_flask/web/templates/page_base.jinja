@@ -22,11 +22,11 @@
                 <div class="container">
                     <div class="nav-wrapper">
                         <div class="row">
-                            <div class="col s1">
+                            <div class="col s2">
                                 <object id="front-page-logo" type="image/svg+xml" data="{{ url_for('static', filename='image/DigiCubes_Kontur.svg') }}">Your browser does not support SVG</object>
                             </div>
-                            <div class="col s3">
-                                <span class="brand-logo dc-brand">DigiCubes {% block space_name %}{% endblock %}</span>
+                            <div class="col s2">
+                                <span class="brand-logo dc-brand">{% block space_name %}{% endblock %}</span>
                             </div>
                             <div class="col s8">
                                 <ul class="right hide-on-med-and-down">

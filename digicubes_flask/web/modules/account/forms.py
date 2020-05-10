@@ -6,9 +6,26 @@ import logging
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, SubmitField, validators
 
-from digicubes_flask.web.wtforms_widgets import materialize_input, materialize_submit
+from digicubes_flask.web import wtforms_widgets as w
 
 logger = logging.getLogger(__name__)
+
+
+class SetPasswordForm(FlaskForm):
+    """
+    Form to set a new password.
+    """
+
+    password = PasswordField(
+        "New Password",
+        widget=w.materialize_password,
+        validators=[
+            validators.InputRequired(),
+            validators.EqualTo("confirm", message="Passwords must match"),
+        ],
+    )
+    confirm = PasswordField("Retype Password", widget=w.materialize_password)
+    submit = SubmitField("Update", widget=w.materialize_submit)
 
 
 class RegisterForm(FlaskForm):
@@ -16,28 +33,28 @@ class RegisterForm(FlaskForm):
     The registration form
     """
 
-    first_name = StringField("First Name", widget=materialize_input)
-    last_name = StringField("Last Name", widget=materialize_input)
+    first_name = StringField("First Name", widget=w.materialize_input)
+    last_name = StringField("Last Name", widget=w.materialize_input)
     email = StringField(
         "Email",
-        widget=materialize_input,
+        widget=w.materialize_input,
         validators=[validators.Email(), validators.InputRequired()],
     )
     login = StringField(
-        "Your Account Name", widget=materialize_input, validators=[validators.InputRequired()]
+        "Your Account Name", widget=w.materialize_input, validators=[validators.InputRequired()]
     )
     password = PasswordField(
-        "Password", widget=materialize_input, validators=[validators.InputRequired()]
+        "Password", widget=w.materialize_input, validators=[validators.InputRequired()]
     )
     password2 = PasswordField(
         "Retype Password",
-        widget=materialize_input,
+        widget=w.materialize_input,
         validators=[
             validators.InputRequired(),
             validators.EqualTo("password", message="Passwords are not identical."),
         ],
     )
-    submit = SubmitField("Register", widget=materialize_submit)
+    submit = SubmitField("Register", widget=w.materialize_submit)
 
 
 class LoginForm(FlaskForm):
@@ -45,8 +62,10 @@ class LoginForm(FlaskForm):
     The login form.
     """
 
-    login = StringField("Login", widget=materialize_input, validators=[validators.InputRequired()])
-    password = PasswordField(
-        "Password", widget=materialize_input, validators=[validators.InputRequired()]
+    login = StringField(
+        "Login", widget=w.materialize_input, validators=[validators.InputRequired()]
     )
-    submit = SubmitField("Login", widget=materialize_submit)
+    password = PasswordField(
+        "Password", widget=w.materialize_input, validators=[validators.InputRequired()]
+    )
+    submit = SubmitField("Login", widget=w.materialize_submit)

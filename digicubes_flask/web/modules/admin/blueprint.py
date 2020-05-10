@@ -96,42 +96,6 @@ def verify_renew(user_id: int):
     return render_template("admin/send_verification_link.jinja", user=user_proxy, link=link)
 
 
-@admin_blueprint.route("/verify/<token>/")
-def verify(token: str):
-    """
-    Route to verify a given verification token.
-    """
-    service: srv.UserService = digicubes.user
-    try:
-        user_proxy, token = service.verify_user(token)
-        current_user.token = token
-        form = SetPasswordForm()
-        action = url_for("admin.update_password")
-        return render_template("admin/verified.jinja", user=user_proxy, form=form, action=action)
-    except:  # pylint: disable=bare-except
-        logger.exception("Could not verify your account.")
-        abort(500)
-
-
-@admin_blueprint.route("/user/updatepassword/", methods=("GET", "POST"))
-@login_required
-def update_password():
-
-    service: srv.UserService = digicubes.user
-    token = digicubes.token
-    form = SetPasswordForm()
-    action = url_for("admin.update_password")
-
-    if form.is_submitted():
-        if form.validate():
-            # Now change the users password
-            service.set_password(token, current_user.id, form.password.data)
-            flash("Password changed successfully")
-            return redirect(url_for("admin.index"))
-
-    return render_template("admin/change_password.jinja", form=form, action=action)
-
-
 @admin_blueprint.route("/uuser/<int:user_id>/", methods=("GET", "POST"))
 @login_required
 def update_user(user_id: int):
