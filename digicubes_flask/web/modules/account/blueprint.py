@@ -71,7 +71,6 @@ def verify(token: str):
         abort(500)
 
 
-
 @account_service.route("/updatepassword", methods=("GET", "POST"))
 @login_required
 def update_password():
