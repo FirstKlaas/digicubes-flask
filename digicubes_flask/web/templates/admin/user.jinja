@@ -4,16 +4,20 @@
 User Details
 {% endblock %}
 
-{% block sub_menu %}
-    <li>
-        <a href="{{url_for('admin.update_user', user_id=user.id)}}">Edit</a>
-    </li>
-    <li>
-        <a href="{{url_for('admin.delete_user', user_id=user.id)}}">Delete</a>
-    </li>
-    <li>
-        <a href="{{url_for('admin.verify_renew', user_id=user.id)}}">Verify</a>
-    </li>
+{% block main_menu %}
+    <li><a href="{{ url_for('account.home') }}">Home</a></li>
+    <li><a href="{{ url_for('admin.users') }}">User</a></li>
+    <li><a href="{{url_for('admin.update_user', user_id=user.id)}}">Edit</a></li>
+    <li><a href="{{url_for('admin.delete_user', user_id=user.id)}}">Delete</a></li>
+    <li><a href="{{url_for('admin.verify_renew', user_id=user.id)}}">Verify</a></li>
+{% endblock %}
+
+{% block mobile_menu %}
+    <li><a href="{{ url_for('account.home') }}">Home</a></li>
+    <li><a href="{{ url_for('admin.users') }}">User</a></li>
+    <li><a href="{{url_for('admin.update_user', user_id=user.id)}}">Edit</a></li>
+    <li><a href="{{url_for('admin.delete_user', user_id=user.id)}}">Delete</a></li>
+    <li><a href="{{url_for('admin.verify_renew', user_id=user.id)}}">Verify</a></li>
 {% endblock %}
 
 {% block main_content %}

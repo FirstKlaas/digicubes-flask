@@ -11,7 +11,7 @@ Update User Account
     <div class="col s12" id="dc_main">
       <form method="POST" action="{{ action }}">
           {{ form.csrf_token }}
-          {{ forms.row_two_columns(form, "login", "password") }}
+          {{ forms.row(form, "login") }}
           {{ forms.row_two_columns(form, "first_name", "last_name") }}
           {{ forms.row(form, "email") }}
           {{ forms.row_two_columns(form, "is_active", "is_verified") }}

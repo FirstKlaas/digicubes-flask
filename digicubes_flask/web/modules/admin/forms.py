@@ -95,12 +95,10 @@ class UserForm(FlaskForm):
         ],
     )
 
-    password = PasswordField("Password", widget=w.materialize_password)
     is_active = BooleanField("Active", widget=w.materialize_checkbox)
     is_verified = BooleanField("Verified", widget=w.materialize_checkbox)
 
     submit = SubmitField("Update", widget=w.materialize_submit)
-
 
 class UserLoginAvailable:
     """

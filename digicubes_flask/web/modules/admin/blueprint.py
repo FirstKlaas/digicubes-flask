@@ -54,6 +54,15 @@ def users():
 def create_user():
     """Create a new user"""
     form = UserForm()
+    
+    # Setting the active state true as the default
+    form.is_active.data = True
+
+    #TODO We have to tabe better care of the verified flag.
+    # If auto_verify is true, then there is no chance of setting
+    # the password. So in this case we need a way to set the initial
+    # password. Maybe as a field of this form.
+
     if form.is_submitted():
         if form.validate({"login": [UserLoginAvailable()]}):
             new_user = proxy.UserProxy()
@@ -64,6 +73,11 @@ def create_user():
             # if current_app.config.get("auto_verify", False):
             #    new_user.is_verified = True
             new_user = digicubes.user.create(digicubes.token, new_user)
+            
+            # TODO: THe newly created user should have at least one role
+            # Most probably the student role. Alternatively we could
+            # improve the form by adding checkboxes for every role.
+
             flash(f"User {new_user.login} successfully created")
             if not new_user.is_verified:
                 # Newly created user is not verified. Now sending him an
