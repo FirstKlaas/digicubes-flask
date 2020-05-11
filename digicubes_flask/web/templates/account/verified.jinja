@@ -4,15 +4,17 @@
 {% block main_content %}
 <div class="section">
     <div class="row">
-        <div class="col s12">
+        <div class="col s12 m8">
             <h2>Congratulation {{ user.first_name }}</h2>
             <p>Your account has been successfully verified. Only one final step to take.
             You have to set a new password. Have a great day.</p>
+            <p>&nbsp</p>
+            <p>
+                <a href="{{ url_for('account.update_password') }}" class="waves-effect waves-light light-blue btn">Set password</a>
+            </p>
         </div>
-    </div>
-    <div class="row">
-        <div class="col s12">
-            <a href="{{ url_for('account.update_password') }}" class="waves-effect waves-light light-blue btn">Set password</a>
+        <div class="col m4 hide-on-small-only">
+              <img src="{{ url_for('static', filename='image/digican-password.png') }}">
         </div>
     </div>
 </div>
