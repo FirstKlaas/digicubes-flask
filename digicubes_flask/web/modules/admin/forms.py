@@ -111,7 +111,6 @@ def create_userform_with_roles(roles: List[proxy.RoleProxy]) -> UserForm:
     class RoleSelectionForm(FlaskForm):
         pass
 
-    
     for role in roles:
         setattr(
             RoleSelectionForm,

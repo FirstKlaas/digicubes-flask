@@ -56,7 +56,7 @@ def create_user():
     """Create a new user"""
     roles = server.role.all(digicubes.token)
     form = create_userform_with_roles(roles)
-    
+
     # Setting the active state true as the default
     form.user.is_active.data = True
 
@@ -83,7 +83,7 @@ def create_user():
             flash(f"User {new_user.login} successfully created")
 
             # Now set the user roles.
-            for role in roles:                
+            for role in roles:
                 if form.role[role.name].data:
                     server.user.add_role(digicubes.token, new_user, role)
 
@@ -104,7 +104,7 @@ def create_user():
             return redirect(url_for("admin.edit_user", user_id=new_user.id))
         else:
             for error in form.user.errors:
-                logger.error('ERROR * '*10)
+                logger.error("ERROR * " * 10)
                 logger.error(error)
 
     # Form not submitted or validation failed.
