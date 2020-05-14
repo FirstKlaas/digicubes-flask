@@ -14,6 +14,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from flask import Flask, redirect, url_for, Response, request, Request, g
+from flask_babel import Babel
 
 import yaml
 from libgravatar import Gravatar
@@ -42,7 +43,7 @@ digicubes: DigicubesAccountManager = accm
 
 mail_cube = MailCube()
 the_account_manager = DigicubesAccountManager()
-
+babel = Babel()
 
 def create_app():
     """
@@ -229,6 +230,7 @@ def create_app():
     the_account_manager.init_app(app)
 
     mail_cube.init_app(app)
+    babel.init_app(app)
 
     # ---------------------------
     # Now register the blueprints
