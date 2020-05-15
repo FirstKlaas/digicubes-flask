@@ -45,6 +45,7 @@ mail_cube = MailCube()
 the_account_manager = DigicubesAccountManager()
 babel = Babel()
 
+
 def create_app():
     """
     Factory function to create the flask server.

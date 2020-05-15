@@ -62,7 +62,7 @@ babel_update:
 	pybabel update -i messages.pot -d digicubes_flask/translations -l de
 
 babel_compile:
-	pybabel compile -d translations
+	pybabel compile -d digicubes_flask/translations
 
 publish: pack
 	twine check ./dist/*	
