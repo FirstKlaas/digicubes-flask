@@ -22,6 +22,7 @@ from .forms import (
     SchoolNameAvailable,
     UserLoginAvailable,
     SetPasswordForm,
+    create_userform_with_roles,
 )
 
 from .rfc import AdminRFC, RfcRequest
@@ -53,32 +54,39 @@ def users():
 @login_required
 def create_user():
     """Create a new user"""
-    form = UserForm()
-    
-    # Setting the active state true as the default
-    form.is_active.data = True
+    roles = server.role.all(digicubes.token)
+    form = create_userform_with_roles(roles)
 
-    #TODO We have to tabe better care of the verified flag.
+    # Setting the active state true as the default
+    form.user.is_active.data = True
+
+    # TODO We have to tabe better care of the verified flag.
     # If auto_verify is true, then there is no chance of setting
     # the password. So in this case we need a way to set the initial
     # password. Maybe as a field of this form.
 
     if form.is_submitted():
-        if form.validate({"login": [UserLoginAvailable()]}):
+        if form.user.validate({"login": [UserLoginAvailable()]}):
             new_user = proxy.UserProxy()
-            form.populate_obj(new_user)
+            form.user.form.populate_obj(new_user)
 
             # When users are created by an admin,
             # he decides, whether the user is verified or not.
             # if current_app.config.get("auto_verify", False):
             #    new_user.is_verified = True
             new_user = digicubes.user.create(digicubes.token, new_user)
-            
-            # TODO: THe newly created user should have at least one role
+
+            # TODO: Te newly created user should have at least one role
             # Most probably the student role. Alternatively we could
             # improve the form by adding checkboxes for every role.
 
             flash(f"User {new_user.login} successfully created")
+
+            # Now set the user roles.
+            for role in roles:
+                if form.role[role.name].data:
+                    server.user.add_role(digicubes.token, new_user, role)
+
             if not new_user.is_verified:
                 # Newly created user is not verified. Now sending him an
                 # email with a verification link.
@@ -94,9 +102,13 @@ def create_user():
                     )
 
             return redirect(url_for("admin.edit_user", user_id=new_user.id))
+        else:
+            for error in form.user.errors:
+                logger.error("ERROR * " * 10)
+                logger.error(error)
 
     # Form not submitted or validation failed.
-    form.submit.label.text = "Create"
+    form.user.submit.label.text = "Create"
     action = url_for("admin.create_user")
     return render_template("admin/create_user.jinja", form=form, action=action)
 

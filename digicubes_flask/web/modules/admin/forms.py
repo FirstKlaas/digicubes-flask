@@ -3,6 +3,7 @@ Some forms to be used with the wtforms package.
 """
 import logging
 from datetime import date
+from typing import List
 
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -15,6 +16,8 @@ from wtforms import (
     HiddenField,
     BooleanField,
     DateField,
+    FieldList,
+    FormField,
 )
 
 from wtforms.validators import ValidationError
@@ -87,7 +90,7 @@ class UserForm(FlaskForm):
     )
 
     login = StringField(
-        "The Account Name",
+        "Login",
         widget=w.materialize_input,
         validators=[
             validators.InputRequired(),
@@ -99,6 +102,26 @@ class UserForm(FlaskForm):
     is_verified = BooleanField("Verified", widget=w.materialize_checkbox)
 
     submit = SubmitField("Update", widget=w.materialize_submit)
+
+
+def create_userform_with_roles(roles: List[proxy.RoleProxy]) -> UserForm:
+    class UserFormWithRoles(FlaskForm):
+        pass
+
+    class RoleSelectionForm(FlaskForm):
+        pass
+
+    for role in roles:
+        setattr(
+            RoleSelectionForm,
+            f"{role.name}",
+            BooleanField(role.name, widget=w.materialize_checkbox),
+        )
+
+    setattr(UserFormWithRoles, "user", FormField(UserForm, label="User"))
+    setattr(UserFormWithRoles, "role", FormField(RoleSelectionForm, label="Roles"))
+    return UserFormWithRoles()
+
 
 class UserLoginAvailable:
     """

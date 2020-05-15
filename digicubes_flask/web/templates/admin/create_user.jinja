@@ -10,18 +10,32 @@ Create new User
 
 {% block main_content %}
 <div class="section">
-  <div class="row">
-    <div class="col s12" id="dc_main">
-      <form method="POST" action="{{ action }}">
-          {{ form.csrf_token }}
-          {{ forms.row(form, "login") }}
-          {{ forms.row_two_columns(form, "first_name", "last_name") }}
-          {{ forms.row(form, "email") }}
-          {{ forms.row_two_columns(form, "is_active", "is_verified") }}
-          {{ forms.submit(form) }}
-      </form>
+  <form method="POST" action="{{ action }}">
+    <div class="row">
+      <div class="col s12"><h3>New Account</h3></div>
     </div>
-  </div>
+        <div class="row">
+      <div class="col s12" id="dc_main">
+          {{ form.csrf_token }}
+          {{ form.user.csrf_token }}
+          {{ form.role.csrf_token }}
+          {{ forms.row(form.user, "login") }}
+          {{ forms.row_two_columns(form.user, "first_name", "last_name") }}
+          {{ forms.row(form.user, "email") }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12"><h3>Roles</h3></div>
+    </div>
+    <div class="row">
+          {% for subfield in form.role %}
+            <div class="col s4 m3 xl2">{{ subfield }}</div>
+          {% endfor %} 
+    </div>
+    <div class="row">
+      <div class="col s12">{{ forms.submit(form.user) }}</div>
+    </div>
+  </form>
 </div>
 {% endblock %}   
 

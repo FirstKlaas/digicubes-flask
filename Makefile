@@ -43,11 +43,26 @@ style:
 badges: deps
 	python lintbadge.py
 
-pack: ci
+pack: ci babel_compile
 	rm -fR dist/
 	#python setup_client.py sdist bdist_wheel
 	python version.py
 	python setup.py sdist bdist_wheel
+
+babel_extract:
+	pybabel extract -F babel.cfg -k lazy_gettext -o messages.pot .
+
+babel_init:
+	pybabel init -i messages.pot -d digicubes_flask/translations -l en
+	pybabel init -i messages.pot -d digicubes_flask/translations -l de
+
+babel_update:
+	#pybabel init -i messages.pot -d digicubes_flask/translations -l en
+	pybabel update -i messages.pot -d digicubes_flask/translations -l en
+	pybabel update -i messages.pot -d digicubes_flask/translations -l de
+
+babel_compile:
+	pybabel compile -d digicubes_flask/translations
 
 publish: pack
 	twine check ./dist/*	
