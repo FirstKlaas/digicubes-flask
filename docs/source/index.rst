@@ -7,6 +7,7 @@ DIGICUBES Client
    services
    proxies
    exceptions
+   configuration
 
 
 

@@ -1,5 +1,5 @@
 Exceptions
 ==========
 
-.. automodule:: digicubes_common.exceptions
+.. automodule:: digicubes_flask.exceptions
 

@@ -64,11 +64,11 @@ def create_app():
         return redirect(url_for("account.login"))
 
     @app.errorhandler(404)
-    def page_not_found(error):
+    def page_not_found(error): #pylint: disable=unused-variable
         return redirect(url_for("account.login"))
 
     @app.template_filter()
-    def gravatar(email: str) -> str:
+    def gravatar(email: str) -> str: #pylint: disable=unused-variable
 
         default = url_for("static", filename="image/digibot_profile_40.png", _external=True)
         if not email:

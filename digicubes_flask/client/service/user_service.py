@@ -23,7 +23,11 @@ logger = logging.getLogger(__name__)
 
 class UserService(AbstractService):
     """
-    All user calls
+    The ``UserService`` offers a set of service calls to manage
+    user accounts. This includes calls to manipulate the user itself,
+    as well as related objects, likes roles or rights.
+
+    :author: FirstKlaas
     """
 
     def all(
@@ -32,11 +36,30 @@ class UserService(AbstractService):
         fields: XFieldList = None,
         offset: Optional[int] = None,
         count: Optional[int] = None,
+        **kwargs,
     ) -> UserList:
         """
-        Gets all users.
+        Get all users in the database.
 
-        Returns a list of UserProxies. ``X-Filter-Fields`` is supported.
+        Returns a list of :class:`digicubes_flask.client.proxy.UserProxy` instances.
+        If ``X-Filter-Fields`` is provided, only attributes are send back that
+        are in the list. If an attribute has no value it will be omitted.
+
+        :Route: ``GET /users/``
+        :param str token: The authentification token
+        :param XFieldList fields: A list of fieldnames that should be send back.
+            If omitted all attributes will be send back. *[Optional]*
+        :offset: Starting with the n-th element in the database. If omitted, the
+            list will start with the first element in the database.
+        :count: Limits the number of returned items. If omitted, it will fallback
+            to the configured maximum number of items. The number of returned
+            items may of course be smaller than count.
+        :kwargs: These named parameters will be added as query parameters
+        :return: The requested Users
+        :rtype: A list of :class:`digicubes_flask.client.proxy.UserProxy` objects.
+        :raises InsufficientRights: If the requesting user has not the permission.
+        :raises TokenExpired: is the token has expired.
+        :raises ServerError: if an unpredicted exception occurred.
         """
         headers = self.create_default_header(token)
         if fields is not None:
@@ -124,6 +147,7 @@ class UserService(AbstractService):
         """
         Get a single user by his login, if existent.
 
+        :Route: ``/user/bylogin/{login}``
         :param str token: The authentification token
         :param str login: The login of the user to be looked up.
         :return: The found user
@@ -159,7 +183,17 @@ class UserService(AbstractService):
 
     def get(self, token, user_id: int, fields: XFieldList = None) -> Optional[UserProxy]:
         """
-        Get a single user
+        Get a single user with the given id.
+
+        :param str token: The authentification token.
+        :param int user_id: The id of the requested user.
+        :param XFieldList fields: The fields of the user, that should be returned.
+        :return: The requested user.
+        :rtype: :class:`digicubes_flask.client.proxy.UserProxy`
+        :raises InsufficientRights: If the requesting user has not the permission.
+        :raises DoesNotExist: if no user exists with the provided login.
+        :raises TokenExpired: is the token has expired.
+        :raises ServerError: if an unpredicted exception occurred.
         """
         user = self.cache.get_user(user_id)
         if user is not None:
@@ -275,12 +309,43 @@ class UserService(AbstractService):
         raise ServerError(f"Unknown error. [{result.status_code}] {result.text}")
 
     def get_verification_token(self, user_id: int) -> str:
+        """
+        Creates a new verification token for the user with the provided id.
+        The verification token is valid for a certain amount of time. How
+        long the token is valid is defined by the server. Check out the
+        documentation to learn more about expirations times and how to
+        configure them.
+
+        :Route: /verify/user/{user_id}
+        :Method: GET
+        :param int id: The user id
+        :return: The newly created token
+        :rtype: str
+        :raises InsufficientRights: If the requesting user has not the permission.
+        :raises TokenExpired: is the token has expired.
+        :raises ServerError: if an unpredicted exception occurred.
+        """
         url = self.url_for(f"/verify/user/{user_id}")
         response = self.requests.get(url)
         data = response.json()
         return data["token"]
 
     def verify_user(self, token: str):
+        """
+        Verifies the user, that is connected to this token. If the token is
+        valid and nor expired, the user, that belongs to this token, will be
+        verified.
+
+        :Route: /verify/user/{token}
+        :Method: PUT
+        :param str token: The verification token returned by ``get_verification_token``
+        :return: The verified user.
+        :rtype: :class:`digicubes_flask.client.proxy.UserProxy`
+        :raises InsufficientRights: If the requesting user has not the permission.
+        :raises DoesNotExist: if the user connected to the token does not exist.
+        :raises TokenExpired: is the token has expired.
+        :raises ServerError: if an unpredicted exception occurred.
+        """
         url = self.url_for(f"/verify/user/{token}")
         response = self.requests.put(url)
         data = response.json()

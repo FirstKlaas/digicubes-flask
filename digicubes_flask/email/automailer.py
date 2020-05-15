@@ -27,9 +27,28 @@ class MailCube:
             raise ex.DigiCubeError("No mailbot in application scope. Not initialized?")
         return mc
 
+    def __get_config_value(self, env_name=None, cfg_name=None, default=None):
+
+        # First chack the environment
+        if env_name:
+            data = os.environ.get(env_name, None)
+            if data:
+                return data
+
+        # Now check the config
+        if cfg_name and self.config:
+            data = self.config.get(cfg_name, None)
+            if data:
+                return data
+
+        # return the default
+        return default
+
     @property
     def smtp_host(self):
-        return os.environ.get("DC_SMTP_HOST", None)
+        return self.__get_config_value(
+            "DC_SMTP_HOST", "host", None
+        )
 
     @property
     def is_enabled(self):
@@ -41,23 +60,28 @@ class MailCube:
 
     @property
     def smtp_port(self):
-        return os.environ.get("DC_SMTP_PORT", 465)
+        return self.__get_config_value(
+            "DC_SMTP_PORT", "port", 465)
 
     @property
     def smtp_username(self):
-        return os.environ.get("DC_SMTP_USERNAME", None)
+        return self.__get_config_value(
+            "DC_SMTP_USERNAME", "username", None)
 
     @property
     def smtp_password(self):
-        return os.environ.get("DC_SMTP_PASSWORD", None)
+        return self.__get_config_value(
+            "DC_SMTP_PASSWORD", "password", None)
 
     @property
     def smtp_from_email_addr(self):
-        return os.environ.get("DC_FROM_EMAIL_ADDR", None)
+        return self.__get_config_value(
+            "DC_SMTP_FROM_EMAIL_ADDR", "from_email_addr", None)
 
     @property
     def smtp_from_display_name(self):
-        return os.environ.get("DC_FROM_EMAIL_ADDR", None)
+        return self.__get_config_value(
+            "DC_SMTP_DISPLAY_NAME", "display_name", None)
 
     @property
     def number_of_workers(self):
@@ -72,6 +96,7 @@ class MailCube:
         self.queue = Queue()
         self.workers = []
         self.enabled = False
+        self.config = None
 
         self.jinja = Environment(
             loader=PackageLoader("digicubes_flask.email", "templates"),
@@ -87,8 +112,6 @@ class MailCube:
             raise ex.ConfigurationError("Secret not configured")
 
         self.config = app.config.get("mail_cube", None)
-        if self.config is None:
-            raise ex.DigiCubeError("Missing mail_cube configuration")
 
         for _ in range(self.number_of_workers):
             w = threading.Thread(target=self.__worker__, daemon=True)
@@ -120,8 +143,6 @@ class MailCube:
                 html_text = template.render(
                     user=recipient, verification_address=verification_address
                 )
-
-                logger.info("Sending masg: %s", html_text)
 
                 with smtplib.SMTP_SSL(self.smtp_host, self.smtp_port) as mailserver:
                     mailserver.login(self.smtp_username, self.smtp_password)
