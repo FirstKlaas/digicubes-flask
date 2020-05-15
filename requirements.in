@@ -12,5 +12,6 @@ gunicorn
 libgravatar
 pyaml
 email-validator
-
-digicubes-pyclient
+cattrs
+attrs
+redis

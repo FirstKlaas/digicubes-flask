@@ -20,10 +20,10 @@ import yaml
 from libgravatar import Gravatar
 from markdown import markdown
 
-from digicubes_common.exceptions import DigiCubeError, TokenExpired
-from digicubes_client.client.proxy import RightProxy, RoleProxy
+from digicubes_flask.client.proxy import RightProxy, RoleProxy
 from digicubes_flask import account_manager as accm, current_user
 from digicubes_flask.email import MailCube
+from digicubes_flask.exceptions import DigiCubeError, TokenExpired
 from digicubes_flask.web.modules import (
     account_blueprint,
     admin_blueprint,

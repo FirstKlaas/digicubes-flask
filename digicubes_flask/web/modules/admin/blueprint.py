@@ -8,12 +8,12 @@ import logging
 
 from flask import Blueprint, render_template, abort, request, url_for, redirect, flash
 
-from digicubes_common import exceptions as ex
-from digicubes_client.client import proxy, service as srv
+from digicubes_flask.client import proxy, service as srv
 
 from digicubes_flask import login_required, digicubes, current_user, CurrentUser
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 from digicubes_flask.email import mail_cube
+from digicubes_flask import exceptions as ex
 
 from .forms import (
     SchoolForm,

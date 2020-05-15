@@ -7,7 +7,7 @@ import os
 from flask import abort, current_app, redirect, Flask, url_for, request, g
 from flask_wtf.csrf import CSRFError
 
-from digicubes_client.client import (
+from digicubes_flask.client import (
     DigiCubeClient,
     RoleService,
     UserService,
@@ -15,8 +15,7 @@ from digicubes_client.client import (
     SchoolService,
 )
 
-from digicubes_common.structures import BearerTokenData
-
+from digicubes_flask.structures import BearerTokenData
 from digicubes_flask import account_manager, current_user, get_version_string
 
 logger = logging.getLogger(__name__)

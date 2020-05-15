@@ -4,9 +4,7 @@ The Admin Blueprint
 import logging
 from flask import Blueprint, render_template, abort, redirect, url_for, flash
 
-from digicubes_common.exceptions import DigiCubeError
-from digicubes_common.structures import BearerTokenData
-from digicubes_client.client import proxy, service as srv
+from digicubes_flask.client import proxy, service as srv
 from digicubes_flask import (
     login_required,
     account_manager,
@@ -15,6 +13,8 @@ from digicubes_flask import (
     digicubes,
     CurrentUser,
 )
+from digicubes_flask.structures import BearerTokenData
+from digicubes_flask.exceptions import DigiCubeError
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 
 

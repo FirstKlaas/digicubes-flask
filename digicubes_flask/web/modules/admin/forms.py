@@ -22,9 +22,9 @@ from wtforms import (
 
 from wtforms.validators import ValidationError
 
-from digicubes_common import exceptions as ex
-from digicubes_client.client import proxy
+from digicubes_flask.client import proxy
 
+from digicubes_flask import exceptions as ex
 import digicubes_flask.web.wtforms_widgets as w
 from digicubes_flask import digicubes
 

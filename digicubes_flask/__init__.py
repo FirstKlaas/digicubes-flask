@@ -12,13 +12,12 @@ from flask import abort, current_app, request, Response, redirect, Flask, url_fo
 from flask_wtf.csrf import CSRFError
 from werkzeug.local import LocalProxy
 
-from digicubes_client.client import DigiCubeClient, service
 
-from digicubes_common.structures import BearerTokenData
-from digicubes_common.exceptions import DigiCubeError
-from digicubes_common.entities import RightEntity
+from digicubes_flask.client import DigiCubeClient, service
 
 from .email.automailer import MailCube
+from .exceptions import DigiCubeError
+from .structures import BearerTokenData
 
 logger = logging.getLogger(__name__)
 
@@ -187,37 +186,7 @@ class needs_right:
     """
 
     def __init__(self, rights, exclude_root=False):
-        self._names = self._normalize_rights(rights)
-        # Always add the root right as this is the joker
-        # and doesn't have to be claimed explicitely as
-        # the root can do anything.
-        if not exclude_root:
-            self._names.append(RightEntity.ROOT_RIGHT.name)
-
-    def _normalize_right(self, right):
-        if isinstance(right, str):
-            return right
-
-        if isinstance(right, RightEntity):
-            return str(right.name)
-
-        raise ValueError(
-            "Provided right has wrong class. Has to be an instance of string or RIghtEntity"
-        )
-
-    def _check_rights(self):
-        user_rights = [str(r) for r in current_user.rights]
-
-        for right in user_rights:
-            if right in self._names:
-                return True
-        return False
-
-    def _normalize_rights(self, names):
-        if isinstance(names, list):
-            return [self._normalize_right(right) for right in names]
-
-        return [self._normalize_right(names)]
+        raise Exception("Currently not implemented.")
 
     def __call__(self, f):
         # update_wrapper(self, f)

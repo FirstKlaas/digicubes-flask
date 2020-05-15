@@ -2,12 +2,9 @@
 The Admin Blueprint
 """
 import logging
-from flask import Blueprint, render_template, abort, current_app as app, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for
 
-from digicubes_client.client import UserProxy
-from digicubes_common.exceptions import DigiCubeError
-from digicubes_common.structures import BearerTokenData
-from digicubes_flask import login_required, account_manager
+from digicubes_flask import login_required
 
 headmaster_service = Blueprint("headmaster", __name__)
 

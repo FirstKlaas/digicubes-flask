@@ -13,8 +13,8 @@ from flask import current_app, url_for
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
-from digicubes_common import exceptions as ex
-from digicubes_client.client import proxy
+from digicubes_flask.client import proxy
+from digicubes_flask import exceptions as ex
 
 logger = logging.getLogger(__name__)
 

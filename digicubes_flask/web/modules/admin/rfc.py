@@ -2,7 +2,7 @@ from typing import Tuple, Dict, Any, Text, Union
 
 import attr
 
-from digicubes_client.client.proxy import UserProxy, SchoolProxy, RoleProxy
+from digicubes_flask.client.proxy import UserProxy, SchoolProxy, RoleProxy
 from digicubes_flask import digicubes, current_user, CurrentUser
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 
