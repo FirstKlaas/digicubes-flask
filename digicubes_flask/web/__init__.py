@@ -64,11 +64,11 @@ def create_app():
         return redirect(url_for("account.login"))
 
     @app.errorhandler(404)
-    def page_not_found(error): #pylint: disable=unused-variable
+    def page_not_found(error):  # pylint: disable=unused-variable
         return redirect(url_for("account.login"))
 
     @app.template_filter()
-    def gravatar(email: str) -> str: #pylint: disable=unused-variable
+    def gravatar(email: str) -> str:  # pylint: disable=unused-variable
 
         default = url_for("static", filename="image/digibot_profile_40.png", _external=True)
         if not email:
@@ -154,9 +154,10 @@ def create_app():
         g.digitoken_received = False
 
         if token is not None:
-            # So we have a token. Not lets refresh it
+            # So we have a token. Now lets refresh it
             try:
                 data = accm.refresh_token(token)
+
                 # current_user.token = token
                 current_user.set_data(data)
                 g.digitoken_received = True
@@ -213,18 +214,6 @@ def create_app():
     # Loading the logging configuration. If no logging configuration
     # is found, it will fall back to logging.basicConfiguration
     logging.basicConfig(level=logging.DEBUG)
-    """
-    try:
-        with open_text("digicubes_flask.cfg", "logging.yaml") as f:
-            settings = yaml.safe_load(f)
-            try:
-                dictConfig(settings)
-                logger.info("Configured logging")
-            except ValueError:
-                logging.basicConfig(level=logging.DEBUG)
-                logger.fatal("Could not configure logging.", exc_info=True)
-    except:
-    """
 
     # Initalizes the account manager extension, wich is responsible for the the
     # login and logout procedure.

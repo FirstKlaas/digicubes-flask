@@ -13,7 +13,6 @@ from digicubes_flask import (
     digicubes,
     CurrentUser,
 )
-from digicubes_flask.structures import BearerTokenData
 from digicubes_flask.exceptions import DigiCubeError
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 
@@ -147,11 +146,6 @@ def register():
     if form.validate_on_submit():
 
         try:
-            # Need root rights for this
-            # FIXME: don't put root credentials in code
-            bearer_token: BearerTokenData = account_manager.generate_token_for("root", "digicubes")
-            token = bearer_token.bearer_token
-
             new_user = proxy.UserProxy()
             form.populate_obj(new_user)
             new_user.is_active = True
@@ -160,15 +154,18 @@ def register():
             new_user.is_verified = account_manager.auto_verify
 
             # Create a new user in behalf of root
-            new_user = account_manager.user.create(token, new_user)
-
+            result = account_manager.user.register(new_user)
+            print(result)
+            new_user, btd = result
+            current_user.set_data(btd)
             # Also setting the password in behalf of root
-            account_manager.user.set_password(token, new_user.id, form.password.data)
+            account_manager.user.set_password(current_user.token, new_user.id, form.password.data)
 
             # If the user has been auto verified, we can directly proceed to the login page.
             # Otherwise we have to show an information to check his email inbox
             # TODO: Pay respect to both situations.
-            return account_manager.successful_logged_in()
+            account_manager.logout()
+            return redirect(url_for("account.index"))
 
         except DigiCubeError as e:
             logger.exception("Could not create new account.", exc_info=e)

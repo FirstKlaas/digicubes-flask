@@ -37,7 +37,7 @@ School
             {% if teacher %}
                 {{ teacher }}
             {% else %}
-                No Teacher
+                <a href="{{ url_for('admin.create_school_course', school_id=school.id) }}" class="waves-effect waves-light light-blue btn-large">Add teacher</a>
             {% endif %}
         </div>
     </div>

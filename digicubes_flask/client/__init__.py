@@ -10,10 +10,11 @@ import requests
 
 from digicubes_flask import structures as st
 from digicubes_flask.exceptions import TokenExpired, ServerError, DoesNotExist
-#from digicubes_flask.configuration import url_for, Route
+
+# from digicubes_flask.configuration import url_for, Route
 
 from .proxy import UserProxy
-from .service import *
+from .service import RoleService, UserService, SchoolService, RightService
 from .cache import create_cache
 
 logger = logging.getLogger(__name__)
@@ -50,10 +51,10 @@ class DigiCubeClient:
         self.protocol = protocol
         self.hostname = hostname
         self.port = port
-        self.user_service = UserService(self)
-        self.role_service = RoleService(self)
-        self.right_service = RightService(self)
-        self.school_service = SchoolService(self)
+        self.user_service: UserService = UserService(self)
+        self.role_service: RoleService = RoleService(self)
+        self.right_service: RightService = RightService(self)
+        self.school_service: SchoolService = SchoolService(self)
 
         self.requests = requests
 

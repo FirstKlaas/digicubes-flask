@@ -1,7 +1,7 @@
 """
 A base class for all service endpoint.
 """
-from typing import Any, Optional, Dict, Text
+from typing import Optional, Dict, Text
 
 from digicubes_flask import exceptions as ex
 
@@ -18,7 +18,7 @@ class AbstractService:
 
     __slots__ = ["client"]
 
-    def __init__(self, client: Any) -> None:
+    def __init__(self, client) -> None:
         self.client = client
 
     @property

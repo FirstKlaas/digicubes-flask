@@ -55,6 +55,19 @@ class SetPasswordForm(FlaskForm):
     submit = SubmitField("Update", widget=w.materialize_submit)
 
 
+class EmailForm(FlaskForm):
+    email = StringField(
+        "Email",
+        widget=w.materialize_input,
+        validators=[
+            validators.Email(),
+            validators.InputRequired(),
+            validators.Length(max=60, message="Max size exceeded"),
+        ],
+    )
+
+    submit = SubmitField("Update", widget=w.materialize_submit)
+
 class UserForm(FlaskForm):
     """
     The user form that is used by the admin to create or update

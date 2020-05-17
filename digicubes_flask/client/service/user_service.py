@@ -8,9 +8,11 @@ from digicubes_flask.exceptions import (
     ConstraintViolation,
     ServerError,
     DoesNotExist,
-    InsufficientRights,
     TokenExpired,
+    DigiCubeError,
 )
+
+from digicubes_flask.structures import BearerTokenData
 
 from .abstract_service import AbstractService
 from ..proxy import UserProxy, RoleProxy
@@ -181,6 +183,69 @@ class UserService(AbstractService):
         except DoesNotExist:
             return None
 
+
+    def filter(self, token, attribute, cmp=None, val=None, columns=None, order_by=None, offset=None, limit=None, count=False, first=False):
+
+        params = {}
+        specials = []
+
+        if count:
+            specials.append("count")
+
+        if first:
+            specials.append("first")
+
+        if len(specials) > 0:
+            params["s"] = specials.join(",")
+
+        if val:
+            params["v"] = val
+
+        if cmp:
+            params["f"] = cmp
+
+        if order_by:
+            params["o"] = order_by.split(",")
+
+        if columns:
+            params["c"] = columns.split(",")
+
+        response = self.requests.get(
+            self.url_for(f"/users/filter/{attribute}/"),
+            headers=self.create_default_header(token),
+            params=params
+        )
+
+        self.check_response_status(response, expected_status=200)
+        return [UserProxy.structure(user) for user in response.json()]
+
+
+    def get_by_email(self, token: str, email: str) -> Optional[UserProxy]:
+        """
+        Get a single user by his email, if existent.
+
+        :Route: ``/user/byemail/{email}``
+        :param str token: The authentification token
+        :param str email: The email of the user to be looked up.
+        :return: The found user
+        :rtype: UserProxy
+        :raises InsufficientRights: If the requesting user has not the permission.
+        :raises DoesNotExist: if no user exists with the provided login.
+        :raises TokenExpired: is the token has expired.
+        :raises ServerError: if an unpredicted exception occurred.
+        """
+        response = self.requests.get(
+            self.url_for("/users/filter/email/"),
+            headers=self.create_default_header(token),
+            params={
+                "v" : email
+            }
+        )
+        self.check_response_status(response, expected_status=200)
+        users = [UserProxy.structure(user) for user in response.json()]
+        # TODO: len > 1 ?
+        return users[0] if len(users) > 0 else None
+
     def get(self, token, user_id: int, fields: XFieldList = None) -> Optional[UserProxy]:
         """
         Get a single user with the given id.
@@ -253,6 +318,42 @@ class UserService(AbstractService):
 
         if result.status_code != 200:
             raise ServerError(f"Wrong status. Expected 200. Got {result.status_code}")
+
+    def register(self, user: UserProxy) -> UserProxy:
+        """
+        Registers a new user.
+
+        If the user cannot register, because the login or the the ameil are already in use,
+        a `ConstraintViolation` exception is raised.
+
+        The student role is added automaticall to the new user.
+
+        :param UserProxy user: The userdate for the new user.
+        """
+        data = user.unstructure()
+        url = self.url_for("/user/register/")
+        result = self.requests.post(url, json=data)
+
+        # Status 201: Ressource created
+        if result.status_code == 201:
+            response_data = result.json()
+            user = UserProxy.structure(response_data["user"])
+            bearer_token_data: BearerTokenData = BearerTokenData.structure(
+                response_data["bearer_token_data"]
+            )
+
+            # Not get the student role
+            student_role = self.client.role_service.get_by_name_or_none(bearer_token_data.bearer_token, "student")
+            if student_role:
+                print(user)
+                print(student_role)
+                self.add_role(bearer_token_data.bearer_token, user, student_role)
+            return (
+                user,
+                bearer_token_data,
+            )
+
+        raise DigiCubeError(f"Something went wrong. Status {result.status_code}")
 
     def create(self, token: str, user: UserProxy, fields: XFieldList = None) -> UserProxy:
         """
@@ -361,7 +462,8 @@ class UserService(AbstractService):
         response = self.requests.put(
             self.url_for(f"/user/{user.id}"),
             json=user.unstructure(),
-            headers=self.create_default_header(token))
+            headers=self.create_default_header(token),
+        )
 
         if response.status_code == 404:
             raise DoesNotExist(response.text)

@@ -87,6 +87,10 @@ class RoleService(AbstractService):
 
         DoesNotExist exception is raised, if the role does
         not exist.
+
+        :param str name: The name of the role.
+        :return: The role
+        :rtype: :class:`digicubes_flask.client.proxy.RoleProxy`
         """
         headers = self.create_default_header(token)
         url = self.url_for(f"/role/byname/{name}")

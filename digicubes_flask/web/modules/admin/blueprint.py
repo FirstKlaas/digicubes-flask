@@ -22,6 +22,7 @@ from .forms import (
     SchoolNameAvailable,
     UserLoginAvailable,
     SetPasswordForm,
+    EmailForm,
     create_userform_with_roles,
 )
 
@@ -32,8 +33,6 @@ admin_blueprint = Blueprint("admin", __name__, template_folder="templates")
 logger = logging.getLogger(__name__)
 
 server: DigicubesAccountManager = digicubes
-user: CurrentUser = current_user
-
 
 @admin_blueprint.route("/")
 @login_required
@@ -102,10 +101,6 @@ def create_user():
                     )
 
             return redirect(url_for("admin.edit_user", user_id=new_user.id))
-        else:
-            for error in form.user.errors:
-                logger.error("ERROR * " * 10)
-                logger.error(error)
 
     # Form not submitted or validation failed.
     form.user.submit.label.text = "Create"
@@ -411,6 +406,36 @@ def create_school_course(school_id: int):
 def create_course_unit(school_id: int):
     # TODO: Nothing implemented
     pass
+
+
+@admin_blueprint.route("/school/<int:school_id>/headmaster/", methods=("GET", "POST"))
+@login_required
+def add_school_headmaster():
+    """
+    Get or add an headmaster to the school with the id `school_id`. If no such school
+    exists, an 404 status code is send back. 
+
+    :Methods:
+
+        - **GET:** Returns all headmasters, associated with this school ordered in
+          lexical ascending order by their last name, followed by the first name.
+          There is no pagination support. The endpoint displays always all
+          headmaster.
+    """
+    user: CurrentUser = current_user
+    token: str = user.token
+    school_service: srv.SchoolService = digicubes.school
+    user_service: srv.UserService = digicubes.user
+
+    school = school_service.get(token)
+    form = EmailForm()
+
+    if form.is_submitted():
+        if form.validate():
+            email = form.email.data
+            # Now check, if a user with this
+            # Emailadress already is registered
+
 
 
 @admin_blueprint.route("/rfc/", methods=("GET", "POST", "PUT"))

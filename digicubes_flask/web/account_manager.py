@@ -174,9 +174,9 @@ class DigicubesAccountManager:
         """
         data: BearerTokenData = self._client.login(login, password)
         current_user.set_data(data)
-        logger.debug("Requested login data for user %s succesfully", login)
-        logger.debug("data is: %r", data)
-        logger.debug("Current token is: %s", current_user.token)
+        # logger.debug("Requested login data for user %s succesfully", login)
+        # logger.debug("data is: %r", data)
+        # logger.debug("Current token is: %s", current_user.token)
         return data
 
     def generate_token_for(self, login: str, password: str) -> str:

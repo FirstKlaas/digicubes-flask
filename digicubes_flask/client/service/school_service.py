@@ -58,8 +58,7 @@ class SchoolService(AbstractService):
         Method: GET
         """
         response = self.requests.get(
-            self.url_for(f"/school/byname/{name}"),
-            headers=self.create_default_header(token)
+            self.url_for(f"/school/byname/{name}"), headers=self.create_default_header(token)
         )
         self.check_response_status(response, expected_status=200)
         return SchoolProxy.structure(response.json())
@@ -136,8 +135,7 @@ class SchoolService(AbstractService):
         Get a list of courses, associated with the provided school.
         """
         response = self.requests.get(
-            self.url_for(f"/school/{school.id}/courses/"),
-            headers=self.create_default_header(token)
+            self.url_for(f"/school/{school.id}/courses/"), headers=self.create_default_header(token)
         )
         self.check_response_status(response, expected_status=200)
         return [CourseProxy.structure(course) for course in response.json()]

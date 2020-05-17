@@ -46,9 +46,7 @@ class MailCube:
 
     @property
     def smtp_host(self):
-        return self.__get_config_value(
-            "DC_SMTP_HOST", "host", None
-        )
+        return self.__get_config_value("DC_SMTP_HOST", "host", None)
 
     @property
     def is_enabled(self):
@@ -60,28 +58,23 @@ class MailCube:
 
     @property
     def smtp_port(self):
-        return self.__get_config_value(
-            "DC_SMTP_PORT", "port", 465)
+        return self.__get_config_value("DC_SMTP_PORT", "port", 465)
 
     @property
     def smtp_username(self):
-        return self.__get_config_value(
-            "DC_SMTP_USERNAME", "username", None)
+        return self.__get_config_value("DC_SMTP_USERNAME", "username", None)
 
     @property
     def smtp_password(self):
-        return self.__get_config_value(
-            "DC_SMTP_PASSWORD", "password", None)
+        return self.__get_config_value("DC_SMTP_PASSWORD", "password", None)
 
     @property
     def smtp_from_email_addr(self):
-        return self.__get_config_value(
-            "DC_SMTP_FROM_EMAIL_ADDR", "from_email_addr", None)
+        return self.__get_config_value("DC_SMTP_FROM_EMAIL_ADDR", "from_email_addr", None)
 
     @property
     def smtp_from_display_name(self):
-        return self.__get_config_value(
-            "DC_SMTP_DISPLAY_NAME", "display_name", None)
+        return self.__get_config_value("DC_SMTP_DISPLAY_NAME", "display_name", None)
 
     @property
     def number_of_workers(self):

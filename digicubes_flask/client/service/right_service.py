@@ -117,7 +117,7 @@ class RightService(AbstractService):
         """
         response = self.requests.delete(
             self.url_for(f"/right/{right.id}/role/{role.id}"),
-            headers=self.create_default_header(token)
+            headers=self.create_default_header(token),
         )
 
         if response.status_code == 200:
@@ -139,8 +139,7 @@ class RightService(AbstractService):
         :return bool: True, if the operation was successful, False else.
         """
         response = self.requests.delete(
-            self.url_for(f"/right/{right.id}/roles/"),
-            headers=self.create_default_header(token)
+            self.url_for(f"/right/{right.id}/roles/"), headers=self.create_default_header(token)
         )
 
         if response.status_code == 200:

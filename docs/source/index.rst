@@ -8,6 +8,7 @@ DIGICUBES Client
    proxies
    exceptions
    configuration
+   admin_blueprint
 
 
 
