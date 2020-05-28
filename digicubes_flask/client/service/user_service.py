@@ -16,6 +16,7 @@ from digicubes_flask.structures import BearerTokenData
 
 from .abstract_service import AbstractService
 from ..proxy import UserProxy, RoleProxy
+from .filter import FilterFunction, Query
 
 UserList = List[UserProxy]
 XFieldList = Optional[List[str]]
@@ -184,36 +185,13 @@ class UserService(AbstractService):
             return None
 
 
-    def filter(self, token, attribute, cmp=None, val=None, columns=None, order_by=None, offset=None, limit=None, count=False, first=False):
+    def filter(self, token, query: Query):
 
-        params = {}
-        specials = []
-
-        if count:
-            specials.append("count")
-
-        if first:
-            specials.append("first")
-
-        if len(specials) > 0:
-            params["s"] = specials.join(",")
-
-        if val:
-            params["v"] = val
-
-        if cmp:
-            params["f"] = cmp
-
-        if order_by:
-            params["o"] = order_by.split(",")
-
-        if columns:
-            params["c"] = columns.split(",")
 
         response = self.requests.get(
-            self.url_for(f"/users/filter/{attribute}/"),
+            self.url_for(f"/users/filter/"),
             headers=self.create_default_header(token),
-            params=params
+            params=query.build
         )
 
         self.check_response_status(response, expected_status=200)

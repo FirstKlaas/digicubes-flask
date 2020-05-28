@@ -71,7 +71,7 @@ class Query:
         self._filter_elems.append((attribute, filter_function, value))
         return self
 
-    def build_query(self) -> Dict[str, Any]:
+    def build(self) -> Dict[str, Any]:
         result = {}
         if len(self._specials) > 0:
             result["s"] = ",".join(self._specials)
@@ -91,5 +91,5 @@ class Query:
 
         return result
 
-    def __dict__(self):
+    def _asdict(self):
         return self.build_query()
