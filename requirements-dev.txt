@@ -8,7 +8,7 @@ alabaster==0.7.12         # via sphinx
 appdirs==1.4.4            # via black, virtualenv
 astroid==2.4.2            # via pylint
 asynctest==0.13.0         # via -r requirements-dev.in
-attrs==19.3.0             # via -r requirements.txt, black, cattrs, pytest
+attrs==20.1.0             # via -r requirements.txt, black, cattrs, pytest
 babel==2.8.0              # via -r requirements.txt, flask-babel, sphinx
 bandit==1.6.2             # via -r requirements-dev.in
 black==19.10b0 ; python_version >= "3.6"  # via -r requirements-dev.in
@@ -41,7 +41,7 @@ gunicorn==20.0.4          # via -r requirements.txt
 idna==2.10                # via -r requirements.txt, email-validator, requests
 imagesize==1.2.0          # via sphinx
 iniconfig==1.0.1          # via pytest
-isort==4.3.21             # via flake8-isort, pylint
+isort==5.4.2              # via flake8-isort, pylint
 itsdangerous==1.1.0       # via -r requirements.txt, flask, flask-wtf
 jeepney==0.4.3            # via keyring, secretstorage
 jinja2==2.11.2            # via -r requirements.txt, flask, flask-babel, pybadges, sphinx
@@ -70,7 +70,7 @@ pycparser==2.20           # via cffi
 pyflakes==2.2.0           # via flake8
 pygments==2.6.1           # via -r requirements-dev.in, doc8, readme-renderer, sphinx
 pyjwt==1.7.1              # via -r requirements.txt
-pylint==2.5.3             # via -r requirements-dev.in
+pylint==2.6.0             # via -r requirements-dev.in
 pyparsing==2.4.7          # via packaging
 pytest==6.0.1             # via -r requirements-dev.in
 python-dotenv==0.14.0     # via -r requirements.txt

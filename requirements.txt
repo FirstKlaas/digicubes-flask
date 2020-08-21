@@ -4,7 +4,7 @@
 #
 #    make up
 #
-attrs==19.3.0             # via -r requirements.in, cattrs
+attrs==20.1.0             # via -r requirements.in, cattrs
 babel==2.8.0              # via flask-babel
 cattrs==1.0.0             # via -r requirements.in
 certifi==2020.6.20        # via requests
