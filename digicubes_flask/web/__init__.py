@@ -46,7 +46,7 @@ the_account_manager = DigicubesAccountManager()
 babel = Babel()
 
 
-def create_app():
+def create_app(cfg_file_name=None):
     """
     Factory function to create the flask server.
     Flask will automatically detect the method
@@ -187,8 +187,8 @@ def create_app():
             match = pattern.findall(value)  # to find all env variables in line
             if match:
                 full_value = value
-                for g in match:
-                    full_value = full_value.replace(f"${{{g}}}", os.environ.get(g, g))
+                for ding in match:
+                    full_value = full_value.replace(f"${{{ding}}}", os.environ.get(ding, ding))
                 return full_value
             return value
 
