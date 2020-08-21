@@ -184,19 +184,16 @@ class UserService(AbstractService):
         except DoesNotExist:
             return None
 
-
     def filter(self, token, query: Query):
-
 
         response = self.requests.get(
             self.url_for(f"/users/filter/"),
             headers=self.create_default_header(token),
-            params=query.build
+            params=query.build,
         )
 
         self.check_response_status(response, expected_status=200)
         return [UserProxy.structure(user) for user in response.json()]
-
 
     def get_by_email(self, token: str, email: str) -> Optional[UserProxy]:
         """
@@ -215,9 +212,7 @@ class UserService(AbstractService):
         response = self.requests.get(
             self.url_for("/users/filter/email/"),
             headers=self.create_default_header(token),
-            params={
-                "v" : email
-            }
+            params={"v": email},
         )
         self.check_response_status(response, expected_status=200)
         users = [UserProxy.structure(user) for user in response.json()]
@@ -321,7 +316,9 @@ class UserService(AbstractService):
             )
 
             # Not get the student role
-            student_role = self.client.role_service.get_by_name_or_none(bearer_token_data.bearer_token, "student")
+            student_role = self.client.role_service.get_by_name_or_none(
+                bearer_token_data.bearer_token, "student"
+            )
             if student_role:
                 print(user)
                 print(student_role)

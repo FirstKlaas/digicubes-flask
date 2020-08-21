@@ -28,7 +28,7 @@ checkdocs:
 docs: checkdocs
 	sphinx-build -E -b html docs/source docs/build
 
-ci:	check nose
+ci:	style check nose
 	#pylint --errors-only $(checkfiles)
 
 nose: deps
@@ -72,3 +72,10 @@ run: export FLASK_ENV=development
 run: export FLASK_APP=digicubes_flask.web
 run:
 	flask run
+
+release:
+	@python version.py
+
+docker-build: publish
+	docker build -t digicubes-web .
+

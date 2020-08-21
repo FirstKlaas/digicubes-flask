@@ -68,6 +68,7 @@ class EmailForm(FlaskForm):
 
     submit = SubmitField("Update", widget=w.materialize_submit)
 
+
 class UserForm(FlaskForm):
     """
     The user form that is used by the admin to create or update

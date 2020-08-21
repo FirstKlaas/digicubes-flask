@@ -38,14 +38,12 @@ class FilterFunction(IntEnum):
 
 
 class Query:
-
     def __init__(self):
         self._filter_elems = []
         self._specials = []
         self._columns = []
         self._page = None
         self._order_by = []
-
 
     def order_by(self, *attributes):
         self._order_by = attributes

@@ -34,6 +34,7 @@ logger = logging.getLogger(__name__)
 
 server: DigicubesAccountManager = digicubes
 
+
 @admin_blueprint.route("/")
 @login_required
 def index():
@@ -435,7 +436,6 @@ def add_school_headmaster():
             email = form.email.data
             # Now check, if a user with this
             # Emailadress already is registered
-
 
 
 @admin_blueprint.route("/rfc/", methods=("GET", "POST", "PUT"))
