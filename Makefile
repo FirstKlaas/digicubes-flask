@@ -43,7 +43,7 @@ style:
 badges: deps
 	python lintbadge.py
 
-pack: ci babel_compile
+pack: babel_compile
 	rm -fR dist/
 	#python setup_client.py sdist bdist_wheel
 	python version.py

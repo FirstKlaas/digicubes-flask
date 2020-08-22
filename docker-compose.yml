@@ -17,8 +17,8 @@ services:
         - "5000:5000"
     environment: 
         DC_API_SERVER_PROTOCOL: http
-        DC_API_SERVER_HOST: nebuhrhood
-        DC_API_SERVER_PORT: 3000
+        DC_API_SERVER_HOST: digicubes-rest
+        DC_API_SERVER_PORT: 3548
 
     depends_on:
         - digicubes-rest
