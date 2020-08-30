@@ -2,6 +2,13 @@ version: "3.3"
 services:
   dcrest:
     image: "firstklaas/digicubes-rest:latest"
+    deploy:
+        replicas: 1
+        restart_policy: 
+            condition: on-failure
+            delay: 5s
+            max_attempts: 3
+            window: 120s
     ports:
         - "3548:3548"
     container_name: digicubes_rest
@@ -15,8 +22,16 @@ services:
   digicubes-web:
     container_name: digicubes_web
     image: "firstklaas/digicubes-web:latest"
+    deploy:
+        replicas: 1
+        restart_policy: 
+            condition: on-failure
+            delay: 5s
+            max_attempts: 3
+            window: 120s
+
     ports:
-        - "5555:5000"
+        - "5000:5000"
     environment: 
         DC_API_SERVER_PROTOCOL: http
         DC_API_SERVER_HOST: dcrest
