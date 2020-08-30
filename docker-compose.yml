@@ -1,7 +1,9 @@
 version: "3.3"
 services:
-  digicubes-rest:
+  dcrest:
     image: "firstklaas/digicubes-rest:latest"
+    ports:
+        - "3548:3548"
     container_name: digicubes_rest
     environment:
         DIGICUBES_DATABASE_URL: sqlite://data/digicubes.db
@@ -14,14 +16,14 @@ services:
     container_name: digicubes_web
     image: "firstklaas/digicubes-web:latest"
     ports:
-        - "5000:5000"
+        - "5555:5000"
     environment: 
         DC_API_SERVER_PROTOCOL: http
-        DC_API_SERVER_HOST: digicubes-rest
+        DC_API_SERVER_HOST: dcrest
         DC_API_SERVER_PORT: 3548
 
     depends_on:
-        - digicubes-rest
+        - dcrest
     restart: always     
 
 volumes: 

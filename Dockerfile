@@ -11,6 +11,7 @@ RUN apt-get update \
 && apt-get clean
 
 RUN mkdir -p data
+RUN mkdir -p logs
 
 RUN pip install --no-cache-dir wheel
 RUN pip install --upgrade pip
