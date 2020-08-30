@@ -381,7 +381,7 @@ def create_school_course(school_id: int):
     # create the new course.
     if form.validate_on_submit():
 
-        new_course = proxy.CourseProxy(created_by_id=user.id)
+        new_course = proxy.CourseProxy(created_by_id=current_user.id)
         form.populate_obj(new_course)
 
         # Create the course.
