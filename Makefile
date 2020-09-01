@@ -69,6 +69,7 @@ publish: pack
 	twine upload ./dist/*
 
 run: export FLASK_ENV=development
+run: export DC_API_SERVER_PORT=3548
 run: export FLASK_APP=digicubes_flask.web
 run:
 	flask run

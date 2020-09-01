@@ -36,14 +36,13 @@ Create new Course for {{ school.name }}
 {% endblock %}   
 
 {% block page_script %}
-  M.AutoInit();
-  document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll('.datepicker');
-    options = {
-        format: 'dd.mm.yyyy'
-    };
-    console.log(elems);
-    var instances = M.Datepicker.init(elems, options);
+
+  $(document).ready(function() {
+
+    var $input = $('.datepicker').pickadate();
+    var picker = $input.pickadate('picker');
+    picker.set('format', "dd.mm.yyyy");
+    console.log("Start");
   });
         
 {% endblock %}   

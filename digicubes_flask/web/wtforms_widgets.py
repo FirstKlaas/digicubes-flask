@@ -3,7 +3,7 @@ Some form widgets.
 """
 import logging
 
-from datetime import date
+from datetime import date, datetime
 
 from wtforms import Field
 from wtforms.widgets import html_params
@@ -168,6 +168,10 @@ def materialize_picker(field, **kwargs):
     field_id = kwargs.pop("id", field.id)
 
     date_value: date = field.data
+    
+    if date_value is None:
+        logger.warning("No date provided. Using today as fallback.")
+        date_value = datetime.today()
 
     attributes = {
         "id": field_id,

@@ -4,15 +4,16 @@
 School
 {% endblock %}
 
-{% block sub_menu %}
+{% block main_menu %}
+    <li><a href="{{ url_for('account.home') }}">Home</a></li>
     <li>
-        <a href="{{ url_for('admin.update_school', school_id=school.id) }}">Edit</a>
+        <a href="{{ url_for('admin.update_school', school_id=school.id) }}">Edit Scool</a>
     </li>
     <li>
         <a href="{{ url_for('admin.create_school_course', school_id=school.id) }}">New Course</a>
     </li>
     <li>
-        <a href="{{ url_for('admin.delete_school', school_id=school.id) }}">Delete</a>
+        <a href="{{ url_for('admin.delete_school', school_id=school.id) }}">Delete School</a>
     </li>
 {% endblock %}
 
