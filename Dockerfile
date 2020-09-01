@@ -13,9 +13,9 @@ RUN apt-get update \
 RUN mkdir -p data
 RUN mkdir -p logs
 
-RUN pip install --no-cache-dir wheel
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/FirstKlaas/digicubes-flask#egg=digicubes-flask
+RUN python -m pip install --no-cache-dir wheel
+RUN python -m pip install --upgrade pip
+RUN python -m pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/FirstKlaas/digicubes-flask
 COPY wsgi.py .
 
 #RUN pip install digicubes-server
