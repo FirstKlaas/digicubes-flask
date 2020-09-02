@@ -1,4 +1,9 @@
-button, input, optgroup, select, textarea, BODY {
+button,
+input,
+optgroup,
+select,
+textarea,
+BODY {
     font-family: 'Exo 2', 'Roboto', 'Ubuntu', sans-serif !important;
     color: #37474f;
 }
@@ -20,6 +25,23 @@ strong {
     cursor: pointer;
 }
 
+.dc-menu {
+    padding: 1px;
+}
+
+.dc-menu-item {
+    cursor: pointer;
+}
+
+.dc-menu a::after {
+    content: "/";
+    padding: 7px;
+}
+
+.dc-menu a:last-child::after {
+    display: None;
+}
+
 TBODY.dc-vtop TD {
     vertical-align: top;
 }
@@ -29,7 +51,6 @@ TBODY.dc-vtop TD {
     padding: 3px 0px !important;
     margin-right: 1rem;
     white-space: nowrap;
-
 }
 
 .dc-val {
@@ -92,7 +113,6 @@ nav.dc-submenu {
     width: 1rem;
 }
 
-
 div[contenteditable] {
     padding: 0.5rem !important;
 }
@@ -118,5 +138,5 @@ div[contenteditable=false] {
 }
 
 #blocklyCode {
-    font-family: monospace;    
+    font-family: monospace;
 }
