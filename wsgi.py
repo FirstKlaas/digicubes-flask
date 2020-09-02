@@ -1,4 +1,7 @@
+import sys
 import os
+sys.path.append(os.getcwd())
+
 from digicubes_flask.web import create_app
 
 app = create_app()
