@@ -15,11 +15,15 @@ RUN mkdir -p logs
 
 RUN python -m pip install --no-cache-dir wheel
 RUN python -m pip install --upgrade pip
-RUN python -m pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/FirstKlaas/digicubes-flask
+
+COPY requirements.txt .
+COPY digicubes_flask .
+#RUN python -m pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/FirstKlaas/digicubes-flask
 COPY wsgi.py .
 
-#RUN pip install digicubes-server
+RUN pip install -r requirements.txt
 
+#RUN pip install digicubes-server
 
 EXPOSE 5000/tcp
 
