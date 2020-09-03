@@ -1,6 +1,6 @@
 import sys
 import os
-sys.path.append(os.getcwd())
+sys.path.append("/digicubes")
 
 from digicubes_flask.web import create_app
 

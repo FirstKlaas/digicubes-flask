@@ -77,6 +77,6 @@ run:
 release:
 	@python version.py
 
-docker-build: publish
+docker-build:
 	docker build -t digicubes-web .
 
