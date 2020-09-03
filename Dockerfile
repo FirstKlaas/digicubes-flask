@@ -31,5 +31,5 @@ VOLUME /digicubes/data
 
 ENV DIGICUBES_SECRET b3j6casjk7d8szeuwz00hdhuw4ohwDu9o
 
-#CMD ["gunicorn", "-b 0.0.0.0:5000", "--worker-tmp-dir=/dev/shm", "--workers=2", "--threads=4", "--worker-class=gthread", "wsgi:app"]
-CMD ["/bin/true"]
+CMD ["gunicorn", "-b 0.0.0.0:5000", "--worker-tmp-dir=/dev/shm", "--workers=2", "--threads=4", "--worker-class=gthread", "wsgi:app"]
+#CMD ["/bin/true"]
