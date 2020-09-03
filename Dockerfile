@@ -20,6 +20,7 @@ COPY requirements.txt .
 COPY digicubes_flask/ .
 #RUN python -m pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/FirstKlaas/digicubes-flask
 COPY wsgi.py .
+COPY loop.py .
 
 RUN pip install -r requirements.txt
 
