@@ -31,7 +31,7 @@ Users Overview
 
 {% block space_name %}User{% endblock %}
 
-{% block main_menu %}
+{% block main_menu_old %}
   <li><a href="{{ url_for('account.home') }}">Home</a></li>
   <li><a href="{{ url_for('admin.users') }}">User</a></li>
   <li><a href="{{url_for('admin.create_user')}}">New User</a></li>
@@ -49,6 +49,11 @@ Users Overview
 
 {% block main_content %}
 <div class="section">
+    <div class="row">
+        <div class="col s12 dc-menu">
+            <a class="dc-menu-item" href="{{url_for('admin.create_user')}}">>New User</a>
+        </div>
+    </div>
     <div class="row">
         <h2>All Users</h2>
     </div>
