@@ -17,7 +17,9 @@ RUN python -m pip install --no-cache-dir wheel
 RUN python -m pip install --upgrade pip
 
 COPY requirements.txt .
-COPY digicubes_flask/ .
+
+RUN mkdir -p digicubes_flask
+COPY digicubes_flask/ digicubes_flask/
 #RUN python -m pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/FirstKlaas/digicubes-flask
 COPY wsgi.py .
 COPY loop.py .
