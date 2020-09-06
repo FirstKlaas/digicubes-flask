@@ -149,12 +149,23 @@ class SchoolService(AbstractService):
         within the scope of the current user. But for the time
         beeing, we are optimistic.
         """
+        #TODO: Check rights
         headers = self.create_default_header(token)
         url = self.url_for(f"/course/{course_id}")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
 
         return CourseProxy.structure(response.json())
+
+    def get_course_or_none(self, token: str, course_id: int) -> Optional [CourseProxy]:
+        """
+        Returns the CourseProxy for the requested course is or None, if
+        any prerequisite does not match (Does not exist, not enough rigths, ...)
+        """
+        try:
+            return self.get_course(token, course_id)
+        except: #pylint: disable=bare-except
+            return None
 
     def delete_course(self, token: str, course_id: int) -> CourseProxy:
         """
@@ -166,9 +177,8 @@ class SchoolService(AbstractService):
         beeing, we are optimistic.
 
         Currently no rights are checked.
-
-
         """
+        #TODO: Check rights
         headers = self.create_default_header(token)
         url = self.url_for(f"/course/{course_id}")
         response = self.requests.delete(url, headers=headers)
@@ -201,6 +211,7 @@ class SchoolService(AbstractService):
         url = self.url_for(f"/course/{course_id}/units/")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
+        return [UnitProxy.structure(unit) for unit in response.json()]
 
     def create_unit(self, token: str, course_id: int, unit: UnitProxy) -> CourseProxy:
         headers = self.create_default_header(token)

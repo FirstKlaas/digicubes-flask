@@ -41,15 +41,13 @@ School
             <h2>Teacher</h2>
         </div>
     </div>
+    {% if teacher %}
     <div class="row">
         <div class="col s12">
-            {% if teacher %}
-                {{ teacher }}
-            {% else %}
-                <a href="{{ url_for('admin.create_school_course', school_id=school.id) }}" class="waves-effect waves-light light-blue btn-large">Add teacher</a>
-            {% endif %}
+            {{ teacher }}
         </div>
     </div>
+    {% endif %}
 </div>
 
 <div class="section">
@@ -70,7 +68,7 @@ School
                 <tbody class="dc-vtop">
             {% for course in courses %}
                 <tr>
-                    <td><a href="{{ url_for('admin.update_school_course', school_id=school.id, course_id=course.id) }}">{{ course.name | nonefilter }}</a></td>
+                    <td><a href="{{ url_for('admin.display_school_course', school_id=school.id, course_id=course.id) }}">{{ course.name | nonefilter }}</a></td>
                     <td>{{ course.description | md }}</td>
                     <td>{{ course.from_date | digidate }}</td>
                     <td>{{ course.until_date | digidate }}</td>

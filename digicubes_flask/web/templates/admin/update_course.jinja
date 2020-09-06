@@ -22,7 +22,17 @@ Edit Course for school {{ school.name }}
 
 {% block main_content %}
 <div class="section">
-  <h2>Course Details</h2>
+    <div class="row">
+        <div class="col s12 dc-menu">
+            <a class="dc-menu-item" href="{{ url_for('admin.school', school_id=school.id) }}">Back to {{  school.name }}</a>
+            <a class="dc-menu-item" href="{{ url_for('admin.display_school_course', school_id=school.id, course_id=course.id) }}">Cancel</a>
+        </div>
+    </div>
+  <div class="row">
+    <div class="col s12">
+      <h2>Edit Course</h2>
+    </div>
+  </div>
   <div class="row">
     <div class="col s6" id="dc_main">
     {% include "admin/fragments/course_form.jinja" with context %}

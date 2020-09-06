@@ -359,7 +359,33 @@ def update_school_course(school_id: int, course_id: int):
         action=action_url,
     )
 
+#
+# DISPLAY COURSE
+#
+@admin_blueprint.route("/school/<int:school_id>/gcourse/<int:course_id>", methods=("GET", "POST"))
+@login_required
+def display_school_course(school_id: int, course_id: int):
+    service: srv.SchoolService = digicubes.school
+    token = digicubes.token
+    db_course: proxy.CourseProxy = service.get_course_or_none(token, course_id)
 
+    db_school: proxy.SchoolProxy = service.get(token, school_id)
+
+    # If there is no course, we just display the
+    # school details
+    if db_course is None:
+        return school(school_id)
+
+    db_units = service.get_units(token, course_id)    
+    return render_template("admin/course.jinja",
+        school=db_school,
+        course=db_course,
+        units=db_units
+    )
+
+#
+# CREATE COURSE
+#
 @admin_blueprint.route("/school/<int:school_id>/ccourse/", methods=("GET", "POST"))
 @login_required
 def create_school_course(school_id: int):
@@ -402,12 +428,14 @@ def create_school_course(school_id: int):
     )
 
 
+#
+# CREATE UNIT
+#
 @admin_blueprint.route("/course/<int:course_id>/cunit/", methods=("GET", "POST"))
 @login_required
 def create_course_unit(school_id: int):
     # TODO: Nothing implemented
     pass
-
 
 @admin_blueprint.route("/school/<int:school_id>/headmaster/", methods=("GET", "POST"))
 @login_required
