@@ -28,7 +28,7 @@ School
         </div>
     </div>
     <div class="row">
-        <div class="col s12">
+        <div class="col s12 dc-md">
             <h1>{{ school.name | nonefilter }}</h1>
             <h5 class="flowtext">{{ school.description | md }}</h5>
         </div>
@@ -69,7 +69,7 @@ School
             {% for course in courses %}
                 <tr>
                     <td><a href="{{ url_for('admin.display_school_course', school_id=school.id, course_id=course.id) }}">{{ course.name | nonefilter }}</a></td>
-                    <td>{{ course.description | md }}</td>
+                    <td class="dc-md">{{ course.description | md }}</td>
                     <td>{{ course.from_date | digidate }}</td>
                     <td>{{ course.until_date | digidate }}</td>
                     <td>{{ course.created_at | digidate }}</td> 

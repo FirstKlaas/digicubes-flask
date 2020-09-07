@@ -27,6 +27,10 @@ strong {
     color: #37474f !important;
 }
 
+.dc-md P {
+    padding: 0.3rem 0rem !important;
+}
+
 .dc-brand {
     font-family: 'Roboto', 'Ubuntu', sans-serif !important;
 }
