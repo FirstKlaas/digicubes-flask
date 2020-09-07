@@ -17,6 +17,16 @@ strong {
     font-weight: bold;
 }
 
+.dc-md LI {
+    list-style-type: circle !important;
+    margin: 0.3rem 2rem !important;
+}
+
+.dc-md H2 {
+    font-size: 1.8rem !important;
+    color: #37474f !important;
+}
+
 .dc-brand {
     font-family: 'Roboto', 'Ubuntu', sans-serif !important;
 }

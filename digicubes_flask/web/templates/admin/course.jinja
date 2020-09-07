@@ -17,9 +17,11 @@ Course Details
         </div>
     </div>
     <div class="row">
-        <div class="col s12">
-            <h2>{{ course.name | nonefilter }}</h2>
-            <h5 class="flowtext">{{ course.description | md }}</h5>
+        <div class="col s12 dc-md">
+            <h1>{{ course.name | nonefilter }}</h1>
+            <p>
+            {{ course.description | md }}
+            </p>
         </div>
     </div>
 </div>
