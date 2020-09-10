@@ -359,6 +359,7 @@ def update_school_course(school_id: int, course_id: int):
         action=action_url,
     )
 
+
 #
 # DISPLAY COURSE
 #
@@ -376,12 +377,9 @@ def display_school_course(school_id: int, course_id: int):
     if db_course is None:
         return school(school_id)
 
-    db_units = service.get_units(token, course_id)    
-    return render_template("admin/course.jinja",
-        school=db_school,
-        course=db_course,
-        units=db_units
-    )
+    db_units = service.get_units(token, course_id)
+    return render_template("admin/course.jinja", school=db_school, course=db_course, units=db_units)
+
 
 #
 # CREATE COURSE
@@ -427,15 +425,6 @@ def create_school_course(school_id: int):
         "admin/create_course.jinja", school=school_proxy, form=form, action=action_url,
     )
 
-
-#
-# CREATE UNIT
-#
-@admin_blueprint.route("/course/<int:course_id>/cunit/", methods=("GET", "POST"))
-@login_required
-def create_course_unit(school_id: int):
-    # TODO: Nothing implemented
-    pass
 
 @admin_blueprint.route("/school/<int:school_id>/headmaster/", methods=("GET", "POST"))
 @login_required

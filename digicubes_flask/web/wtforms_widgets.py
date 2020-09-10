@@ -168,7 +168,7 @@ def materialize_picker(field, **kwargs):
     field_id = kwargs.pop("id", field.id)
 
     date_value: date = field.data
-    
+
     if date_value is None:
         logger.warning("No date provided. Using today as fallback.")
         date_value = datetime.today()

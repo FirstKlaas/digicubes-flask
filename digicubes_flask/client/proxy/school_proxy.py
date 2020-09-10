@@ -49,6 +49,7 @@ class CourseProxy(AbstractProxy):
 @attr.s(auto_attribs=True)
 class UnitProxy(AbstractProxy):
     id: Optional[int] = None
+    created_by_id: Optional[int] = None
     name: Optional[str] = None
     position: Optional[int] = None
 

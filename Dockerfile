@@ -35,4 +35,4 @@ VOLUME /digicubes/data
 ENV DIGICUBES_SECRET b3j6casjk7d8szeuwz00hdhuw4ohwDu9o
 
 CMD ["gunicorn", "-b 0.0.0.0:5000", "--worker-tmp-dir=/dev/shm", "--workers=2", "--threads=4", "--worker-class=gthread", "wsgi:app"]
-# Generated at 2020-09-07 18:03:33.808147
+# Generated at 2020-09-10 16:30:25.208974

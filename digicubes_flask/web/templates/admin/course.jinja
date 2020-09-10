@@ -12,8 +12,8 @@ Course Details
         <div class="col s12 dc-menu">
             <a class="dc-menu-item" href="{{ url_for('admin.school', school_id=school.id) }}">Back to {{  school.name }}</a>
             <a class="dc-menu-item" href="{{ url_for('admin.update_school_course', school_id=school.id, course_id=course.id) }}">Edit Course</a>
+            <a class="dc-menu-item" href="{{ url_for('teacher.create_course_unit', school_id=school.id, course_id=course.id) }}">New Unit</a>
             
-            <a class="dc-menu-item" href="#">New Unit</a>
         </div>
     </div>
     <div class="row">
@@ -33,7 +33,21 @@ Course Details
         </div>
         <div class="col s12">
             {% if units %}
-                {{ units }}
+                <table class="highlight">
+                    <thead>
+                    <tr>
+                        <th style="width: 20em;">Name</th>
+                        <th style="width: 60em;">Short Description</th>
+                    </tr>
+                    <tbody class="dc-vtop">
+                    {% for unit in units %}
+                    <tr>
+                        <td>{{ unit.name | nonefilter }}</td>
+                        <td class="dc-md">{{ unit.short_description | md }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             {% else %}
                 No Units
             {% endif %}

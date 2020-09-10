@@ -149,7 +149,7 @@ class SchoolService(AbstractService):
         within the scope of the current user. But for the time
         beeing, we are optimistic.
         """
-        #TODO: Check rights
+        # TODO: Check rights
         headers = self.create_default_header(token)
         url = self.url_for(f"/course/{course_id}")
         response = self.requests.get(url, headers=headers)
@@ -157,14 +157,14 @@ class SchoolService(AbstractService):
 
         return CourseProxy.structure(response.json())
 
-    def get_course_or_none(self, token: str, course_id: int) -> Optional [CourseProxy]:
+    def get_course_or_none(self, token: str, course_id: int) -> Optional[CourseProxy]:
         """
         Returns the CourseProxy for the requested course is or None, if
         any prerequisite does not match (Does not exist, not enough rigths, ...)
         """
         try:
             return self.get_course(token, course_id)
-        except: #pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             return None
 
     def delete_course(self, token: str, course_id: int) -> CourseProxy:
@@ -178,7 +178,7 @@ class SchoolService(AbstractService):
 
         Currently no rights are checked.
         """
-        #TODO: Check rights
+        # TODO: Check rights
         headers = self.create_default_header(token)
         url = self.url_for(f"/course/{course_id}")
         response = self.requests.delete(url, headers=headers)

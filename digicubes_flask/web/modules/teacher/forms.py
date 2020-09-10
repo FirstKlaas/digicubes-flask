@@ -3,12 +3,8 @@ Some forms to be used with the wtforms package.
 """
 import logging
 from datetime import date
-from typing import List
-
 from flask_wtf import FlaskForm
 from wtforms import (
-    Field,
-    PasswordField,
     StringField,
     SubmitField,
     validators,
@@ -16,17 +12,10 @@ from wtforms import (
     HiddenField,
     BooleanField,
     DateField,
-    FieldList,
-    FormField,
 )
 
-from wtforms.validators import ValidationError
-
-from digicubes_flask.client import proxy
 
 import digicubes_flask.web.wtforms_widgets as w
-from digicubes_flask import digicubes
-from digicubes_flask import exceptions as ex
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +69,6 @@ class UnitForm(FlaskForm):
     Unit Form. A unit is a part of a course.
     """
 
-    course_id = HiddenField()
     name = StringField(
         "Name",
         widget=w.materialize_input,
