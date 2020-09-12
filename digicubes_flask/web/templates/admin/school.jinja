@@ -3,6 +3,7 @@
 {% block page_title %}
 School
 {% endblock %}
+{% block space_name %}{{ school.name }}{% endblock %}
 
 {% block main_menu_old %}
     <li><a href="{{ url_for('account.home') }}">Back Home</a></li>
@@ -29,25 +30,9 @@ School
     </div>
     <div class="row">
         <div class="col s12 dc-md">
-            <h1>{{ school.name | nonefilter }}</h1>
             <h5 class="flowtext">{{ school.description | md }}</h5>
         </div>
     </div>
-</div>
-
-<div class="section">
-    <div class="row">
-        <div class="col s12">
-            <h2>Teacher</h2>
-        </div>
-    </div>
-    {% if teacher %}
-    <div class="row">
-        <div class="col s12">
-            {{ teacher }}
-        </div>
-    </div>
-    {% endif %}
 </div>
 
 <div class="section">
@@ -88,6 +73,21 @@ School
             {% endif %}
         </div>
     </div>
+</div>
+
+<div class="section">
+    <div class="row">
+        <div class="col s12">
+            <h2>Teacher</h2>
+        </div>
+    </div>
+    {% if teacher %}
+    <div class="row">
+        <div class="col s12">
+            {{ teacher }}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 {% endblock %}

@@ -1,0 +1,39 @@
+{% import "macros/forms.jinja" as forms %}
+{% extends "admin/base.jinja" %}
+
+{% block page_title %}Edit Unit{% endblock %}
+{% block space_name %}Edit {{ unit.name }}{% endblock %}
+
+
+{% block main_content %}
+<div class="section">
+    <div class="row">
+        <div class="col s12 dc-menu">
+            <a class="dc-menu-item" href="{{ url_for('unit.display_course_unit', school_id=school.id, course_id=course.id, unit_id=unit.id) }}">Back</a>            
+        </div>
+    </div>
+
+  <div class="row">
+    <div class="col s12" id="dc_main">
+        <form method="POST" action="{{ action }}">
+            {{ form.csrf_token }}
+            {{ forms.row(form, "position") }}
+            {{ forms.row(form, "name") }}
+            {{ forms.row(form, "short_description") }}
+            {{ forms.row(form, "long_description") }}
+            {{ forms.row(form, "is_active") }}
+            {{ forms.row(form, "is_visible") }}
+            {{ forms.submit(form) }}
+        </form>
+    </div>
+  </div>
+</div>
+{% endblock %}   
+
+{% block page_script %}
+
+  $(document).ready(function() {
+    M.updateTextFields();
+  });
+        
+{% endblock %}   

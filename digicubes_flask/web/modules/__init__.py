@@ -6,3 +6,4 @@ from .headmaster.blueprint import headmaster_service as headmaster_blueprint
 from .teacher.blueprint import teacher_service as teacher_blueprint
 from .student.blueprint import student_service as student_blueprint
 from .blockly import blockly_blueprint
+from .unit import unit_service as unit_blueprint

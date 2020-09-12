@@ -58,6 +58,7 @@ strong {
 
 TBODY.dc-vtop TD {
     vertical-align: top;
+    padding: 4px !important;
 }
 
 .dc-attr {

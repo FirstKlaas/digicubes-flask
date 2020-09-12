@@ -3,6 +3,7 @@
 {% block page_title %}
 Course Details
 {% endblock %}
+{% block space_name %}{{ course.name | nonefilter }}{% endblock %}
 
 
 {% block main_content %}
@@ -18,7 +19,6 @@ Course Details
     </div>
     <div class="row">
         <div class="col s12 dc-md">
-            <h1>{{ course.name | nonefilter }}</h1>
             <p>
             {{ course.description | md }}
             </p>
@@ -38,12 +38,23 @@ Course Details
                     <tr>
                         <th style="width: 20em;">Name</th>
                         <th style="width: 60em;">Short Description</th>
+                        <th style="width: 4em;"></th>
+                        
                     </tr>
                     <tbody class="dc-vtop">
                     {% for unit in units %}
                     <tr>
-                        <td>{{ unit.name | nonefilter }}</td>
+                        <td>
+                            <a href="{{ url_for('unit.display_course_unit', school_id=school.id, course_id=course.id, unit_id=unit.id) }}">
+                                {{ unit.position }} - {{ unit.name | nonefilter }}
+                            </a>
+                        </td>
                         <td class="dc-md">{{ unit.short_description | md }}</td>
+                        <td>
+                            <a href="{{ url_for('unit.delete_course_unit', school_id=school.id, course_id=course.id, unit_id=unit.id) }}">
+                                <i class="material-icons red-text text-darken-3">delete</i>
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                     </tbody>

@@ -12,6 +12,7 @@ from wtforms import (
     HiddenField,
     BooleanField,
     DateField,
+    IntegerField,
 )
 
 
@@ -68,6 +69,15 @@ class UnitForm(FlaskForm):
     """
     Unit Form. A unit is a part of a course.
     """
+
+    position = IntegerField(
+        "Position",
+        widget=w.materialize_input,
+        validators=[
+            validators.InputRequired("A name is required"),
+            validators.NumberRange(min=1)
+        ],
+    )
 
     name = StringField(
         "Name",

@@ -33,9 +33,11 @@ def home():
 #
 # CREATE UNIT
 #
-@teacher_service.route("/school/<int:school_id>/course/<int:course_id>/cunit/", methods=("GET", "POST"))
+@teacher_service.route(
+    "/school/<int:school_id>/course/<int:course_id>/cunit/", methods=("GET", "POST")
+)
 @login_required
-def create_course_unit(school_id:int, course_id:int):
+def create_course_unit(school_id: int, course_id: int):
     """
         Create a new unit for this course.
     """
@@ -53,15 +55,11 @@ def create_course_unit(school_id:int, course_id:int):
 
         # TODO: Redirect to the right url
         return redirect(
-            url_for(
-                "admin.display_school_course",
-                school_id=school_id,
-                course_id=course_id
-            )
+            url_for("admin.display_school_course", school_id=school_id, course_id=course_id)
         )
 
     return render_template(
-        "school/create_unit.jinja",
+        "unit/create_unit.jinja",
         form=form,
         action=url_for("teacher.create_course_unit", school_id=school_id, course_id=course_id),
     )

@@ -13,6 +13,7 @@ New Unit
 
     <form method="POST" action="{{ action }}">
         {{ form.csrf_token }}
+        {{ forms.row(form, "position") }}
         {{ forms.row(form, "name") }}
         {{ forms.row(form, "short_description") }}
         {{ forms.row(form, "long_description") }}
