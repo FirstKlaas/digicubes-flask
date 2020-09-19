@@ -219,7 +219,7 @@ class SchoolService(AbstractService):
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
         return UnitProxy.structure(response.json())
-        
+
     def create_unit(self, token: str, course_id: int, unit: UnitProxy) -> CourseProxy:
         headers = self.create_default_header(token)
         data = unit.unstructure()
@@ -228,13 +228,20 @@ class SchoolService(AbstractService):
         self.check_response_status(response, expected_status=201)
         return UnitProxy.structure(response.json())
 
+    def update_unit(self, token: str, unit: UnitProxy) -> UnitProxy:
+        headers = self.create_default_header(token)
+        url = self.url_for(f"/unit/{unit.id}")
+        response = self.requests.put(url, headers=headers, json=unit.unstructure())
+        self.check_response_status(response, expected_status=200)
+        return UnitProxy.structure(response.json())
+
     def delete_unit(self, token: str, unit_id: int) -> UnitProxy:
         headers = self.create_default_header(token)
         url = self.url_for(f"/unit/{unit_id}")
         response = self.requests.delete(url, headers=headers)
         self.check_response_status(response, expected_status=200)
         return UnitProxy.structure(response.json())
-        
+
     def get_school_teacher(self, token: str, school_id: int) -> List[UserProxy]:
         headers = self.create_default_header(token)
         url = self.url_for(f"/school/{school_id}/teacher/")

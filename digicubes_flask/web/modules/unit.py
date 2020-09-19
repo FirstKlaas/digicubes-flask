@@ -50,10 +50,7 @@ class UnitForm(FlaskForm):
     position = IntegerField(
         "Position",
         widget=w.materialize_input,
-        validators=[
-            validators.InputRequired("A name is required"),
-            validators.NumberRange(min=1)
-        ],
+        validators=[validators.InputRequired("A name is required"), validators.NumberRange(min=1)],
     )
 
     name = StringField(
@@ -94,6 +91,7 @@ class UnitForm(FlaskForm):
 # DISPLAY COURSE UNIT
 # -------------------
 
+
 @unit_service.route(
     "/school/<int:school_id>/course/<int:course_id>/unit/<int:unit_id>/", methods=("GET", "POST")
 )
@@ -103,15 +101,11 @@ def display_course_unit(school_id: int, course_id: int, unit_id: int):
     token = digicubes.token
     db_course: proxy.CourseProxy = service.get_course_or_none(token, course_id)
     db_school: proxy.SchoolProxy = service.get(token, school_id)
-    db_unit: proxy.UnitProxy = service.get_unit(token, unit_id) 
+    db_unit: proxy.UnitProxy = service.get_unit(token, unit_id)
     # TODO: Get Unit By ID not implemented.
 
-    return render_template(
-        "unit/unit.jinja",
-        school = db_school,
-        course=db_course,
-        unit=db_unit
-    )
+    return render_template("unit/unit.jinja", school=db_school, course=db_course, unit=db_unit)
+
 
 # CREATE UNIT
 # -----------
@@ -145,6 +139,7 @@ def create_course_unit(school_id: int, course_id: int):
         action=url_for("teacher.create_course_unit", school_id=school_id, course_id=course_id),
     )
 
+
 # UPDATE UNIT
 # -----------
 @unit_service.route(
@@ -157,7 +152,7 @@ def update(school_id: int, course_id: int, unit_id: int):
     """
     service: srv.SchoolService = digicubes.school
     token = digicubes.token
-    db_unit: proxy.UnitProxy = service.get_unit(token, unit_id) 
+    db_unit: proxy.UnitProxy = service.get_unit(token, unit_id)
     db_course: proxy.CourseProxy = service.get_course_or_none(token, course_id)
     db_school: proxy.SchoolProxy = service.get(token, school_id)
 
@@ -167,9 +162,17 @@ def update(school_id: int, course_id: int, unit_id: int):
     # create the new unit.
     if form.is_submitted():
         if form.validate():
-            updated_unit: proxy.UnitProxy(id=unit_id)
+            updated_unit = proxy.UnitProxy(id=unit_id)
             form.populate_obj(updated_unit)
-
+            service.update_unit(token, updated_unit)
+            return redirect(
+                url_for(
+                    "unit.display_course_unit",
+                    school_id=school_id,
+                    course_id=course_id,
+                    unit_id=unit_id,
+                )
+            )
 
     else:
         form.process(obj=db_unit)
@@ -197,5 +200,7 @@ def delete_course_unit(school_id: int, course_id: int, unit_id: int):
     service: srv.SchoolService = digicubes.school
     token = digicubes.token
 
-    service.delete_unit(token, unit_id=unit_id)    
-    return redirect(url_for("admin.display_school_course", school_id=school_id, course_id=course_id))
+    service.delete_unit(token, unit_id=unit_id)
+    return redirect(
+        url_for("admin.display_school_course", school_id=school_id, course_id=course_id)
+    )

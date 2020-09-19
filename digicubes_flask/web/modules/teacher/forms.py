@@ -73,10 +73,7 @@ class UnitForm(FlaskForm):
     position = IntegerField(
         "Position",
         widget=w.materialize_input,
-        validators=[
-            validators.InputRequired("A name is required"),
-            validators.NumberRange(min=1)
-        ],
+        validators=[validators.InputRequired("A name is required"), validators.NumberRange(min=1)],
     )
 
     name = StringField(

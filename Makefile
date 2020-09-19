@@ -43,7 +43,7 @@ style:
 badges: deps
 	python lintbadge.py
 
-pack: babel_compile
+pack: ci release babel_compile
 	rm -fR dist/
 	#python setup_client.py sdist bdist_wheel
 	python version.py
@@ -74,9 +74,12 @@ run: export FLASK_APP=digicubes_flask.web
 run:
 	flask run
 
-release:
+docker_gen:
+	@python generate_docker_file.py
+
+release: docker_gen
 	@python version.py
 
-docker-build:
+docker-build: pack
 	docker build -t digicubes-web .
 
