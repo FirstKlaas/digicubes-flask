@@ -100,16 +100,17 @@ class UserService(AbstractService):
         if fields is not None:
             headers[self.X_FILTER_FIELDS] = ",".join(fields)
 
-        url = self.url_for("/me/rights")
+        url = self.url_for("/me/rights/")
         result = self.requests.get(url, headers=headers)
         logger.debug("Requested rights. Status is %s", result.status_code)
+
         if result.status_code == 200:
             data = result.json()
             return data
 
         raise TokenExpired("Could not read user rights. Token expired.")
 
-    def get_my_roles(self, token, fields: XFieldList = None):
+    def get_my_roles(self, token, fields: XFieldList = None) -> List[RoleProxy]:
         "Get my roles"
         headers = self.create_default_header(token=token)
         if fields is not None:
@@ -121,6 +122,9 @@ class UserService(AbstractService):
         if result.status_code == 200:
             data = result.json()
             return [RoleProxy.structure(role) for role in data]
+
+        if result.status_code == 404:
+            raise DoesNotExist()
 
         raise TokenExpired("Could not read user roles. Token expired.")
 

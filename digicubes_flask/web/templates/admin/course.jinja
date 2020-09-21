@@ -38,7 +38,9 @@ Course Details
                     <tr>
                         <th style="width: 20em;">Name</th>
                         <th style="width: 60em;">Short Description</th>
+                        {% if has_right("course_delete") %}
                         <th style="width: 4em;"></th>
+                        {% endif %}
                         
                     </tr>
                     <tbody class="dc-vtop">
@@ -50,11 +52,13 @@ Course Details
                             </a>
                         </td>
                         <td class="dc-md">{{ unit.short_description | md }}</td>
+                        {% if has_right("course_delete") %}
                         <td>
                             <a href="{{ url_for('unit.delete_course_unit', school_id=school.id, course_id=course.id, unit_id=unit.id) }}">
                                 <i class="material-icons red-text text-darken-3">delete</i>
                             </a>
                         </td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                     </tbody>

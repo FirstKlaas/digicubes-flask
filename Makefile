@@ -80,6 +80,6 @@ docker_gen:
 release: docker_gen
 	@python version.py
 
-docker-build: pack
+docker: pack
 	docker build -t digicubes-web .
 

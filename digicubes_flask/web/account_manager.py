@@ -57,16 +57,23 @@ class DigicubesAccountManager:
             # are written to the session. Or removed if requested.
             # app.after_request(update_current_user)
 
-            def has_right(user_id: int, right: str) -> bool:
+            def has_role(role_name: str) -> bool:
+                # TODO: Using cached roles
+                for role in self.user.get_my_roles(self.token):
+                    if role.name == role_name:
+                        return True
+
+                return False
+
+            def has_right(right: str) -> bool:
                 # Vielleicht nicht über den user_service machen, sondern
                 # über den account manager. Dann hätte man die Möglichkeit,
                 # die Rechte zumindest im g Scope zu sichern.
-                rights = self.user.get_rights(self.token, user_id)
+                rights = self.user.get_my_rights(self.token)
                 return "no_limits" in rights or right in rights
 
             def is_root(user_id: int) -> bool:
-                rights = self.user.get_rights(self.token, user_id)
-                return "no_limits" in rights
+                return has_right("no_limits")
 
             # Make certain objects available to be used in jinja2 templates
             app.context_processor(
@@ -76,6 +83,7 @@ class DigicubesAccountManager:
                     "has_right": has_right,
                     "is_root": is_root,
                     "version": get_version_string(),
+                    "has_role": has_role,
                 }
             )
 
