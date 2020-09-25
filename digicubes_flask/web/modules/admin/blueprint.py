@@ -10,17 +10,14 @@ from flask import Blueprint, render_template, abort, request, url_for, redirect,
 
 from digicubes_flask.client import proxy, service as srv
 
-from digicubes_flask import login_required, digicubes, current_user, CurrentUser
+from digicubes_flask import login_required, digicubes
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 from digicubes_flask.email import mail_cube
 from digicubes_flask import exceptions as ex
 
 from .forms import (
     UserForm,
-    CourseForm,
-    SchoolNameAvailable,
     UserLoginAvailable,
-    EmailForm,
     create_userform_with_roles,
 )
 
@@ -52,7 +49,7 @@ def users():
 @login_required
 def create_user():
     """Create a new user"""
-    roles = server.role.all(digicubes.token)
+    db_roles = server.role.all(digicubes.token)
     form = create_userform_with_roles(roles)
 
     # Setting the active state true as the default
@@ -81,9 +78,9 @@ def create_user():
             flash(f"User {new_user.login} successfully created")
 
             # Now set the user roles.
-            for role in roles:
-                if form.role[role.name].data:
-                    server.user.add_role(digicubes.token, new_user, role)
+            for db_role in db_roles:
+                if form.role[db_role.name].data:
+                    server.user.add_role(digicubes.token, new_user, db_role)
 
             if not new_user.is_verified:
                 # Newly created user is not verified. Now sending him an
@@ -219,133 +216,12 @@ def rights():
     return render_template("admin/rights.jinja", rights=rights_list)
 
 
-@admin_blueprint.route("/school/<int:school_id>/dcourse/<int:course_id>/")
-def delete_course(school_id: int, course_id: int):
-    """
-    Delete an existing course.
-    """
-    token = digicubes.token
-    service: srv.SchoolService = digicubes.school
-
-    # Deleteing the course
-    # TODO: catch 404
-    try:
-        service.delete_course(token, course_id)
-    except ex.NotAuthenticated:
-        return redirect(url_for("admin.login"))
-
-    return redirect(url_for("school.get", school_id=school_id))
-
-
-@admin_blueprint.route("/school/<int:school_id>/ucourse/<int:course_id>/", methods=["GET", "POST"])
-@login_required
-def update_school_course(school_id: int, course_id: int):
-    service: srv.SchoolService = digicubes.school
-    token = digicubes.token
-    form = CourseForm()
-
-    # First get the course to be updated
-    service.get_courses(token, proxy.SchoolProxy(id=school_id))
-
-    # if method is post and all fields are valid,
-    # create the new course.
-    if form.validate_on_submit():
-
-        course = proxy.CourseProxy()
-        form.populate_obj(course)
-        course.school_id = int(course.school_id)
-        course.id = int(course_id)
-        service.update_course(token, course)
-        return redirect(url_for("school.get", school_id=school_id))
-
-    school_proxy: proxy.SchoolProxy = service.get(token, school_id)
-    course: proxy.CourseProxy = service.get_course(token, course_id)
-    action_url = url_for(
-        "admin.update_school_course", school_id=school_proxy.id, course_id=course.id
-    )
-    form = CourseForm(obj=course)
-    form.submit.label.text = "Update"
-    return render_template(
-        "admin/update_course.jinja",
-        school=school_proxy,
-        course=course,
-        form=form,
-        action=action_url,
-    )
-
-
-#
-# DISPLAY COURSE
-#
-@admin_blueprint.route("/school/<int:school_id>/gcourse/<int:course_id>", methods=("GET", "POST"))
-@login_required
-def display_school_course(school_id: int, course_id: int):
-    service: srv.SchoolService = digicubes.school
-    token = digicubes.token
-    db_course: proxy.CourseProxy = service.get_course_or_none(token, course_id)
-
-    db_school: proxy.SchoolProxy = service.get(token, school_id)
-
-    # If there is no course, we just display the
-    # school details
-    if db_course is None:
-        return school(school_id)
-
-    db_units = service.get_units(token, course_id)
-    return render_template("admin/course.jinja", school=db_school, course=db_course, units=db_units)
-
-
-#
-# CREATE COURSE
-#
-@admin_blueprint.route("/school/<int:school_id>/ccourse/", methods=("GET", "POST"))
-@login_required
-def create_school_course(school_id: int):
-    """
-        Create a new course for the school
-
-        The method GET will render the creation form, while
-        the method POST will validate the form and create the
-        course, if possible.
-
-        If any errors occure during the validation of the form,
-        the form will be rerendered.
-    """
-
-    # Create the form instance
-    form: CourseForm = CourseForm()
-
-    # if method is post and all fields are valid,
-    # create the new course.
-    if form.validate_on_submit():
-
-        new_course = proxy.CourseProxy(created_by_id=current_user.id)
-        form.populate_obj(new_course)
-
-        # Create the course.
-        # TODO: Errors may occoure and have to be handled in a proper way.
-        server.school.create_course(server.token, proxy.SchoolProxy(id=school_id), new_course)
-
-        # After succesfully creating the course go back to
-        # the administration page of the school.
-        return redirect(url_for("school.get", school_id=school_id))
-
-    # Get the school proxy from the server and render out the form.
-    token: str = server.token
-    school_proxy: proxy.SchoolProxy = server.school.get(token, school_id)
-    form.submit.label.text = "Create"
-    action_url = url_for("admin.create_school_course", school_id=school_proxy.id)
-    return render_template(
-        "admin/create_course.jinja", school=school_proxy, form=form, action=action_url,
-    )
-
-
 @admin_blueprint.route("/school/<int:school_id>/headmaster/", methods=("GET", "POST"))
 @login_required
 def add_school_headmaster():
     """
     Get or add an headmaster to the school with the id `school_id`. If no such school
-    exists, an 404 status code is send back. 
+    exists, an 404 status code is send back.
 
     :Methods:
 
@@ -354,19 +230,15 @@ def add_school_headmaster():
           There is no pagination support. The endpoint displays always all
           headmaster.
     """
-    user: CurrentUser = current_user
-    token: str = user.token
-    school_service: srv.SchoolService = digicubes.school
-    user_service: srv.UserService = digicubes.user
+    #user: CurrentUser = current_user
 
-    school = school_service.get(token)
-    form = EmailForm()
+    #form = EmailForm()
 
-    if form.is_submitted():
-        if form.validate():
-            email = form.email.data
-            # Now check, if a user with this
-            # Emailadress already is registered
+    #if form.is_submitted():
+    #    if form.validate():
+    #        email = form.email.data
+    #        # Now check, if a user with this
+    #        # Emailadress already is registered
 
 
 @admin_blueprint.route("/rfc/", methods=("GET", "POST", "PUT"))

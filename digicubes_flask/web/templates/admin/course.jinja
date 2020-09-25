@@ -12,8 +12,8 @@ Course Details
     <div class="row">
         <div class="col s12 dc-menu">
             <a class="dc-menu-item" href="{{ url_for('school.get', school_id=school.id) }}">Back to {{  school.name }}</a>
-            <a class="dc-menu-item" href="{{ url_for('admin.update_school_course', school_id=school.id, course_id=course.id) }}">Edit Course</a>
-            <a class="dc-menu-item" href="{{ url_for('teacher.create_course_unit', school_id=school.id, course_id=course.id) }}">New Unit</a>
+            <a class="dc-menu-item" href="{{ url_for('course.update', school_id=school.id, course_id=course.id) }}">Edit Course</a>
+            <a class="dc-menu-item" href="{{ url_for('unit.create', school_id=school.id, course_id=course.id) }}">New Unit</a>
             
         </div>
     </div>
@@ -47,14 +47,14 @@ Course Details
                     {% for unit in units %}
                     <tr>
                         <td>
-                            <a href="{{ url_for('unit.display_course_unit', school_id=school.id, course_id=course.id, unit_id=unit.id) }}">
+                            <a href="{{ url_for('unit.get', school_id=school.id, course_id=course.id, unit_id=unit.id) }}">
                                 {{ unit.position }} - {{ unit.name | nonefilter }}
                             </a>
                         </td>
                         <td class="dc-md">{{ unit.short_description | md }}</td>
                         {% if has_right("course_delete") %}
                         <td>
-                            <a href="{{ url_for('unit.delete_course_unit', school_id=school.id, course_id=course.id, unit_id=unit.id) }}">
+                            <a href="{{ url_for('unit.delete', school_id=school.id, course_id=course.id, unit_id=unit.id) }}">
                                 <i class="material-icons red-text text-darken-3">delete</i>
                             </a>
                         </td>

@@ -55,7 +55,7 @@ def create_course_unit(school_id: int, course_id: int):
 
         # TODO: Redirect to the right url
         return redirect(
-            url_for("admin.display_school_course", school_id=school_id, course_id=course_id)
+            url_for("course.get", school_id=school_id, course_id=course_id)
         )
 
     return render_template(

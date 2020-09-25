@@ -94,7 +94,7 @@ class SchoolForm(FlaskForm):
 
 
 @blueprint.route("/schools/")
-def all():
+def get_all():
     """
     Display all schools
     """
@@ -112,7 +112,7 @@ def create():
         if form.validate({"name": [SchoolNameAvailable()]}):
             new_school = proxy.SchoolProxy(name=form.name.data, description=form.description.data,)
             digicubes.school.create(digicubes.token, new_school)
-            return redirect(url_for("school.all"))
+            return redirect(url_for("school.get_all"))
 
     form.submit.label.ttext = "Create"
     return render_template(
@@ -177,4 +177,4 @@ def delete(school_id: int):
     # Gettting the school details from the server
     # TODO: Was, wenn die Schule nicht existiert?
     digicubes.school.delete(token, school_id)
-    return redirect(url_for("school.all"))
+    return redirect(url_for("school.get_all"))

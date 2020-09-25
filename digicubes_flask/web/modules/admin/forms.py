@@ -2,7 +2,6 @@
 Some forms to be used with the wtforms package.
 """
 import logging
-from datetime import date
 from typing import List
 
 from flask_wtf import FlaskForm
@@ -13,9 +12,7 @@ from wtforms import (
     SubmitField,
     validators,
     TextAreaField,
-    HiddenField,
     BooleanField,
-    DateField,
     FormField,
 )
 
@@ -219,43 +216,4 @@ class SchoolForm(FlaskForm):
         widget=w.materialize_textarea,
         validators=[validators.InputRequired("A description is required.")],
     )
-    submit = SubmitField("Ok", widget=w.materialize_submit)
-
-
-class CourseForm(FlaskForm):
-    """
-    Create new Course Form
-    """
-
-    school_id = HiddenField()
-    name = StringField(
-        "Name",
-        widget=w.materialize_input,
-        validators=[validators.InputRequired("A name is required")],
-    )
-
-    description = TextAreaField(
-        "Description",
-        widget=w.materialize_textarea,
-        validators=[validators.InputRequired("A desciption is required")],
-    )
-
-    from_date = DateField(
-        "Starting from",
-        default=date.today(),
-        format="%d.%m.%Y",
-        widget=w.materialize_picker,
-        validators=[validators.InputRequired("The course needs a starting date.")],
-    )
-
-    until_date = DateField(
-        "Ending at",
-        default=date.today(),
-        format="%d.%m.%Y",
-        widget=w.materialize_picker,
-        validators=[validators.InputRequired("A course needs a ending date.")],
-    )
-
-    is_private = BooleanField("Private", widget=w.materialize_switch)
-
     submit = SubmitField("Ok", widget=w.materialize_submit)

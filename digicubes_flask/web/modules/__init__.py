@@ -14,6 +14,7 @@ from .student.blueprint import student_service as student_blueprint
 from .blockly import blockly_blueprint
 from .unit import unit_service as unit_blueprint
 from .school import blueprint as school_blueprint
+from .course import blueprint as course_blueprint
 
 __all__ = ["register_blueprints"]
 
@@ -21,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 blueprints = [
         school_blueprint,
+        course_blueprint,
         unit_blueprint,
     ]
 

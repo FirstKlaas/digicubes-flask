@@ -8,7 +8,7 @@
   <li><a href="{{ url_for('admin.users') }}">User</a></li>
   <li><a href="{{ url_for('admin.roles') }}">Roles</a></li>
   <li><a href="{{ url_for('admin.rights') }}">Rights</a></li>
-  <li><a href="{{ url_for('school.all') }}">Schools</a></li>
+  <li><a href="{{ url_for('school.get_all') }}">Schools</a></li>
   <li><a href="{{ url_for('account.logout') }}">Logout</a></li>
 {% endblock %}
 
@@ -17,6 +17,6 @@
   <li><a href="{{ url_for('admin.users') }}">User</a></li>
   <li><a href="{{ url_for('admin.roles') }}">Roles</a></li>
   <li><a href="{{ url_for('admin.rights') }}">Rights</a></li>
-  <li><a href="{{ url_for('school.all') }}">Schools</a></li>
+  <li><a href="{{ url_for('school.get_all') }}">Schools</a></li>
   <li><a href="{{ url_for('account.logout') }}">Logout</a></li>
 {% endblock %}

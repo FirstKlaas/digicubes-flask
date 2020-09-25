@@ -25,7 +25,7 @@ Edit Course for school {{ school.name }}
     <div class="row">
         <div class="col s12 dc-menu">
             <a class="dc-menu-item" href="{{ url_for('school.get', school_id=school.id) }}">Back to {{  school.name }}</a>
-            <a class="dc-menu-item" href="{{ url_for('admin.display_school_course', school_id=school.id, course_id=course.id) }}">Cancel</a>
+            <a class="dc-menu-item" href="{{ url_for('course.get', school_id=school.id, course_id=course.id) }}">Cancel</a>
         </div>
     </div>
   <div class="row">

@@ -91,7 +91,7 @@ class UnitForm(FlaskForm):
     "/school/<int:school_id>/course/<int:course_id>/unit/<int:unit_id>/", methods=("GET", "POST")
 )
 @login_required
-def display_course_unit(school_id: int, course_id: int, unit_id: int):
+def get(school_id: int, course_id: int, unit_id: int):
     """
     Get the uint details.
     """
@@ -111,7 +111,7 @@ def display_course_unit(school_id: int, course_id: int, unit_id: int):
     "/school/<int:school_id>/course/<int:course_id>/cunit/", methods=("GET", "POST")
 )
 @login_required
-def create_course_unit(school_id: int, course_id: int):
+def create(school_id: int, course_id: int):
     """
         Create a new unit for this course.
     """
@@ -128,7 +128,7 @@ def create_course_unit(school_id: int, course_id: int):
         server.school.create_unit(server.token, course_id, new_unit)
 
         return redirect(
-            url_for("admin.display_school_course", school_id=school_id, course_id=course_id)
+            url_for("course.get", school_id=school_id, course_id=course_id)
         )
 
     return render_template(
@@ -165,7 +165,7 @@ def update(school_id: int, course_id: int, unit_id: int):
             service.update_unit(token, updated_unit)
             return redirect(
                 url_for(
-                    "unit.display_course_unit",
+                    "unit.get",
                     school_id=school_id,
                     course_id=course_id,
                     unit_id=unit_id,
@@ -191,7 +191,7 @@ def update(school_id: int, course_id: int, unit_id: int):
     "/school/<int:school_id>/course/<int:course_id>/dunit/<int:unit_id>", methods=("GET",)
 )
 @login_required
-def delete_course_unit(school_id: int, course_id: int, unit_id: int):
+def delete(school_id: int, course_id: int, unit_id: int):
     """
         Delete a new unit for this course.
     """
@@ -200,5 +200,5 @@ def delete_course_unit(school_id: int, course_id: int, unit_id: int):
 
     service.delete_unit(token, unit_id=unit_id)
     return redirect(
-        url_for("admin.display_school_course", school_id=school_id, course_id=course_id)
+        url_for("course.get", school_id=school_id, course_id=course_id)
     )
