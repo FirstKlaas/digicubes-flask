@@ -1,4 +1,10 @@
-""" Here we expose all known blueprints """
+"""
+Here we imort all known blueprints and offer one central
+method to register these blueprints. All blueprints need
+to have there own url_prefix already set."""
+import logging
+
+from flask import Flask
 
 from .account.blueprint import account_service as account_blueprint
 from .admin.blueprint import admin_blueprint
@@ -7,3 +13,21 @@ from .teacher.blueprint import teacher_service as teacher_blueprint
 from .student.blueprint import student_service as student_blueprint
 from .blockly import blockly_blueprint
 from .unit import unit_service as unit_blueprint
+from .school import blueprint as school_blueprint
+
+__all__ = ["register_blueprints"]
+
+logger = logging.getLogger(__name__)
+
+blueprints = [
+        school_blueprint,
+        unit_blueprint,
+    ]
+
+def register_blueprints(app: Flask) -> None:
+    """
+    Register all known blueprints with the given flask app.
+    """
+    for blueprint in blueprints:
+        logger.info("Register blueprint at %s", blueprint.url_prefix)
+        app.register_blueprint(blueprint)

@@ -16,7 +16,6 @@ from wtforms import (
     HiddenField,
     BooleanField,
     DateField,
-    FieldList,
     FormField,
 )
 
@@ -56,6 +55,9 @@ class SetPasswordForm(FlaskForm):
 
 
 class EmailForm(FlaskForm):
+    """
+    Simple Emailform, to update a users email address
+    """
     email = StringField(
         "Email",
         widget=w.materialize_input,
@@ -119,11 +121,19 @@ class UserForm(FlaskForm):
 
 
 def create_userform_with_roles(roles: List[proxy.RoleProxy]) -> UserForm:
+    """
+    Function to create a user form, that boolean fields for all defined
+    roles.
+    """
     class UserFormWithRoles(FlaskForm):
-        pass
+        """
+        Aggregated Form
+        """
 
     class RoleSelectionForm(FlaskForm):
-        pass
+        """
+        Form for the User Roles
+        """
 
     for role in roles:
         setattr(

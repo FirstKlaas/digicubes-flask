@@ -16,12 +16,10 @@ from digicubes_flask.email import mail_cube
 from digicubes_flask import exceptions as ex
 
 from .forms import (
-    SchoolForm,
     UserForm,
     CourseForm,
     SchoolNameAvailable,
     UserLoginAvailable,
-    SetPasswordForm,
     EmailForm,
     create_userform_with_roles,
 )
@@ -221,90 +219,6 @@ def rights():
     return render_template("admin/rights.jinja", rights=rights_list)
 
 
-@admin_blueprint.route("/schools/")
-def schools():
-    """
-    Display all schools
-    """
-    school_list = digicubes.school.all(digicubes.token)
-    return render_template("admin/schools.jinja", schools=school_list)
-
-
-@admin_blueprint.route("/cschool/", methods=("GET", "POST"))
-@login_required
-def create_school():
-    """Create a new school"""
-    # token = digicubes.token
-    form = SchoolForm()
-    if form.is_submitted():
-        if form.validate({"name": [SchoolNameAvailable()]}):
-            new_school = proxy.SchoolProxy(name=form.name.data, description=form.description.data,)
-            digicubes.school.create(digicubes.token, new_school)
-            return redirect(url_for("admin.schools"))
-
-    form.submit.label.ttext = "Create"
-    return render_template(
-        "admin/create_school.jinja", form=form, action=url_for("admin.create_school")
-    )
-
-
-@admin_blueprint.route("/school/<int:school_id>/")
-@login_required
-def school(school_id: int):
-    """Schow details of an existing school"""
-    service: srv.SchoolService = digicubes.school
-    token = digicubes.token
-    # Gettting the school details from the server
-    # TODO: Was, wenn die Schule nicht existiert?
-    db_school = service.get(token, school_id)
-    courses = service.get_courses(digicubes.token, db_school)
-    teacher = service.get_school_teacher(digicubes.token, school_id)
-    return render_template("admin/school.jinja", school=db_school, courses=courses, teacher=teacher)
-
-
-@admin_blueprint.route("/uschool/<int:school_id>/", methods=("GET", "POST"))
-@login_required
-def update_school(school_id: int):
-    service: srv.SchoolService = digicubes.school
-    token = digicubes.token
-    form = SchoolForm()
-    db_school: proxy.SchoolProxy = service.get(token, school_id)
-
-    # What about the creation date and the modified date?
-    if form.is_submitted():
-        if form.validate({"name": [SchoolNameAvailable(school_id=school_id)]}):
-            upschool = proxy.SchoolProxy()
-            form.populate_obj(upschool)
-            upschool.id = school_id
-            digicubes.school.update(token, upschool)
-
-            return redirect(url_for("admin.school", school_id=school_id))
-    else:
-        # This is the request to display the form with
-        # the current data ofthe school
-        form = SchoolForm(obj=db_school)
-
-    form.submit.label.text = "Update"
-
-    return render_template(
-        "admin/update_school.jinja",
-        form=form,
-        school=db_school,
-        action=url_for("admin.update_school", school_id=db_school.id),
-    )
-
-
-@admin_blueprint.route("/dschool/<int:school_id>/")
-@login_required
-def delete_school(school_id: int):
-    """Delete an existing school"""
-    token = digicubes.token
-    # Gettting the school details from the server
-    # TODO: Was, wenn die Schule nicht existiert?
-    digicubes.school.delete(token, school_id)
-    return redirect(url_for("admin.schools"))
-
-
 @admin_blueprint.route("/school/<int:school_id>/dcourse/<int:course_id>/")
 def delete_course(school_id: int, course_id: int):
     """
@@ -320,7 +234,7 @@ def delete_course(school_id: int, course_id: int):
     except ex.NotAuthenticated:
         return redirect(url_for("admin.login"))
 
-    return redirect(url_for("admin.school", school_id=school_id))
+    return redirect(url_for("school.get", school_id=school_id))
 
 
 @admin_blueprint.route("/school/<int:school_id>/ucourse/<int:course_id>/", methods=["GET", "POST"])
@@ -342,7 +256,7 @@ def update_school_course(school_id: int, course_id: int):
         course.school_id = int(course.school_id)
         course.id = int(course_id)
         service.update_course(token, course)
-        return redirect(url_for("admin.school", school_id=school_id))
+        return redirect(url_for("school.get", school_id=school_id))
 
     school_proxy: proxy.SchoolProxy = service.get(token, school_id)
     course: proxy.CourseProxy = service.get_course(token, course_id)
@@ -414,7 +328,7 @@ def create_school_course(school_id: int):
 
         # After succesfully creating the course go back to
         # the administration page of the school.
-        return redirect(url_for("admin.school", school_id=school_id))
+        return redirect(url_for("school.get", school_id=school_id))
 
     # Get the school proxy from the server and render out the form.
     token: str = server.token

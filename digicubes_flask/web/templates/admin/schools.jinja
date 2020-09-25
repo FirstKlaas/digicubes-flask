@@ -6,7 +6,7 @@ Schools Overview
 
 {% block sub_menu %}
     <li>
-        <a href="{{url_for('admin.create_school')}}">New School</a>
+        <a href="{{url_for('school.create')}}">New School</a>
     </li>
 {% endblock %}
 
@@ -14,7 +14,7 @@ Schools Overview
 <div class="section">
     <div class="row">
         <div class="col s12 dc-menu">
-            <a class="dc-menu-item" href="{{url_for('admin.create_school')}}">New School</a>
+            <a class="dc-menu-item" href="{{url_for('school.create')}}">New School</a>
         </div>
     </div>
 
@@ -36,13 +36,13 @@ Schools Overview
             {% for school in schools %}
                 <tr>
                     <td>
-                        <a href="{{ url_for('admin.school', school_id=school.id) }}">{{ school.name }}</a>
+                        <a href="{{ url_for('school.get', school_id=school.id) }}">{{ school.name }}</a>
                         <span class="badge" dc-school-id="{{school.id}}">-</span>
                     </td> 
                     <td>{{ school.description | md }}</td>                     
                     <td>{{ school.created_at | digidate }}</td> 
                     <td class="right-align dc-icon-column">
-                        <a href="{{ url_for('admin.delete_school', school_id=school.id) }}"><i class="material-icons red-text text-darken-3">delete</i></a>
+                        <a href="{{ url_for('school.delete', school_id=school.id) }}"><i class="material-icons red-text text-darken-3">delete</i></a>
                     </td>
                 </tr>
             {% endfor %}
@@ -50,7 +50,7 @@ Schools Overview
         </thead>
     </table>   
     {% else %}
-        <a href="{{ url_for('admin.create_school') }}" class="waves-effect waves-light light-blue btn-large">Create your first school</a>
+        <a href="{{ url_for('school.create') }}" class="waves-effect waves-light light-blue btn-large">Create your first school</a>
     {% endif %}
 </div> 
 {% endblock %}        

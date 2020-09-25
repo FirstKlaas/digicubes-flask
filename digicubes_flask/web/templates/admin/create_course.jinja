@@ -18,7 +18,7 @@ Create new Course for {{ school.name }}
 
 {% block sub_menu %}
     <li>
-        <a href="{{url_for('admin.school', school_id=school.id)}}">Back</a>
+        <a href="{{url_for('school.get', school_id=school.id)}}">Back</a>
     </li>
 {% endblock %}
 

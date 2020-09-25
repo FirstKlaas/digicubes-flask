@@ -31,7 +31,7 @@ from digicubes_flask.web.modules import (
     teacher_blueprint,
     student_blueprint,
     blockly_blueprint,
-    unit_blueprint,
+    register_blueprints,
 )
 
 from .account_manager import DigicubesAccountManager
@@ -259,8 +259,9 @@ def create_app(cfg_file_name=None):
     logger.debug("Register student blueprint at %s", url_prefix)
     app.register_blueprint(student_blueprint, url_prefix=url_prefix)
 
-    logger.debug("Register unit blueprint at /unit")
-    app.register_blueprint(unit_blueprint, url_prefix="/unit")
+
+    # Register all known blueprints
+    register_blueprints(app)
 
     logger.info("Static folder is %s", app.static_folder)
     return app

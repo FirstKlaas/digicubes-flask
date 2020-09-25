@@ -11,7 +11,7 @@ Course Details
 <div class="section">
     <div class="row">
         <div class="col s12 dc-menu">
-            <a class="dc-menu-item" href="{{ url_for('admin.school', school_id=school.id) }}">Back to {{  school.name }}</a>
+            <a class="dc-menu-item" href="{{ url_for('school.get', school_id=school.id) }}">Back to {{  school.name }}</a>
             <a class="dc-menu-item" href="{{ url_for('admin.update_school_course', school_id=school.id, course_id=course.id) }}">Edit Course</a>
             <a class="dc-menu-item" href="{{ url_for('teacher.create_course_unit', school_id=school.id, course_id=course.id) }}">New Unit</a>
             

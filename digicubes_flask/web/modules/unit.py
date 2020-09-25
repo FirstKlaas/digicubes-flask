@@ -2,35 +2,30 @@
 The Admin Blueprint
 """
 import logging
-from datetime import date
-from flask import Blueprint, render_template, abort, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
     SubmitField,
     validators,
     TextAreaField,
-    HiddenField,
     BooleanField,
-    DateField,
     IntegerField,
 )
 
 from digicubes_flask.client import proxy, service as srv
 from digicubes_flask import (
     login_required,
-    account_manager,
-    request,
     current_user,
     digicubes,
     CurrentUser,
 )
-from digicubes_flask.exceptions import DigiCubeError
+
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 
 import digicubes_flask.web.wtforms_widgets as w
 
-unit_service = Blueprint("unit", __name__)
+unit_service = Blueprint("unit", __name__, url_prefix="/unit")
 
 logger = logging.getLogger(__name__)
 
@@ -97,6 +92,9 @@ class UnitForm(FlaskForm):
 )
 @login_required
 def display_course_unit(school_id: int, course_id: int, unit_id: int):
+    """
+    Get the uint details.
+    """
     service: srv.SchoolService = digicubes.school
     token = digicubes.token
     db_course: proxy.CourseProxy = service.get_course_or_none(token, course_id)
