@@ -29,37 +29,3 @@ def index():
 def home():
     return redirect(url_for("account.home"))
 
-
-#
-# CREATE UNIT
-#
-@teacher_service.route(
-    "/school/<int:school_id>/course/<int:course_id>/cunit/", methods=("GET", "POST")
-)
-@login_required
-def create_course_unit(school_id: int, course_id: int):
-    """
-        Create a new unit for this course.
-    """
-
-    form: UnitForm = UnitForm()
-
-    # if method is post and all fields are valid,
-    # create the new unit.
-    if form.validate_on_submit():
-
-        new_unit = proxy.UnitProxy(created_by_id=current_user.id)
-
-        form.populate_obj(new_unit)
-        db_unit: proxy.UnitProxy = server.school.create_unit(server.token, course_id, new_unit)
-
-        # TODO: Redirect to the right url
-        return redirect(
-            url_for("course.get", school_id=school_id, course_id=course_id)
-        )
-
-    return render_template(
-        "unit/create_unit.jinja",
-        form=form,
-        action=url_for("teacher.create_course_unit", school_id=school_id, course_id=course_id),
-    )

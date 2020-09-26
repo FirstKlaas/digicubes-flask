@@ -6,10 +6,10 @@ User Details
 
 {% block sub_menu %}
     <li>
-        <a href="{{url_for('admin.update_user', user_id=user.id)}}">Edit</a>
+        <a href="{{url_for('user.update', user_id=user.id)}}">Edit</a>
     </li>
     <li>
-        <a href="{{url_for('admin.delete_user', user_id=user.id)}}">Delete</a>
+        <a href="{{url_for('user.delete', user_id=user.id)}}">Delete</a>
     </li>
 {% endblock %}
 

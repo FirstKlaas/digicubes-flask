@@ -2,18 +2,14 @@
 Some forms to be used with the wtforms package.
 """
 import logging
-from typing import List
 
 from flask_wtf import FlaskForm
 from wtforms import (
-    Field,
     PasswordField,
     StringField,
     SubmitField,
     validators,
     TextAreaField,
-    BooleanField,
-    FormField,
 )
 
 from wtforms.validators import ValidationError
@@ -27,7 +23,6 @@ from digicubes_flask import digicubes
 logger = logging.getLogger(__name__)
 
 __ALL__ = [
-    "UserForm",
     "SchoolForm",
     "CourseForm",
     "CourseForm",
@@ -68,103 +63,6 @@ class EmailForm(FlaskForm):
     submit = SubmitField("Update", widget=w.materialize_submit)
 
 
-class UserForm(FlaskForm):
-    """
-    The user form that is used by the admin to create or update
-    users.
-    """
-
-    first_name = StringField(
-        "First Name",
-        widget=w.materialize_input,
-        validators=[
-            validators.InputRequired(),
-            validators.Length(max=20, message="Max size exceeded"),
-        ],
-    )
-
-    last_name = StringField(
-        "Last Name",
-        widget=w.materialize_input,
-        validators=[
-            validators.InputRequired(),
-            validators.Length(max=20, message="Max size exceeded"),
-        ],
-    )
-
-    email = StringField(
-        "Email",
-        widget=w.materialize_input,
-        validators=[
-            validators.Email(),
-            validators.InputRequired(),
-            validators.Length(max=60, message="Max size exceeded"),
-        ],
-    )
-
-    login = StringField(
-        "Login",
-        widget=w.materialize_input,
-        validators=[
-            validators.InputRequired(),
-            validators.Length(max=20, message="Max size exceeded"),
-        ],
-    )
-
-    is_active = BooleanField("Active", widget=w.materialize_checkbox)
-    is_verified = BooleanField("Verified", widget=w.materialize_checkbox)
-
-    submit = SubmitField("Update", widget=w.materialize_submit)
-
-
-def create_userform_with_roles(roles: List[proxy.RoleProxy]) -> UserForm:
-    """
-    Function to create a user form, that boolean fields for all defined
-    roles.
-    """
-    class UserFormWithRoles(FlaskForm):
-        """
-        Aggregated Form
-        """
-
-    class RoleSelectionForm(FlaskForm):
-        """
-        Form for the User Roles
-        """
-
-    for role in roles:
-        setattr(
-            RoleSelectionForm,
-            f"{role.name}",
-            BooleanField(role.name, widget=w.materialize_checkbox),
-        )
-
-    setattr(UserFormWithRoles, "user", FormField(UserForm, label="User"))
-    setattr(UserFormWithRoles, "role", FormField(RoleSelectionForm, label="Roles"))
-    return UserFormWithRoles()
-
-
-class UserLoginAvailable:
-    """
-    Custom validator to check, if a user with the login name
-    from the field already exists and therefor cannot be used.
-    """
-
-    def __init__(self, user_id: int = None):
-        self.user_id = user_id
-
-    def __call__(self, form: UserForm, field: Field):
-        if not field.data:
-            raise ValidationError("Login may not be empty.")
-
-        try:
-            user_proxy: proxy.UserProxy = digicubes.user.get_by_login(digicubes.token, field.data)
-            if self.user_id is not None and self.user_id == user_proxy.id:
-                return
-
-            raise ValidationError("User already exists. Try a different login.")
-        except ex.DoesNotExist:
-            pass
 
 
 class SchoolNameAvailable:

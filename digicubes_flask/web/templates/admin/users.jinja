@@ -33,25 +33,30 @@ Users Overview
 
 {% block main_menu_old %}
   <li><a href="{{ url_for('account.home') }}">Home</a></li>
-  <li><a href="{{ url_for('admin.users') }}">User</a></li>
-  <li><a href="{{url_for('admin.create_user')}}">New User</a></li>
+  <li><a href="{{ url_for('user.get_all') }}">User</a></li>
+  <li><a href="{{url_for('user.create')}}">New User</a></li>
 {% endblock %}
 
 {% block mobile_menu %}
   <li><a href="{{ url_for('account.home') }}">Home</a></li>
-  <li><a href="{{ url_for('admin.users') }}">User</a></li>
-  <li><a href="{{url_for('admin.create_user')}}">New User</a></li>
+  <li><a href="{{ url_for('user.get_all') }}">User</a></li>
+  <li><a href="{{url_for('user.create')}}">New User</a></li>
 {% endblock %}
 
 {% block sub_menu %}
-    
+    <li>
+        <a href="#">Edit</a>
+    </li>
+    <li>
+        <a href="#">Delete</a>
+    </li>
 {% endblock %}
 
 {% block main_content %}
 <div class="section">
     <div class="row">
         <div class="col s12 dc-menu">
-            <a class="dc-menu-item" href="{{url_for('admin.create_user')}}">New User</a>
+            <a class="dc-menu-item" href="{{url_for('user.create')}}">New User</a>
         </div>
     </div>
     <div class="row">
@@ -73,7 +78,7 @@ Users Overview
             {% for user in users %}
             <tr>
                 <td>{{ gravatar(user.email) }}</td>
-                <td ><a href="{{ url_for('admin.edit_user', user_id=user.id) }}">{{ user.first_name | nonefilter }} {{ user.last_name | nonefilter }}</a></td>
+                <td ><a href="{{ url_for('user.get', user_id=user.id) }}">{{ user.first_name | nonefilter }} {{ user.last_name | nonefilter }}</a></td>
                 <td>{{ user.login }}</td>
                 <td>{{ user.email | nonefilter }}</td>
                 <td>{{ user.created_at | digidate }}</td> 

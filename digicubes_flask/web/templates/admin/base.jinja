@@ -5,7 +5,7 @@
 
 {% block main_menu %}
   <li><a href="{{ url_for('account.home') }}">Home</a></li>
-  <li><a href="{{ url_for('admin.users') }}">User</a></li>
+  <li><a href="{{ url_for('user.get_all') }}">User</a></li>
   <li><a href="{{ url_for('admin.roles') }}">Roles</a></li>
   <li><a href="{{ url_for('admin.rights') }}">Rights</a></li>
   <li><a href="{{ url_for('school.get_all') }}">Schools</a></li>
@@ -14,7 +14,7 @@
 
 {% block mobile_menu %}
   <li><a href="{{ url_for('account.home') }}">Home</a></li>
-  <li><a href="{{ url_for('admin.users') }}">User</a></li>
+  <li><a href="{{ url_for('user.get_all') }}">User</a></li>
   <li><a href="{{ url_for('admin.roles') }}">Roles</a></li>
   <li><a href="{{ url_for('admin.rights') }}">Rights</a></li>
   <li><a href="{{ url_for('school.get_all') }}">Schools</a></li>

@@ -4,38 +4,37 @@
 User Details
 {% endblock %}
 
-{% block main_menu %}
-    <li><a href="{{ url_for('account.home') }}">Home</a></li>
-    <li><a href="{{ url_for('admin.users') }}">User</a></li>
-    <li><a href="{{url_for('admin.update_user', user_id=user.id)}}">Edit</a></li>
-    <li><a href="{{url_for('admin.delete_user', user_id=user.id)}}">Delete</a></li>
-    <li><a href="{{url_for('admin.verify_renew', user_id=user.id)}}">Verify</a></li>
-{% endblock %}
-
-{% block mobile_menu %}
-    <li><a href="{{ url_for('account.home') }}">Home</a></li>
-    <li><a href="{{ url_for('admin.users') }}">User</a></li>
-    <li><a href="{{url_for('admin.update_user', user_id=user.id)}}">Edit</a></li>
-    <li><a href="{{url_for('admin.delete_user', user_id=user.id)}}">Delete</a></li>
-    <li><a href="{{url_for('admin.verify_renew', user_id=user.id)}}">Verify</a></li>
-{% endblock %}
+{% block space_name %}{{ user.login }}{% endblock %}
 
 {% block main_content %}
 <div class="section">
     <div class="row">
-        <div class="col s12">
-            <h1 class="dc-bottom">{{ user.login | nonefilter }}</h1>
-            <h5 class="flowtext dc-top">
-                {{ user.first_name | nonefilter }} {{ user.last_name | nonefilter }}
-                / Created at {{ user.created_at | digidate}} 
-                {% if user.last_login_at %}
-                / last login at {{ user.last_login_at | digidate}} 
-                {% else %}
-                / never logged in
-                {% endif %}
-            </h5>
+        <div class="col s12 dc-menu">
+            <a href="{{url_for('user.update', user_id=user.id)}}">Edit</a>
+            <a class="dc-menu-item" href="{{url_for('user.delete', user_id=user.id)}}">Delete</a>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col m2 s6">First Name:</div>
+        <div class="col m10 s6">{{ user.first_name | nonefilter }}</div>
+    </div>
+        
+    <div class="row">
+        <div class="col m2 s6">Last Name:</div>
+        <div class="col m10 s6">{{ user.last_name | nonefilter }}</div>
+    </div>
+
+    <div class="row">
+        <div class="col m2 s6">Created at:</div>
+        <div class="col m10 s6">{{ user.created_at | digidate}}</div>
+    </div>
+
+    <div class="row">
+        <div class="col m2 s6">Last login at:</div>
+        <div class="col m10 s6">{{ user.last_login_at | digidate}}</div>
+    </div>
+
 </div>
 
 <div class="section dc-top">
