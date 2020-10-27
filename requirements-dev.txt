@@ -21,7 +21,7 @@ click==7.1.2              # via -r requirements.txt, black, flask, pip-tools
 colorama==0.4.3           # via green, twine
 coverage==5.2.1           # via coveralls, green, nose2
 coveralls==2.1.2          # via -r requirements-dev.in
-cryptography==3.0         # via secretstorage
+cryptography==3.2         # via secretstorage
 distlib==0.3.1            # via virtualenv
 dnspython==2.0.0          # via -r requirements.txt, email-validator
 doc8==0.8.1               # via -r requirements-dev.in
