@@ -36,6 +36,18 @@ class RightService(AbstractService):
 
         raise ServerError(f"Unknown error. [{result.status_code}] {result.text}")
 
+    def create_multiple(self, token, rights: List[RightProxy]):
+        """
+        Creates a set of rights and returns a list of created
+        right proxies. The creation of the rights is not an atomic
+        operation. 
+        """
+        #TODO: Maybe e could do this as an parallel async operation
+        #TODO: Also we should return two sets. One for the successfully
+        # created and one for the failed.
+        return [self.create(token, right) for right in rights]
+        
+
     def all(self, token) -> RightList:
         """
         Returns all rigths.

@@ -69,7 +69,7 @@ School
                 </tbody>
             </table>
             {% else %}
-            <a href="{{ url_for('course.delete', school_id=school.id) }}" class="waves-effect waves-light light-blue btn-large">Create your first course</a>
+            <a href="{{ url_for('course.create', school_id=school.id) }}" class="waves-effect waves-light light-blue btn-large">Create your first course</a>
             {% endif %}
         </div>
     </div>

@@ -134,7 +134,7 @@ def create(school_id: int, course_id: int):
     return render_template(
         "unit/create_unit.jinja",
         form=form,
-        action=url_for("teacher.create_course_unit", school_id=school_id, course_id=course_id),
+        action=url_for("unit.create", school_id=school_id, course_id=course_id),
     )
 
 
