@@ -116,3 +116,5 @@ ENV/
 digicubes.db-wal
 digicubes.db-shm
 .~lock.routes.ods#
+settings.json
+.vscode/settings.json
