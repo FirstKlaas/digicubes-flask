@@ -47,9 +47,9 @@ class DigicubesAccountManager:
             self.successful_logged_in_callback = lambda: redirect(url_for(index_view))
 
             self._client = DigiCubeClient(
-                protocol=os.environ.get("DC_API_SERVER_PROTOCOL", "http"),
-                hostname=os.environ.get("DC_API_SERVER_HOST", "localhost"),
-                port=os.environ.get("DC_API_SERVER_PORT", 3000),
+                protocol=os.getenv("DIGICUBES_API_SERVER_PROTOCOL", "http"),
+                hostname=os.getenv("DIGICUBES_API_SERVER_HOST", "localhost"),
+                port=int(os.getenv("DIGICUBES_API_SERVER_PORT", "3000"))
             )
 
             # At the end of each request the session

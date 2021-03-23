@@ -68,9 +68,6 @@ publish: pack
 	twine check ./dist/*	
 	twine upload ./dist/*
 
-run: export FLASK_ENV=development
-run: export DC_API_SERVER_PORT=3548
-run: export FLASK_APP=digicubes_flask.web
 run:
 	flask run
 
@@ -83,3 +80,5 @@ release: docker_gen
 docker: pack
 	docker build -t digicubes-web .
 
+gunicorn:
+	gunicorn -b 0.0.0.0:5050 --worker-tmp-dir=/dev/shm --workers=2 --threads=4 --worker-class=gthread wsgi:app

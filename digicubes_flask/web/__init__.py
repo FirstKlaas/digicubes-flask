@@ -54,9 +54,15 @@ def create_app(cfg_file_name=None):
     on `flask run`.
     """
 
+    # First, load the .env file, wich adds environment variables to the
+    # the program. Together with the pyaml parser extension these variables
+    # can be used in the yaml configuration
+    load_dotenv(verbose=False)
+
     app = Flask(__name__)
-    app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # TODO: Set via configuration
+    app.secret_key = os.getenv("DIGICUBES_SECRET", b'_5#y2L"F4Q8z\n\xec]/')
     app.config["DC_COOKIE_NAME"] = "digitoken"
+    app.config["secret"] = app.secret_key
 
     @app.errorhandler(DigiCubeError)
     def handle_digicube_error(error):  # pylint: disable=unused-variable
@@ -166,51 +172,11 @@ def create_app(cfg_file_name=None):
                 current_user.reset()
                 logger.warning("Token was send by the client, but it is expired on the server.")
 
-    def parse_config(data=None, tag="!ENV"):
-        """
-        Add a new token to the yaml parser. If we have an !ENV ${xyz} string in the yaml file,
-        xyz will be replaced by the corresonding environment variable if availabe or by the string
-        xyz else.
-        """
-        pattern = re.compile(".*?\${(\w+)}.*?")  # pylint: disable=anomalous-backslash-in-string
-        loader = yaml.SafeLoader
-        loader.add_implicit_resolver(tag, pattern, None)
-
-        def constructor_env_variables(loader, node):
-            """
-            Extracts the environment variable from the node's value
-            :param yaml.Loader loader: the yaml loader
-            :param node: the current node in the yaml
-            :return: the parsed string that contains the value of the environment
-            variable
-            """
-            value = loader.construct_scalar(node)
-            match = pattern.findall(value)  # to find all env variables in line
-            if match:
-                full_value = value
-                for ding in match:
-                    full_value = full_value.replace(f"${{{ding}}}", os.environ.get(ding, ding))
-                return full_value
-            return value
-
-        loader.add_constructor(tag, constructor_env_variables)
-        return yaml.load(data, Loader=loader)
 
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # C O N F I G U R A T I O N
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    # First, load the .env file, wich adds environment variables to the
-    # the program. Together with the pyaml parser extension these variables
-    # can be used in the yaml configuration
-    load_dotenv(verbose=False)
-
-    # Load the default settings and then load the custom settings
-    # The default settings are stored in this package and have to be loaded
-    # as a ressource.
-    with open_text("digicubes_flask.cfg", "default_configuration.yaml") as f:
-        settings = parse_config(f)
-        app.config.update(settings)
 
     # Loading the logging configuration. If no logging configuration
     # is found, it will fall back to logging.basicConfiguration
@@ -219,8 +185,7 @@ def create_app(cfg_file_name=None):
     # Initalizes the account manager extension, wich is responsible for the the
     # login and logout procedure.
     the_account_manager.init_app(app)
-
-    mail_cube.init_app(app)
+    #mail_cube.init_app(app)
     babel.init_app(app)
 
     # ---------------------------
