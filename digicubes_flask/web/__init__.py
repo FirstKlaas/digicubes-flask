@@ -206,21 +206,21 @@ def create_app(cfg_file_name=None):
     app.register_blueprint(blockly_blueprint, url_prefix="/blockly")
 
     # Admin blueprint
-    url_prefix = "/dcad"
+    url_prefix = "/admin"
     logger.debug("Register admin blueprint at %s", url_prefix)
     app.register_blueprint(admin_blueprint, url_prefix=url_prefix)
 
     # Headmaster blueprint
-    url_prefix = "/dchm"
+    url_prefix = "/headmaster"
     logger.debug("Register headmaster blueprint at %s", url_prefix)
     app.register_blueprint(headmaster_blueprint, url_prefix=url_prefix)
 
     # Teacher blueprint
-    url_prefix = "/dcte"
+    url_prefix = "/teacher"
     logger.debug("Register teacher blueprint at %s", url_prefix)
     app.register_blueprint(teacher_blueprint, url_prefix=url_prefix)
 
-    url_prefix = "/dcst"
+    url_prefix = "/student"
     logger.debug("Register student blueprint at %s", url_prefix)
     app.register_blueprint(student_blueprint, url_prefix=url_prefix)
 

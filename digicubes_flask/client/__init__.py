@@ -46,7 +46,7 @@ class DigiCubeClient:
     ]
 
     def __init__(
-        self, protocol: str = "http", hostname: str = "localhost", port: int = 3000
+        self, protocol: str = "http", hostname: str = "localhost", port: int = 3548
     ) -> None:
         self.protocol = protocol
         self.hostname = hostname
@@ -78,7 +78,6 @@ class DigiCubeClient:
         logger.info("Login with account %s to get bearer token.", login)
         data = {"login": login, "password": password}
         headers = {"accept": "application/json"}
-        # TODO: Use url_for
         response = self.requests.post(self.url_for("/login/"), data=data, headers=headers)
 
         if response.status_code == 404:

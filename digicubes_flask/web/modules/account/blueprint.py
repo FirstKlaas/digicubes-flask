@@ -124,6 +124,7 @@ def login():
             account_manager.login(user_login, password)
             return home()
         except DigiCubeError:
+            logger.exception("Could not validate credentials.")
             return account_manager.unauthorized()
 
     if request.method == "POST":

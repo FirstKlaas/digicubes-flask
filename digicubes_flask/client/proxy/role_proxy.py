@@ -26,3 +26,4 @@ class RoleProxy(AbstractProxy):
     description: Optional[str] = ""
     created_at: Optional[str] = None
     modified_at: Optional[str] = None
+
