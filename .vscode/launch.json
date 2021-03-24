@@ -6,7 +6,7 @@
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "wsgi.py",
+                "FLASK_APP": "${workspaceFolder}/wsgi.py",
                 "FLASK_ENV": "development",
                 "DIGICUBES_DATABASE_URL": "sqlite://:memory:"
             },
