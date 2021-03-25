@@ -17,17 +17,20 @@ from .school import blueprint as school_blueprint
 from .course import blueprint as course_blueprint
 from .unit import unit_service as unit_blueprint
 from .blockly import blockly_blueprint
+from .right import blueprint as right_blueprint
 
 __all__ = ["register_blueprints"]
 
 logger = logging.getLogger(__name__)
 
 blueprints = [
-        school_blueprint,
-        course_blueprint,
-        unit_blueprint,
-        user_blueprint,
-    ]
+    school_blueprint,
+    course_blueprint,
+    unit_blueprint,
+    user_blueprint,
+    right_blueprint,
+]
+
 
 def register_blueprints(app: Flask) -> None:
     """

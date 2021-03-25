@@ -15,7 +15,7 @@
   {% endif %}
   
   {% if has_right('right_read') %}
-  <li><a href="{{ url_for('admin.rights') }}">Rights</a></li>
+  <li><a href="{{ url_for('right.all') }}">Rights</a></li>
   {% endif %}
   
   {% if has_right('school_read') %}
@@ -29,7 +29,7 @@
   <li><a href="{{ url_for('account.home') }}">Home</a></li>
   <li><a href="{{ url_for('user.get_all') }}">User</a></li>
   <li><a href="{{ url_for('admin.roles') }}">Roles</a></li>
-  <li><a href="{{ url_for('admin.rights') }}">Rights</a></li>
+  <li><a href="{{ url_for('right.all') }}">Rights</a></li>
   <li><a href="{{ url_for('school.get_all') }}">Schools</a></li>
   <li><a href="{{ url_for('account.logout') }}">Logout</a></li>
 {% endblock %}

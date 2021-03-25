@@ -40,6 +40,7 @@ user: CurrentUser = current_user
 # THE FORMS
 # =========================================================================
 
+
 class CourseForm(FlaskForm):
     """
     Create new Course Form
@@ -78,9 +79,11 @@ class CourseForm(FlaskForm):
 
     submit = SubmitField("Ok", widget=w.materialize_submit)
 
+
 # =========================================================================
 # THE ROUTES
 # =========================================================================
+
 
 @blueprint.route("/school/<int:school_id>/dcourse/<int:course_id>/")
 def delete(school_id: int, course_id: int):
@@ -126,13 +129,11 @@ def update(school_id: int, course_id: int):
 
     school_proxy: proxy.SchoolProxy = service.get(token, school_id)
     course: proxy.CourseProxy = service.get_course(token, course_id)
-    action_url = url_for(
-        "course.update", school_id=school_proxy.id, course_id=course.id
-    )
+    action_url = url_for("course.update", school_id=school_proxy.id, course_id=course.id)
     form = CourseForm(obj=course)
     form.submit.label.text = "Update"
     return render_template(
-        "admin/update_course.jinja",
+        "course/update_course.jinja",
         school=school_proxy,
         course=course,
         form=form,
@@ -161,7 +162,9 @@ def get(school_id: int, course_id: int):
 
     # Get all the course units
     db_units = service.get_units(token, course_id)
-    return render_template("admin/course.jinja", school=db_school, course=db_course, units=db_units)
+    return render_template(
+        "course/course.jinja", school=db_school, course=db_course, units=db_units
+    )
 
 
 #
@@ -171,14 +174,14 @@ def get(school_id: int, course_id: int):
 @login_required
 def create(school_id: int):
     """
-        Create a new course for the school
+    Create a new course for the school
 
-        The method GET will render the creation form, while
-        the method POST will validate the form and create the
-        course, if possible.
+    The method GET will render the creation form, while
+    the method POST will validate the form and create the
+    course, if possible.
 
-        If any errors occure during the validation of the form,
-        the form will be rerendered.
+    If any errors occure during the validation of the form,
+    the form will be rerendered.
     """
 
     # Create the form instance
@@ -205,5 +208,8 @@ def create(school_id: int):
     form.submit.label.text = "Create"
     action_url = url_for("course.create", school_id=school_proxy.id)
     return render_template(
-        "admin/create_course.jinja", school=school_proxy, form=form, action=action_url,
+        "course/create_course.jinja",
+        school=school_proxy,
+        form=form,
+        action=action_url,
     )

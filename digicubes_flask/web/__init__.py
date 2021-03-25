@@ -172,11 +172,9 @@ def create_app(cfg_file_name=None):
                 current_user.reset()
                 logger.warning("Token was send by the client, but it is expired on the server.")
 
-
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # C O N F I G U R A T I O N
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 
     # Loading the logging configuration. If no logging configuration
     # is found, it will fall back to logging.basicConfiguration
@@ -223,7 +221,6 @@ def create_app(cfg_file_name=None):
     url_prefix = "/student"
     logger.debug("Register student blueprint at %s", url_prefix)
     app.register_blueprint(student_blueprint, url_prefix=url_prefix)
-
 
     # Register all known blueprints
     register_blueprints(app)

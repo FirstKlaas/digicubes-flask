@@ -113,7 +113,7 @@ def get(school_id: int, course_id: int, unit_id: int):
 @login_required
 def create(school_id: int, course_id: int):
     """
-        Create a new unit for this course.
+    Create a new unit for this course.
     """
 
     form: UnitForm = UnitForm()
@@ -127,9 +127,7 @@ def create(school_id: int, course_id: int):
         form.populate_obj(new_unit)
         server.school.create_unit(server.token, course_id, new_unit)
 
-        return redirect(
-            url_for("course.get", school_id=school_id, course_id=course_id)
-        )
+        return redirect(url_for("course.get", school_id=school_id, course_id=course_id))
 
     return render_template(
         "unit/create_unit.jinja",
@@ -146,7 +144,7 @@ def create(school_id: int, course_id: int):
 @login_required
 def update(school_id: int, course_id: int, unit_id: int):
     """
-        Update an existing unit for this course.
+    Update an existing unit for this course.
     """
     service: srv.SchoolService = digicubes.school
     token = digicubes.token
@@ -193,12 +191,10 @@ def update(school_id: int, course_id: int, unit_id: int):
 @login_required
 def delete(school_id: int, course_id: int, unit_id: int):
     """
-        Delete a new unit for this course.
+    Delete a new unit for this course.
     """
     service: srv.SchoolService = digicubes.school
     token = digicubes.token
 
     service.delete_unit(token, unit_id=unit_id)
-    return redirect(
-        url_for("course.get", school_id=school_id, course_id=course_id)
-    )
+    return redirect(url_for("course.get", school_id=school_id, course_id=course_id))

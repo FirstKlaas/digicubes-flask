@@ -40,13 +40,12 @@ class RightService(AbstractService):
         """
         Creates a set of rights and returns a list of created
         right proxies. The creation of the rights is not an atomic
-        operation. 
+        operation.
         """
-        #TODO: Maybe e could do this as an parallel async operation
-        #TODO: Also we should return two sets. One for the successfully
+        # TODO: Maybe e could do this as an parallel async operation
+        # TODO: Also we should return two sets. One for the successfully
         # created and one for the failed.
         return [self.create(token, right) for right in rights]
-        
 
     def all(self, token) -> RightList:
         """

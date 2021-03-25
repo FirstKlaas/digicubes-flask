@@ -37,6 +37,7 @@ user: CurrentUser = current_user
 # THE FORMS
 # =========================================================================
 
+
 class SchoolNameAvailable:
     """
     Field validator to check, if the name (field.data) is available,
@@ -88,6 +89,7 @@ class SchoolForm(FlaskForm):
     )
     submit = SubmitField("Ok", widget=w.materialize_submit)
 
+
 # =========================================================================
 # THE ROUTES
 # =========================================================================
@@ -99,11 +101,14 @@ def get_all():
     Display all schools
     """
     school_list = digicubes.school.all(digicubes.token)
-    return render_template("admin/schools.jinja", schools=school_list)
+    return render_template("school/schools.jinja", schools=school_list)
 
 
 @blueprint.route("/school/<int:school_id>/teacher/", methods=("GET",))
-def get_school_teacher(school_id:int):
+def get_school_teacher(school_id: int):
+    """
+    Get a list of teachers associated with this school.
+    """
     teacher = server.school.get_school_teacher(digicubes.token, school_id)
     return teacher
 
@@ -116,14 +121,15 @@ def create():
     form = SchoolForm()
     if form.is_submitted():
         if form.validate({"name": [SchoolNameAvailable()]}):
-            new_school = proxy.SchoolProxy(name=form.name.data, description=form.description.data,)
+            new_school = proxy.SchoolProxy(
+                name=form.name.data,
+                description=form.description.data,
+            )
             digicubes.school.create(digicubes.token, new_school)
             return redirect(url_for("school.get_all"))
 
     form.submit.label.ttext = "Create"
-    return render_template(
-        "admin/create_school.jinja", form=form, action=url_for("school.create")
-    )
+    return render_template("school/create_school.jinja", form=form, action=url_for("school.create"))
 
 
 @blueprint.route("/school/<int:school_id>/")
@@ -135,9 +141,11 @@ def get(school_id: int):
     # Gettting the school details from the server
     # TODO: Was, wenn die Schule nicht existiert?
     db_school = service.get(token, school_id)
-    courses = service.get_courses(digicubes.token, db_school)
-    teacher = service.get_school_teacher(digicubes.token, school_id)
-    return render_template("admin/school.jinja", school=db_school, courses=courses, teacher=teacher)
+    courses = service.get_courses(token, db_school)
+    teacher = service.get_school_teacher(token, school_id)
+    return render_template(
+        "school/school.jinja", school=db_school, courses=courses, teacher=teacher
+    )
 
 
 @blueprint.route("/uschool/<int:school_id>/", methods=("GET", "POST"))
@@ -168,7 +176,7 @@ def update(school_id: int):
     form.submit.label.text = "Update"
 
     return render_template(
-        "admin/update_school.jinja",
+        "school/update_school.jinja",
         form=form,
         school=db_school,
         action=url_for("school.update", school_id=db_school.id),

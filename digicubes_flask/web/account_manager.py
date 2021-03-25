@@ -50,7 +50,7 @@ class DigicubesAccountManager:
             self._client = DigiCubeClient(
                 protocol=os.getenv("DIGICUBES_API_SERVER_PROTOCOL", "http"),
                 hostname=os.getenv("DIGICUBES_API_SERVER_HOST", "localhost"),
-                port=int(os.getenv("DIGICUBES_API_SERVER_PORT", "3548"))
+                port=int(os.getenv("DIGICUBES_API_SERVER_PORT", "3548")),
             )
 
             # At the end of each request the session
@@ -85,7 +85,7 @@ class DigicubesAccountManager:
                     "is_root": is_root,
                     "version": get_version_string(),
                     "has_role": has_role,
-                    "md" : markdown,
+                    "md": markdown,
                 }
             )
 

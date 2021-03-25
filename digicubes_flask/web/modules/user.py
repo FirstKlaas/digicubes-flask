@@ -5,11 +5,11 @@ import logging
 from typing import List
 
 from flask import (
-    Blueprint, 
-    render_template, 
-    redirect, 
-    url_for, 
-    abort, 
+    Blueprint,
+    render_template,
+    redirect,
+    url_for,
+    abort,
     request,
     flash,
 )
@@ -100,6 +100,7 @@ def create_userform_with_roles(roles: List[proxy.RoleProxy]) -> UserForm:
     Function to create a user form, that boolean fields for all defined
     roles.
     """
+
     class UserFormWithRoles(FlaskForm):
         """
         Aggregated Form that holds the UserForm as well as a dynamically
@@ -150,6 +151,7 @@ class UserLoginAvailable:
 # =========================================================================
 # THE ROUTES
 # =========================================================================
+
 
 @blueprint.route("/all/")
 @login_required

@@ -93,8 +93,8 @@ def update_password():
 @login_required
 def logout():
     """
-        Logs current user out.
-        Redirects to the configured unauthorized page.
+    Logs current user out.
+    Redirects to the configured unauthorized page.
     """
     account_manager.logout()
     return account_manager.unauthorized()

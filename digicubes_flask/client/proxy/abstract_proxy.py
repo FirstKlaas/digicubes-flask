@@ -21,48 +21,48 @@ TStructuredData = Dict[str, Any]
 
 def unstructure_hook_date(d: datetime.date):
     """
-        Converts a string to an datetime object.
-        The string is expected to have the following
-        format: yyyy-mm-dd. (ISO format)
+    Converts a string to an datetime object.
+    The string is expected to have the following
+    format: yyyy-mm-dd. (ISO format)
 
-        It is used by cattr to convert json responses
-        to corresponding data structures.
+    It is used by cattr to convert json responses
+    to corresponding data structures.
     """
     return d.isoformat()
 
 
 def unstructure_hook_datetime(d: datetime.datetime):
     """
-        Converts a string to an datetime object.
-        The string is expected to have the following
-        format: yyyy-mm-dd. (ISO format)
+    Converts a string to an datetime object.
+    The string is expected to have the following
+    format: yyyy-mm-dd. (ISO format)
 
-        It is used by cattr to convert json responses
-        to corresponding data structures.
+    It is used by cattr to convert json responses
+    to corresponding data structures.
     """
     return d.isoformat()
 
 
 def structure_hook_date(s: str, t):
     """
-        Converts a string to an datetime object.
-        The string is expected to have the following
-        format: yyyy-mm-dd. (ISO format)
+    Converts a string to an datetime object.
+    The string is expected to have the following
+    format: yyyy-mm-dd. (ISO format)
 
-        It is used by cattr to convert json responses
-        to corresponding data structures.
+    It is used by cattr to convert json responses
+    to corresponding data structures.
     """
     return datetime.date.fromisoformat(s)
 
 
 def structure_hook_datetime(s: str, t):
     """
-        Converts a string to an datetime object.
-        The string is expected to have the following
-        format: yyyy-mm-dd. (ISO format)
+    Converts a string to an datetime object.
+    The string is expected to have the following
+    format: yyyy-mm-dd. (ISO format)
 
-        It is used by cattr to convert json responses
-        to corresponding data structures.
+    It is used by cattr to convert json responses
+    to corresponding data structures.
     """
     return datetime.datetime.fromisoformat(s)
 

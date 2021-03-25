@@ -37,6 +37,7 @@ user: CurrentUser = current_user
 # THE FORMS
 # =========================================================================
 
+
 class RightForm(FlaskForm):
     """
     Create or update right form
@@ -49,27 +50,21 @@ class RightForm(FlaskForm):
     )
     submit = SubmitField("Ok", widget=w.materialize_submit)
 
+
 # =========================================================================
 # THE ROUTES
 # =========================================================================
+
 
 def right_service() -> RightService:
     return digicubes.right
 
 
-@blueprint.route("/rights/")
+@blueprint.route("/all/")
 @login_required
-def get_all():
+def all():
     """
     Display all rights
     """
 
-    return render_template(
-        "admin/right.jinja", 
-        rights=right_service().all(digicubes.token))
-
-
-@blueprint.route("/cright/", methods=("GET", "POST"))
-@login_required
-def create():
-    """Create a new right"""
+    return render_template("right/rights.jinja", rights=right_service().all(digicubes.token))

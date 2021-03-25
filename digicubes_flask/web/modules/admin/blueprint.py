@@ -34,7 +34,7 @@ def roles():
     Display all roles
     """
     role_list = digicubes.role.all(digicubes.token)
-    return render_template("admin/roles.jinja", roles=role_list)
+    return render_template("role/roles.jinja", roles=role_list)
 
 
 @admin_blueprint.route("/user/<int:user_id>/addrole/<int:role_id>")
@@ -52,39 +52,6 @@ def remove_user_role(user_id: int, role_id: int):
     )
     return redirect(url_for("user.update", user_id=user_id))
 
-
-@admin_blueprint.route("/rights/")
-def rights():
-    """
-    Display all roles
-    """
-    rights_list = digicubes.right.all(digicubes.token)
-    return render_template("admin/rights.jinja", rights=rights_list)
-
-
-@admin_blueprint.route("/school/<int:school_id>/headmaster/", methods=("GET", "POST"))
-@login_required
-def add_school_headmaster():
-    """
-    Get or add an headmaster to the school with the id `school_id`. If no such school
-    exists, an 404 status code is send back.
-
-    :Methods:
-
-        - **GET:** Returns all headmasters, associated with this school ordered in
-          lexical ascending order by their last name, followed by the first name.
-          There is no pagination support. The endpoint displays always all
-          headmaster.
-    """
-    #user: CurrentUser = current_user
-
-    #form = EmailForm()
-
-    #if form.is_submitted():
-    #    if form.validate():
-    #        email = form.email.data
-    #        # Now check, if a user with this
-    #        # Emailadress already is registered
 
 @admin_blueprint.route("/rfc/", methods=("GET", "POST", "PUT"))
 @login_required

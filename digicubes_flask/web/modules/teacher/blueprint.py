@@ -28,4 +28,3 @@ def index():
 @login_required
 def home():
     return redirect(url_for("account.home"))
-

@@ -50,6 +50,7 @@ class EmailForm(FlaskForm):
     """
     Simple Emailform, to update a users email address
     """
+
     email = StringField(
         "Email",
         widget=w.materialize_input,
@@ -61,8 +62,6 @@ class EmailForm(FlaskForm):
     )
 
     submit = SubmitField("Update", widget=w.materialize_submit)
-
-
 
 
 class SchoolNameAvailable:
