@@ -3,6 +3,7 @@ import threading
 import logging
 import os
 from queue import Queue
+from typing import Optional
 
 from email.message import EmailMessage
 from email.headerregistry import Address
@@ -27,29 +28,12 @@ class MailCube:
             raise ex.DigiCubeError("No mailbot in application scope. Not initialized?")
         return mc
 
-    def __get_config_value(self, env_name=None, cfg_name=None, default=None):
-
-        # First chack the environment
-        if env_name:
-            data = os.environ.get(env_name, None)
-            if data:
-                return data
-
-        # Now check the config
-        if cfg_name and self.config:
-            data = self.config.get(cfg_name, None)
-            if data:
-                return data
-
-        # return the default
-        return default
+    @property
+    def smtp_host(self) -> Optional[str]:
+        return os.getenv("DC_SMTP_HOST", None)
 
     @property
-    def smtp_host(self):
-        return self.__get_config_value("DC_SMTP_HOST", "host", None)
-
-    @property
-    def is_enabled(self):
+    def is_enabled(self) -> bool:
         """
         Flag, to indicate, wether the mail add on is enabled or not.
         Currently only the existence of the SMTP host is tested.
@@ -57,32 +41,32 @@ class MailCube:
         return self.smtp_host is not None
 
     @property
-    def smtp_port(self):
-        return self.__get_config_value("DC_SMTP_PORT", "port", 465)
+    def smtp_port(self) -> int:
+        return int(os.getenv("DC_SMTP_PORT", 465))
 
     @property
     def smtp_username(self):
-        return self.__get_config_value("DC_SMTP_USERNAME", "username", None)
+        return os.getenv("DC_SMTP_USERNAME", None)
 
     @property
     def smtp_password(self):
-        return self.__get_config_value("DC_SMTP_PASSWORD", "password", None)
+        return os.getenv("DC_SMTP_PASSWORD", None)
 
     @property
     def smtp_from_email_addr(self):
-        return self.__get_config_value("DC_SMTP_FROM_EMAIL_ADDR", "from_email_addr", None)
+        return os.getenv("DC_SMTP_FROM_EMAIL_ADDR", None)
 
     @property
     def smtp_from_display_name(self):
-        return self.__get_config_value("DC_SMTP_DISPLAY_NAME", "display_name", None)
+        return os.getenv("DC_SMTP_DISPLAY_NAME", None)
 
     @property
     def number_of_workers(self):
-        return self.config.get("number_of_workers", 1)
+        return int(os.getenv("DC_MAILCUBE_WORKERS", 1))
 
     @property
     def number_of_tries(self):
-        return self.config.get("number_of_tries", 1)
+        return int(os.getenv("DC_MAILCUBE_MAX_RETRY", 1))
 
     def __init__(self, app=None):
 
@@ -103,8 +87,6 @@ class MailCube:
         self.secret = app.config.get("secret", None)
         if self.secret is None:
             raise ex.ConfigurationError("Secret not configured")
-
-        self.config = app.config.get("mail_cube", None)
 
         for _ in range(self.number_of_workers):
             w = threading.Thread(target=self.__worker__, daemon=True)

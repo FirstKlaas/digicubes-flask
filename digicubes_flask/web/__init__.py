@@ -185,7 +185,7 @@ def create_app(cfg_file_name=None):
     # Initalizes the account manager extension, wich is responsible for the the
     # login and logout procedure.
     the_account_manager.init_app(app)
-    #mail_cube.init_app(app)
+    mail_cube.init_app(app)
     babel.init_app(app)
 
     # ---------------------------

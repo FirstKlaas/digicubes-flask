@@ -154,7 +154,7 @@ DigiCubes.toggleUserRole = async function(user_id, role_id, operation = "toggle"
 }
 
 DigiCubes.adminRFC = async function(method, funcName, data) {
-    return fetch('/dcad/rfc/', {
+    return fetch('/admin/rfc/', {
         method: method,
         mode: 'same-origin',
         cache: 'default',
