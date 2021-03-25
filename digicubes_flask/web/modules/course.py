@@ -152,7 +152,6 @@ def get(school_id: int, course_id: int):
     service: srv.SchoolService = digicubes.school
     token = digicubes.token
     db_course: proxy.CourseProxy = service.get_course_or_none(token, course_id)
-
     db_school: proxy.SchoolProxy = service.get(token, school_id)
 
     # If there is no course, we just display the
@@ -160,6 +159,7 @@ def get(school_id: int, course_id: int):
     if db_course is None:
         return db_school(school_id)
 
+    # Get all the course units
     db_units = service.get_units(token, course_id)
     return render_template("admin/course.jinja", school=db_school, course=db_course, units=db_units)
 

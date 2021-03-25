@@ -60,7 +60,7 @@ def create_app(cfg_file_name=None):
     load_dotenv(verbose=False)
 
     app = Flask(__name__)
-    app.secret_key = os.getenv("DIGICUBES_SECRET", b'_5#y2L"F4Q8z\n\xec]/')
+    app.secret_key = os.getenv("DIGICUBES_SECRET", '_5#y2L"F4Q8z\n\xec]/')
     app.config["DC_COOKIE_NAME"] = "digitoken"
     app.config["secret"] = app.secret_key
 

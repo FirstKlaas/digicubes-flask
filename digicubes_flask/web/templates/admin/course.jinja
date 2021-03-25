@@ -1,29 +1,47 @@
 {% extends "admin/base.jinja" %}
 
+
 {% block page_title %}
 Course Details
 {% endblock %}
 {% block space_name %}{{ course.name | nonefilter }}{% endblock %}
 
+{% macro info_row(label, value) %}
+<div class="row">
+    <div class="col s2">{{ label }}:</div>
+    <div class="col s10">{{ value }}</div>
+</div>
+{% endmacro %}
+
+{% macro menu_button(url, label) %}
+    <a href="{{ url }}" class="waves-effect waves-light btn-small light-blue">{{ label }}</a>
+{% endmacro %}
+
+{% macro menu_button_plain(url, label) %}
+    <a class="dc-menu-item" href="{{ url }}">{{ label }}</a>
+{% endmacro %}
 
 {% block main_content %}
-
+{# The page menu #}
 <div class="section">
     <div class="row">
-        <div class="col s12 dc-menu">
-            <a class="dc-menu-item" href="{{ url_for('school.get', school_id=school.id) }}">Back to {{  school.name }}</a>
-            <a class="dc-menu-item" href="{{ url_for('course.update', school_id=school.id, course_id=course.id) }}">Edit Course</a>
-            <a class="dc-menu-item" href="{{ url_for('unit.create', school_id=school.id, course_id=course.id) }}">New Unit</a>
-            
+        <div class="col s12">
+            {{ menu_button(url_for('school.get', school_id=school.id), school.name) }}
+            {{ menu_button(url_for('course.update', school_id=school.id, course_id=course.id), "Edit Course") }}
+            {{ menu_button(url_for('unit.create', school_id=school.id, course_id=course.id), "New Unit") }}
         </div>
     </div>
-    <div class="row">
-        <div class="col s12 dc-md">
-            <p>
-            {{ course.description | md }}
-            </p>
-        </div>
-    </div>
+</div>
+
+{# Header info for this unit #}
+<div class="section">
+    {{ info_row("Schule", school.name) }}
+    {{ info_row("Kursname", course.name) }}
+    {{ info_row("Beschreibung", md(course.description)) }}
+    {{ info_row("Angelegt", course.created_at) }}
+    {{ info_row("Zuletzt geändert", course.last_modified_at) }}
+    {{ info_row("Startdatum", course.from_date) }}
+    {{ info_row("Enddatum", course.until_date) }}
 </div>
 
 <div class="section">

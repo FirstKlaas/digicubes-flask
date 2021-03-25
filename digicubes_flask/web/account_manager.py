@@ -6,6 +6,7 @@ import os
 
 from flask import abort, current_app, redirect, Flask, url_for, request, g
 from flask_wtf.csrf import CSRFError
+from markdown import markdown
 
 from digicubes_flask.client import (
     DigiCubeClient,
@@ -84,6 +85,7 @@ class DigicubesAccountManager:
                     "is_root": is_root,
                     "version": get_version_string(),
                     "has_role": has_role,
+                    "md" : markdown,
                 }
             )
 
