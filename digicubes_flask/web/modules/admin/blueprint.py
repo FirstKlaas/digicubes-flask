@@ -86,7 +86,6 @@ def add_school_headmaster():
     #        # Now check, if a user with this
     #        # Emailadress already is registered
 
-
 @admin_blueprint.route("/rfc/", methods=("GET", "POST", "PUT"))
 @login_required
 def rfc():

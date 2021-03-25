@@ -1,4 +1,5 @@
 {% extends "admin/base.jinja" %}
+{% import "macros/menu.jinja" as menu %}
 
 {% block page_title %}
 School
@@ -21,11 +22,11 @@ School
 {% block main_content %}
 <div class="section">
     <div class="row">
-        <div class="col s12 dc-menu">
-            <a class="dc-menu-item" href="{{ url_for('school.update', school_id=school.id) }}">Edit School</a>
-            <a class="dc-menu-item" href="{{ url_for('course.create', school_id=school.id) }}">New Course</a>
-            <a class="dc-menu-item" href="#">Add Teacher</a>
-            <a class="dc-menu-item" href="{{ url_for('school.delete', school_id=school.id) }}">Delete School</a>
+        <div class="col s12">
+            {{ menu.button(url_for('school.update', school_id=school.id), "Edit School") }}
+            {{ menu.button(url_for('course.create', school_id=school.id), "New Course") }}
+            {{ menu.button("#","Add Teacher") }}
+            {{ menu.button(url_for('school.delete', school_id=school.id), "Delete School") }}
         </div>
     </div>
     <div class="row">

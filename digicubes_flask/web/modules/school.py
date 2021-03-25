@@ -102,6 +102,12 @@ def get_all():
     return render_template("admin/schools.jinja", schools=school_list)
 
 
+@blueprint.route("/school/<int:school_id>/teacher/", methods=("GET",))
+def get_school_teacher(school_id:int):
+    teacher = server.school.get_school_teacher(digicubes.token, school_id)
+    return teacher
+
+
 @blueprint.route("/cschool/", methods=("GET", "POST"))
 @login_required
 def create():

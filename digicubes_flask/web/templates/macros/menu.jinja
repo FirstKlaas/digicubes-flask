@@ -1,0 +1,7 @@
+{% macro button(url, label) %}
+    <a href="{{ url }}" class="waves-effect waves-light btn-small light-blue">{{ label }}</a>
+{% endmacro %}
+
+{% macro plain(url, label) %}
+    <a class="dc-menu-item" href="{{ url }}">{{ label }}</a>
+{% endmacro %}
