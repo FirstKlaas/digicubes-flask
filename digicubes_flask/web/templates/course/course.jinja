@@ -8,7 +8,7 @@ Course Details
 {% block space_name %}{{ course.name | nonefilter }}{% endblock %}
 
 {% macro info_row(label, value) %}
-<div class="row">
+<div class="row"  style="margin-bottom: 5px !important">
     <div class="col s2">{{ label }}:</div>
     <div class="col s10">{{ value }}</div>
 </div>
@@ -32,8 +32,9 @@ Course Details
     {{ info_row("Schule", school.name) }}
     {{ info_row("Kursname", course.name) }}
     {{ info_row("Beschreibung", md(course.description)) }}
-    {{ info_row("Angelegt", course.created_at) }}
-    {{ info_row("Zuletzt geändert", course.last_modified_at) }}
+    {{ info_row("Angelegt durch", creator.login) }}
+    {{ info_row("Angelegt am", course.created_at) }}
+    {{ info_row("Zuletzt geändert", course.modified_at) }}
     {{ info_row("Startdatum", course.from_date) }}
     {{ info_row("Enddatum", course.until_date) }}
 </div>

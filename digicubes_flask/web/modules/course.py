@@ -151,6 +151,8 @@ def get(school_id: int, course_id: int):
     Display a single course.
     """
     service: srv.SchoolService = digicubes.school
+    user_service: srv.UserService = digicubes.user
+
     token = digicubes.token
     db_course: proxy.CourseProxy = service.get_course_or_none(token, course_id)
     db_school: proxy.SchoolProxy = service.get(token, school_id)
@@ -162,8 +164,12 @@ def get(school_id: int, course_id: int):
 
     # Get all the course units
     db_units = service.get_units(token, course_id)
+
+    # Get infos about the creator
+    creator = user_service.get(token, db_course.created_by_id, ["login", "first_name", "last_name", "id"])
+
     return render_template(
-        "course/course.jinja", school=db_school, course=db_course, units=db_units
+        "course/course.jinja", school=db_school, course=db_course, units=db_units, creator=creator
     )
 
 
