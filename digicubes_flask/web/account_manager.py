@@ -20,6 +20,8 @@ from digicubes_flask.client import (
 from digicubes_flask.structures import BearerTokenData
 from digicubes_flask import account_manager, current_user, get_version_string
 
+from .momentjs import to_local_datetime
+
 logger = logging.getLogger(__name__)
 
 
@@ -100,6 +102,7 @@ class DigicubesAccountManager:
                     "has_role": has_role,
                     "md": markdown,
                     "format_datetime": format_datetime,
+                    "to_local_datetime": to_local_datetime,
                 }
             )
 

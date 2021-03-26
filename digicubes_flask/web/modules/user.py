@@ -281,7 +281,7 @@ def get(user_id: int):
     all_roles = server.role.all(token)
 
     role_list = [(role, role.name in user_roles_names) for role in all_roles]
-    return render_template("admin/user.jinja", user=user_proxy, roles=role_list)
+    return render_template("user/user.jinja", user=user_proxy, roles=role_list)
 
 
 @blueprint.route("/panel/all/")

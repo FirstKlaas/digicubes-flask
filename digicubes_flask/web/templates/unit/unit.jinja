@@ -4,7 +4,7 @@
 
 
 {% block page_title %}{{ unit.name }}{% endblock %}
-{% block space_name %}{{ unit.name }}{% endblock %}
+{% block space_name %}Kurseinheit{% endblock %}
 
 
 {% block main_content %}
@@ -23,8 +23,8 @@
     {{ info.row("Unit Name", unit.name) }}
     {{ info.row("Kurz Beschreibung", md(unit.short_description)) }}
     {{ info.row("Lang Beschreibung", md(unit.long_description)) }}
-    {{ info.row("Angelegt am", format_datetime(unit.created_at)) }}
-    {{ info.row("Zuletzt geändert", format_datetime(unit.modified_at)) }}
+    {{ info.row("Angelegt am", to_local_datetime(unit.created_at, "fromNow()")) }}
+    {{ info.row("Zuletzt geändert", to_local_datetime(unit.modified_at, "fromNow()")) }}
 </div>
 
 {% endblock %}   

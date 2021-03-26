@@ -1,40 +1,32 @@
 {% extends "admin/base.jinja" %}
+{% import "macros/menu.jinja" as menu %}
+{% import "macros/object_info.jinja" as info %}
 
 {% block page_title %}
 User Details
 {% endblock %}
 
-{% block space_name %}{{ user.login }}{% endblock %}
+{% block space_name %}Benutzer Infos{% endblock %}
 
 {% block main_content %}
+{# Page Menu #}
 <div class="section">
-    <div class="row">
-        <div class="col s12 dc-menu">
-            <a href="{{url_for('user.update', user_id=user.id)}}">Edit</a>
-            <a class="dc-menu-item" href="{{url_for('user.delete', user_id=user.id)}}">Delete</a>
-        </div>
+  <div class="row">
+    <div class="col s12">
+      {{ menu.button(url_for('user.update', user_id=user.id), "Edit User") }}
+      {{ menu.button(url_for('user.delete', user_id=user.id), "Delete User") }}
     </div>
+  </div>
+</div>
 
-    <div class="row">
-        <div class="col m2 s6">First Name:</div>
-        <div class="col m10 s6">{{ user.first_name | nonefilter }}</div>
-    </div>
-        
-    <div class="row">
-        <div class="col m2 s6">Last Name:</div>
-        <div class="col m10 s6">{{ user.last_name | nonefilter }}</div>
-    </div>
-
-    <div class="row">
-        <div class="col m2 s6">Created at:</div>
-        <div class="col m10 s6">{{ user.created_at | digidate}}</div>
-    </div>
-
-    <div class="row">
-        <div class="col m2 s6">Last login at:</div>
-        <div class="col m10 s6">{{ user.last_login_at | digidate}}</div>
-    </div>
-
+{# Header info for this unit #}
+<div class="section">
+    {{ info.row("Vorname", user.first_name) }}
+    {{ info.row("Nachname", user.last_name) }}
+    {{ info.row("Email", user.email) }}
+    {{ info.row("Angelegt am", to_local_datetime(user.created_at, "fromNow()")) }}
+    {{ info.row("Zuletzt geändert", to_local_datetime(user.modified_at, "fromNow()")) }}
+    {{ info.row("Zuletzt eingelogged", to_local_datetime(user.last_login_at, "fromNow()")) }}
 </div>
 
 <div class="section dc-top">
