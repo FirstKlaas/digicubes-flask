@@ -1,0 +1,13 @@
+{% macro row(label, value) %}
+<div class="row"  style="margin-bottom: 5px !important">
+    <div class="col s2">{{ label }}:</div>
+    <div class="col s10">{{ value }}</div>
+</div>
+{% endmacro %}
+
+{% macro link_row(label, value, url) %}
+<div class="row"  style="margin-bottom: 5px !important">
+    <div class="col s2">{{ label }}:</div>
+    <div class="col s10"><a href="{{ url }}">{{ value }}</a></div>
+</div>
+{% endmacro %}

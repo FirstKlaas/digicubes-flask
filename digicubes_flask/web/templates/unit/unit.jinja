@@ -1,19 +1,7 @@
 {% extends "admin/base.jinja" %}
 {% import "macros/menu.jinja" as menu %}
+{% import "macros/object_info.jinja" as info %}
 
-{% macro info_row(label, value) %}
-<div class="row"  style="margin-bottom: 5px !important">
-    <div class="col s2">{{ label }}:</div>
-    <div class="col s10">{{ value }}</div>
-</div>
-{% endmacro %}
-
-{% macro info_link_row(label, value, url) %}
-<div class="row"  style="margin-bottom: 5px !important">
-    <div class="col s2">{{ label }}:</div>
-    <div class="col s10"><a href="{{ url }}">{{ value }}</a></div>
-</div>
-{% endmacro %}
 
 {% block page_title %}{{ unit.name }}{% endblock %}
 {% block space_name %}{{ unit.name }}{% endblock %}
@@ -30,13 +18,13 @@
 
 {# Header info for this unit #}
 <div class="section">
-    {{ info_link_row("Schule", school.name, url_for('school.get', school_id=school.id)) }}
-    {{ info_link_row("Kurs", course.name, url_for('course.get', school_id=school.id, course_id=course.id)) }}
-    {{ info_row("Unit Name", unit.name) }}
-    {{ info_row("Kurz Beschreibung", md(unit.short_description)) }}
-    {{ info_row("Lang Beschreibung", md(unit.long_description)) }}
-    {{ info_row("Angelegt am", unit.created_at) }}
-    {{ info_row("Zuletzt geändert", unit.modified_at) }}
+    {{ info.link_row("Schule", school.name, url_for('school.get', school_id=school.id)) }}
+    {{ info.link_row("Kurs", course.name, url_for('course.get', school_id=school.id, course_id=course.id)) }}
+    {{ info.row("Unit Name", unit.name) }}
+    {{ info.row("Kurz Beschreibung", md(unit.short_description)) }}
+    {{ info.row("Lang Beschreibung", md(unit.long_description)) }}
+    {{ info.row("Angelegt am", unit.created_at) }}
+    {{ info.row("Zuletzt geändert", unit.modified_at) }}
 </div>
 
 {% endblock %}   
