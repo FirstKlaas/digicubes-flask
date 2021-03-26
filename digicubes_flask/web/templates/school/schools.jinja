@@ -5,17 +5,11 @@
 Schools Overview
 {% endblock %}
 
-{% block sub_menu %}
-    <li>
-        <a href="{{url_for('school.create')}}">New School</a>
-    </li>
-{% endblock %}
-
 {% block main_content %}
 <div class="section">
     <div class="row">
         <div class="col s12">
-            {{ menu.button(url_for('school.create'), "New School") }}
+            {% if has_right('school_create') %} {{ menu.button(url_for('school.create'), "New School") }} {% endif %}
         </div>
     </div>
 
@@ -51,7 +45,9 @@ Schools Overview
         </thead>
     </table>   
     {% else %}
-        <a href="{{ url_for('school.create') }}" class="waves-effect waves-light light-blue btn-large">Create your first school</a>
+        {% if has_right('school_create') %}
+            <a href="{{ url_for('school.create') }}" class="waves-effect waves-light light-blue btn-large">Create your first school</a>
+        {% endif %}
     {% endif %}
 </div> 
 {% endblock %}        

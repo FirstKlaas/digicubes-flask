@@ -30,7 +30,7 @@ user: CurrentUser = current_user
 @account_service.route("/")
 @login_required
 def index():
-    """The home route"""
+    """The home route for the root account"""
     return render_template("account/index.jinja")
 
 
