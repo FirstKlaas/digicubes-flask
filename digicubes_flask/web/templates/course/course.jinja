@@ -33,10 +33,10 @@ Course Details
     {{ info.row("Kursname", course.name) }}
     {{ info.row("Beschreibung", md(course.description)) }}
     {{ info.row("Angelegt durch", creator.login) }}
-    {{ info.row("Angelegt am", course.created_at) }}
-    {{ info.row("Zuletzt geändert", course.modified_at) }}
-    {{ info.row("Startdatum", course.from_date) }}
-    {{ info.row("Enddatum", course.until_date) }}
+    {{ info.row("Angelegt am", format_datetime(course.created_at)) }}
+    {{ info.row("Zuletzt geändert", format_datetime(course.modified_at)) }}
+    {{ info.row("Startdatum", format_datetime(course.from_date, date_format="%d.%m.%Y")) }}
+    {{ info.row("Enddatum", format_datetime(course.until_date, date_format="%d.%m.%Y")) }}
 </div>
 
 <div class="section">

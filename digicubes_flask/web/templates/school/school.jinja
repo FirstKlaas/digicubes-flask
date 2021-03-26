@@ -1,5 +1,7 @@
 {% extends "admin/base.jinja" %}
 {% import "macros/menu.jinja" as menu %}
+{% import "macros/object_info.jinja" as info %}
+
 
 {% block page_title %}
 School
@@ -29,12 +31,16 @@ School
             {{ menu.button(url_for('school.delete', school_id=school.id), "Delete School") }}
         </div>
     </div>
-    <div class="row">
-        <div class="col s12 dc-md">
-            <h5 class="flowtext">{{ school.description | md }}</h5>
-        </div>
-    </div>
 </div>
+
+{# Header info for this school #}
+<div class="section">
+    {{ info.link_row("Schule", school.name, url_for('school.get', school_id=school.id)) }}
+    {{ info.row("Beschreibung", md(school.description)) }}
+    {{ info.row("Angelegt am", format_datetime(school.created_at)) }}
+    {{ info.row("Zuletzt geändert", format_datetime(school.modified_at)) }}
+</div>
+
 
 <div class="section">
     <div class="row">

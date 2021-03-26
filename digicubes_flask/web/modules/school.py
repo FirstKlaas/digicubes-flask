@@ -95,7 +95,7 @@ class SchoolForm(FlaskForm):
 # =========================================================================
 
 
-@blueprint.route("/schools/")
+@blueprint.route("/all/")
 def get_all():
     """
     Display all schools
@@ -104,7 +104,7 @@ def get_all():
     return render_template("school/schools.jinja", schools=school_list)
 
 
-@blueprint.route("/school/<int:school_id>/teacher/", methods=("GET",))
+@blueprint.route("/<int:school_id>/teacher/", methods=("GET",))
 def get_school_teacher(school_id: int):
     """
     Get a list of teachers associated with this school.
@@ -113,7 +113,7 @@ def get_school_teacher(school_id: int):
     return teacher
 
 
-@blueprint.route("/cschool/", methods=("GET", "POST"))
+@blueprint.route("/create/", methods=("GET", "POST"))
 @login_required
 def create():
     """Create a new school"""
@@ -132,7 +132,7 @@ def create():
     return render_template("school/create_school.jinja", form=form, action=url_for("school.create"))
 
 
-@blueprint.route("/school/<int:school_id>/")
+@blueprint.route("/get/<int:school_id>/")
 @login_required
 def get(school_id: int):
     """Schow details of an existing school"""
@@ -148,7 +148,7 @@ def get(school_id: int):
     )
 
 
-@blueprint.route("/uschool/<int:school_id>/", methods=("GET", "POST"))
+@blueprint.route("/update/<int:school_id>/", methods=("GET", "POST"))
 @login_required
 def update(school_id: int):
     """
@@ -183,7 +183,7 @@ def update(school_id: int):
     )
 
 
-@blueprint.route("/dschool/<int:school_id>/")
+@blueprint.route("/delete/<int:school_id>/")
 @login_required
 def delete(school_id: int):
     """Delete an existing school"""
