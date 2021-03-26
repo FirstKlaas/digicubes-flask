@@ -58,3 +58,6 @@ class UnitProxy(AbstractProxy):
 
     short_description: Optional[str] = None
     long_description: Optional[str] = None
+
+    created_at: Optional[str] = None
+    modified_at: Optional[str] = None
