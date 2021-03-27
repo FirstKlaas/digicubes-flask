@@ -1,5 +1,7 @@
-{% macro button(url, label) %}
+{% macro button(url, label, right=none) %}
+    {% if right == none or has_right(right) %}
     <a href="{{ url }}" class="waves-effect waves-light btn-small light-blue">{{ label }}</a>
+    {% endif%}
 {% endmacro %}
 
 {% macro plain(url, label) %}

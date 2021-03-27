@@ -1,4 +1,5 @@
 {% extends "admin/base.jinja" %}
+{% import "macros/menu.jinja" as menu with context %}
 
 {% macro icon_verified(user) -%}
     {% if user.is_verified %}
@@ -26,16 +27,10 @@
 {% endblock %}
 
 {% block page_title %}
-Users Overview
+All Users
 {% endblock %}
 
-{% block space_name %}User{% endblock %}
-
-{% block main_menu_old %}
-  <li><a href="{{ url_for('account.home') }}">Home</a></li>
-  <li><a href="{{ url_for('user.get_all') }}">User</a></li>
-  <li><a href="{{url_for('user.create')}}">New User</a></li>
-{% endblock %}
+{% block space_name %}All User{% endblock %}
 
 {% block mobile_menu %}
   <li><a href="{{ url_for('account.home') }}">Home</a></li>
@@ -43,26 +38,18 @@ Users Overview
   <li><a href="{{url_for('user.create')}}">New User</a></li>
 {% endblock %}
 
-{% block sub_menu %}
-    <li>
-        <a href="#">Edit</a>
-    </li>
-    <li>
-        <a href="#">Delete</a>
-    </li>
-{% endblock %}
 
 {% block main_content %}
+{# The page menu. Actions are protected against the necessary rights #}
 <div class="section">
     <div class="row">
-        <div class="col s12 dc-menu">
-            <a class="dc-menu-item" href="{{url_for('user.create')}}">New User</a>
+        <div class="col s12">
+            {{ menu.button(url_for('user.create'), "New User", right="user_create") }}
         </div>
     </div>
-    <div class="row">
-        <h2>All Users</h2>
-    </div>
+</div>
 
+<div class="section">
     <table class="highlight">
         <thead>
             <tr>

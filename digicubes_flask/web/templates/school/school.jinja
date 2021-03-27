@@ -1,34 +1,22 @@
 {% extends "admin/base.jinja" %}
-{% import "macros/menu.jinja" as menu %}
+{% import "macros/menu.jinja" as menu with context %}
 {% import "macros/object_info.jinja" as info %}
-
 
 {% block page_title %}
 School
 {% endblock %}
 {% block space_name %}{{ school.name }}{% endblock %}
 
-{% block main_menu_old %}
-    <li><a href="{{ url_for('account.home') }}">Back Home</a></li>
-    <li>
-        <a href="{{ url_for('school.update', school_id=school.id) }}">Edit Scool</a>
-    </li>
-    <li>
-        <a href="{{ url_for('course.create', school_id=school.id) }}">New Course</a>
-    </li>
-    <li>
-        <a href="{{ url_for('school.delete', school_id=school.id) }}">Delete School</a>
-    </li>
-{% endblock %}
-
 {% block main_content %}
+
+{# The page menu. Actions are protected against the necessary rights #}
 <div class="section">
     <div class="row">
         <div class="col s12">
-            {{ menu.button(url_for('school.update', school_id=school.id), "Edit School") }}
-            {{ menu.button(url_for('course.create', school_id=school.id), "New Course") }}
-            {{ menu.button("#","Add Teacher") }}
-            {{ menu.button(url_for('school.delete', school_id=school.id), "Delete School") }}
+            {{ menu.button(url_for('school.update', school_id=school.id), "Edit School", right="school_update") }}
+            {{ menu.button(url_for('course.create', school_id=school.id), "New Course", right="course_create") }}
+            {{ menu.button("#","Add Teacher", right="school_add_teacher") }}
+            {{ menu.button(url_for('school.delete', school_id=school.id), "Delete School", right="school_delete") }}
         </div>
     </div>
 </div>

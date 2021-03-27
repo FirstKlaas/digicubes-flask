@@ -6,19 +6,19 @@
 {% block main_menu %}
   <li><a href="{{ url_for('account.home') }}">Home</a></li>
 
-  {% if has_right('user_read') %}
+  {% if has_right('user_all') %}
   <li><a href="{{ url_for('user.get_all') }}">User</a></li>
   {% endif %}
 
-  {% if has_right('role_read') %}
+  {% if has_right('role_all') %}
   <li><a href="{{ url_for('admin.roles') }}">Roles</a></li>
   {% endif %}
   
-  {% if has_right('right_read') %}
+  {% if has_right('right_all') %}
   <li><a href="{{ url_for('right.all') }}">Rights</a></li>
   {% endif %}
   
-  {% if has_right('school_read') %}
+  {% if has_right('school_all') %}
   <li><a href="{{ url_for('school.get_all') }}">Schools</a></li>
   {% endif %}
   

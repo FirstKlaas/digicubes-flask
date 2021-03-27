@@ -1,0 +1,5 @@
+{% macro has(right, template) %}
+    {% if has_right(right) %}
+        {{ template }}
+    {% endif %}
+{% endmacro %}
