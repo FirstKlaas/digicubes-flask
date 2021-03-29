@@ -10,7 +10,6 @@ Markupsafe
 python-dotenv
 gunicorn
 libgravatar
-pyaml
 email-validator
 cattrs
 attrs

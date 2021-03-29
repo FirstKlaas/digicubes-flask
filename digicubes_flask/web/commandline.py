@@ -6,8 +6,6 @@ Usage:
   digiweb [--config=<name>] [-d | --development | -p | --production | -t | --testing]
 
 Options:
-  --template=<name>   Name of a file to write default settings to. Defaults to 'account.yaml'
-  --config=<name>     Name of the configuration file. Defaults to 'digicubes.yaml'
   -d --development  Starts the server in development mode
   -p --production   Starts the server in production mode (default)
   -t --testing      Starts the server in testing mode

@@ -16,7 +16,6 @@ from dotenv import load_dotenv
 from flask import Flask, redirect, url_for, Response, request, Request, g
 from flask_babel import Babel
 
-import yaml
 from libgravatar import Gravatar
 from markdown import markdown
 
@@ -55,8 +54,7 @@ def create_app(cfg_file_name=None):
     """
 
     # First, load the .env file, wich adds environment variables to the
-    # the program. Together with the pyaml parser extension these variables
-    # can be used in the yaml configuration
+    # the program.
     load_dotenv(verbose=False)
 
     app = Flask(__name__)

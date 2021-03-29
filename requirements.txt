@@ -31,7 +31,7 @@ flask==1.1.2
     #   -r requirements.in
     #   flask-babel
     #   flask-wtf
-gunicorn==20.0.4
+gunicorn==20.1.0
     # via -r requirements.in
 idna==2.10
     # via
@@ -54,18 +54,14 @@ markupsafe==1.1.1
     #   -r requirements.in
     #   jinja2
     #   wtforms
-pyaml==20.4.0
-    # via -r requirements.in
 pyjwt==2.0.1
     # via -r requirements.in
-python-dotenv==0.15.0
+python-dotenv==0.16.0
     # via -r requirements.in
 pytz==2021.1
     # via
     #   babel
     #   flask-babel
-pyyaml==5.4.1
-    # via pyaml
 redis==3.5.3
     # via -r requirements.in
 requests==2.25.1
