@@ -212,6 +212,7 @@ def create():
                         "admin/send_verification_link.jinja", user=new_user, link=link
                     )
 
+
             return redirect(url_for("user.update", user_id=new_user.id))
 
     # Form not submitted or validation failed.
@@ -281,7 +282,15 @@ def get(user_id: int):
     all_roles = server.role.all(token)
 
     role_list = [(role, role.name in user_roles_names) for role in all_roles]
-    return render_template("user/user.jinja", user=user_proxy, roles=role_list)
+
+    return render_template(
+        "user/user.jinja",
+        user=user_proxy,
+        roles=role_list,
+        headmaster_schools = server.school.get_headmaster_schools(token, user_proxy),
+        teacher_schools = server.school.get_teacher_schools(token, user_proxy),
+        student_schools = server.school.get_student_schools(token, user_proxy)
+    )
 
 
 @blueprint.route("/panel/all/")

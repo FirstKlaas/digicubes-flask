@@ -114,3 +114,11 @@ class SchoolForm(FlaskForm):
         validators=[validators.InputRequired("A description is required.")],
     )
     submit = SubmitField("Ok", widget=w.materialize_submit)
+
+class SimpleTextForm(FlaskForm):
+    login = StringField(
+        "Login",
+        widget=w.materialize_input,
+        validators=[validators.InputRequired("A login is required.")],
+    )
+    submit = SubmitField("Ok", widget=w.materialize_submit)

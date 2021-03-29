@@ -1,0 +1,32 @@
+{% extends "admin/base.jinja" %}
+{% import "macros/forms.jinja" as forms %}
+
+
+{% block page_title %}
+Create new User
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+    <form method="POST" action="#">
+        <div class="row">
+            <div class="col s12"><h3>Add Teacher by login</h3></div>
+        </div>
+        <div class="row">
+            <div class="col s12" id="dc_main">
+                {{ form.csrf_token }}
+                {{ forms.row(form, "login") }}
+                {{ forms.submit(form) }} 
+            </div>
+        </div>
+    </form>
+</div>
+<div class="section">
+    <h3>Zugeordnete Lehrer</h3>
+    {% for t in teacher %}
+    <div class="row">
+        <div class="col s12" >{{ t.last_name }},{{ t.first_name }} [{{ t.login }}]</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,9 +1,11 @@
 
 {% extends "page_base.jinja" %}
+{% import "macros/menu.jinja" as menu with context %}
 
 {% block space_name %}Headmaster Space{% endblock %}
 
+{# THe main menu #}
 {% block main_menu %}
-  <li><a href="{{ url_for('account.home') }}">Home</a></li>
-  <li><a href="{{ url_for('account.logout') }}">Logout</a></li>
+  {{ menu.main(url_for('account.home'), "Home") }}
+  {{ menu.main(url_for('account.logout'), "Logout") }}
 {% endblock %}

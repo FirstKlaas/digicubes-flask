@@ -15,7 +15,7 @@ School
         <div class="col s12">
             {{ menu.button(url_for('school.update', school_id=school.id), "Edit School", right="school_update") }}
             {{ menu.button(url_for('course.create', school_id=school.id), "New Course", right="course_create") }}
-            {{ menu.button("#","Add Teacher", right="school_add_teacher") }}
+            {{ menu.button(url_for('admin.school_add_teacher', school_id=school.id), "Add Teacher", right="school_add_teacher") }}
             {{ menu.button(url_for('school.delete', school_id=school.id), "Delete School", right="school_delete") }}
         </div>
     </div>

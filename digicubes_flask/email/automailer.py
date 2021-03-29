@@ -38,7 +38,7 @@ class MailCube:
         Flag, to indicate, wether the mail add on is enabled or not.
         Currently only the existence of the SMTP host is tested.
         """
-        return self.smtp_host is not None
+        return self.smtp_host is not None and (os.getenv("DC_SMTP_ENABLED", "False") == "True")
 
     @property
     def smtp_port(self) -> int:

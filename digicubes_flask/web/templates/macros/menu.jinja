@@ -7,3 +7,9 @@
 {% macro plain(url, label) %}
     <a class="dc-menu-item" href="{{ url }}">{{ label }}</a>
 {% endmacro %}
+
+{% macro main(url, label, right=none) %}
+    {% if right == none or has_right(right) %}
+    <li><a href="{{ url }}">{{ label }}</a></li>
+    {% endif %}
+{% endmacro %}

@@ -7,12 +7,14 @@ role 'admin'
 import logging
 
 from flask import Blueprint, render_template, request, url_for, redirect
+from flask.helpers import flash
 
 from digicubes_flask.client import proxy
 from digicubes_flask import login_required, digicubes
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 
 from .rfc import AdminRFC, RfcRequest
+from .forms import SimpleTextForm
 
 admin_blueprint = Blueprint("admin", __name__, template_folder="templates")
 
@@ -61,3 +63,28 @@ def rfc():
 
     response = AdminRFC.call(rfc_request)
     return {"status": response.status, "text": response.text, "data": response.data}
+
+@admin_blueprint.route("/school/<int:school_id>/addteacher/", methods=("GET", "POST"))
+def school_add_teacher(school_id: int):
+
+    form = SimpleTextForm()
+
+    if form.is_submitted():
+        if form.validate():
+            login = form.login.data
+            # Check if a user with the given login exists
+            user = server.user.get_by_login_or_none(server.token, login)
+            if user is None:
+                flash("No such user")
+            elif server.school.add_teacher(server.token, proxy.SchoolProxy(id=school_id), user):
+                flash("Teacher added successfully")
+            else:
+                flash("Teacher not added")
+    
+    return render_template(
+        "admin/school_add_teacher.jinja",
+        form=form,
+        action=url_for(
+            "admin.school_add_teacher",
+            school_id=school_id),
+        teacher=server.school.get_school_teacher(server.token, school_id))
