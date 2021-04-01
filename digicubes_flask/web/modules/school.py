@@ -126,6 +126,9 @@ def create():
                 description=form.description.data,
             )
             digicubes.school.create(digicubes.token, new_school)
+
+            # Now lets see, if the current user has the "headmaster" role.
+            # if so, make him a headmaster for the newly created school.
             return redirect(url_for("school.get_all"))
 
     form.submit.label.ttext = "Create"

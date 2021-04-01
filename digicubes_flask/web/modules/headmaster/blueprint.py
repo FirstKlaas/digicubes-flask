@@ -4,8 +4,10 @@ The Admin Blueprint
 import logging
 from flask import Blueprint, render_template, redirect, url_for
 
-from digicubes_flask import login_required, digicubes
-from digicubes_flask.client.service import UserService
+from digicubes_flask import login_required, digicubes, current_user, CurrentUser
+from digicubes_flask.client.proxy import UserProxy
+
+from digicubes_flask.client.service import UserService, SchoolService
 
 headmaster_service = Blueprint("headmaster", __name__)
 
@@ -31,5 +33,9 @@ def get_my_schools():
     a headmaster. If no schools are associated with this user,
     a info message will be displayed.
     """
-    #schools = digicubes.school.get_headmaster_schools()
-    return redirect(url_for("account.home"))
+    school_service: SchoolService = digicubes.school
+
+    schools = school_service.get_headmaster_schools(
+        digicubes.token,
+        UserProxy(id=current_user.id))
+    return render_template("headmaster/schools.jinja", schools=schools)

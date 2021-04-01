@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 # pylint: disable=unnecessary-lambda
 account_manager = LocalProxy(lambda: _get_account_manager())
-digicubes = account_manager
+digicubes: 'DigicubesAccountManager' = account_manager
 current_user = LocalProxy(lambda: _get_current_user())
 
 DIGICUBES_ACCOUNT_ATTRIBUTE_NAME = "digicubes_account_manager"
@@ -47,7 +47,8 @@ class CurrentUser:
     """
 
     def __init__(self):
-        self._rights: List[str] = None  # Cached User rights
+        self._rights: Optional[List[str]] = None  # Cached User rights
+        self._roles: Optional[List[str]] = None
         self._dbuser = None
         self._token = None
         self._lifetime = None
@@ -121,14 +122,14 @@ class CurrentUser:
             logger.debug("Loaded db user %s: %s", self._dbuser.id, self._dbuser.login)
         return self._dbuser
 
-    def has_right(self, right):
+    def has_right(self, right) -> bool:
         """
         Test, wether the current user has the given right.
         """
         return right in self.rights or "no_limits" in self.rights
 
     @property
-    def is_root(self):
+    def is_root(self) -> bool:
         """
         Test, if the current user has root privilidges.
         """
@@ -148,6 +149,16 @@ class CurrentUser:
 
         return self._rights
 
+    @property
+    def roles(self) -> List[str]:
+        if self.tolen is None:
+            return []
+
+        if self._roles is None:
+            # Lazy load the rols of the current user
+            #TODO: get_my_roles gibt es noch nicht.
+            self._roles = [str(r) for r in account_manager.user.get_my_roles(self.token)]
+
 
 def _get_current_user():
     if "digiuser" not in g or g.digiuser is None:
@@ -155,7 +166,7 @@ def _get_current_user():
     return g.digiuser
 
 
-def _get_account_manager():
+def _get_account_manager() -> 'DigicubesAccountManager':
     return getattr(current_app, DIGICUBES_ACCOUNT_ATTRIBUTE_NAME, None)
 
 

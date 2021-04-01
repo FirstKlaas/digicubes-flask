@@ -7,5 +7,6 @@
 {# THe main menu #}
 {% block main_menu %}
   {{ menu.main(url_for('account.home'), "Home") }}
+  {{ menu.main(url_for('headmaster.get_my_schools'), "My Schools") }}
   {{ menu.main(url_for('account.logout'), "Logout") }}
 {% endblock %}
