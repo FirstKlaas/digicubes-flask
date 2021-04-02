@@ -58,9 +58,9 @@ class RedisCache(Cache):
         key = f"USER:{user_id}:ROLES"
         self.redis.set(key, pickle.dumps(roles), ex=self.max_age)
 
-    def get_roles(self) -> List[p.RoleProxy]:
-        raw_data = self.redis.get(f"ROLES")
+    def get_roles(self) -> List[RoleModel]:
+        raw_data = self.redis.get("ROLES")
         return None if raw_data is None else pickle.loads(raw_data)
 
-    def set_roles(self, roles: List[p.RoleProxy]):
+    def set_roles(self, roles: List[RoleModel]):
         self.redis.set("ROLES", pickle.dumps(roles), ex=self.max_age)

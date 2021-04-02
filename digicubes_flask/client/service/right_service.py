@@ -50,7 +50,7 @@ class RightService(AbstractService):
     def all(self, token) -> RightList:
         """
         Returns all rigths.
-        The result is a list of ``RightProxy`` objects.
+        The result is a list of ``RightModel`` objects.
         """
         headers = self.create_default_header(token)
         url = self.url_for("/rights/")
@@ -145,7 +145,7 @@ class RightService(AbstractService):
         role is associated with this right. The right must exist.
         At least the id of the right has to be set.
 
-        :param RightProxy right: The right, where the roles should be cleared.
+        :param RightModel right: The right, where the roles should be cleared.
 
         :return bool: True, if the operation was successful, False else.
         """

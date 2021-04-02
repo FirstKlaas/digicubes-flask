@@ -13,14 +13,14 @@ RoleModel
 .. autoclass:: digicubes_flask.client.model.RoleModel
     :members:
 
-RightProxy
+RightModel
 ----------
 
-.. autoclass:: digicubes_flask.client.proxy.RightProxy
+.. autoclass:: digicubes_flask.client.model.RightModel
     :members:
 
-SchoolProxy
+SchoolModel
 -----------
 
-.. autoclass:: digicubes_flask.client.proxy.SchoolProxy
+.. autoclass:: digicubes_flask.client.model.SchoolModel
     :members:

@@ -13,7 +13,8 @@ from wtforms import (
     IntegerField,
 )
 
-from digicubes_flask.client import proxy, service as srv
+from digicubes_flask.client import service as srv
+from digicubes_flask.client.model import SchoolModel, CourseModel, UnitModel
 from digicubes_flask import (
     login_required,
     current_user,
@@ -97,9 +98,9 @@ def get(school_id: int, course_id: int, unit_id: int):
     """
     service: srv.SchoolService = digicubes.school
     token = digicubes.token
-    db_course: proxy.CourseProxy = service.get_course_or_none(token, course_id)
-    db_school: proxy.SchoolProxy = service.get(token, school_id)
-    db_unit: proxy.UnitProxy = service.get_unit(token, unit_id)
+    db_course: CourseModel = service.get_course_or_none(token, course_id)
+    db_school: SchoolModel = service.get(token, school_id)
+    db_unit: UnitModel = service.get_unit(token, unit_id)
     # TODO: Get Unit By ID not implemented.
 
     return render_template("unit/unit.jinja", school=db_school, course=db_course, unit=db_unit)
@@ -122,9 +123,8 @@ def create(school_id: int, course_id: int):
     # create the new unit.
     if form.validate_on_submit():
 
-        new_unit = proxy.UnitProxy(created_by_id=current_user.id)
-
-        form.populate_obj(new_unit)
+        new_unit = UnitModel.parse_obj(form.data)
+        new_unit.created_by_id = current_user.id
         server.school.create_unit(server.token, course_id, new_unit)
 
         return redirect(url_for("course.get", school_id=school_id, course_id=course_id))
@@ -148,9 +148,9 @@ def update(school_id: int, course_id: int, unit_id: int):
     """
     service: srv.SchoolService = digicubes.school
     token = digicubes.token
-    db_unit: proxy.UnitProxy = service.get_unit(token, unit_id)
-    db_course: proxy.CourseProxy = service.get_course_or_none(token, course_id)
-    db_school: proxy.SchoolProxy = service.get(token, school_id)
+    db_unit: UnitModel = service.get_unit(token, unit_id)
+    db_course: CourseModel = service.get_course_or_none(token, course_id)
+    db_school: SchoolModel = service.get(token, school_id)
 
     form: UnitForm = UnitForm()
 
@@ -158,8 +158,8 @@ def update(school_id: int, course_id: int, unit_id: int):
     # create the new unit.
     if form.is_submitted():
         if form.validate():
-            updated_unit = proxy.UnitProxy(id=unit_id)
-            form.populate_obj(updated_unit)
+            updated_unit = UnitModel.parse_obj(form.data)
+            updated_unit.id = unit_id
             service.update_unit(token, updated_unit)
             return redirect(
                 url_for(

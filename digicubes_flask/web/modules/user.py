@@ -181,7 +181,6 @@ def create():
     if form.is_submitted():
         if form.user.validate({"login": [UserLoginAvailable()]}):
             new_user = UserModelUpsert.parse_obj(form.user.form.data)
-            #form.user.form.populate_obj(new_user)
 
             # When users are created by an admin,
             # he decides, whether the user is verified or not.
@@ -213,7 +212,6 @@ def create():
                     return render_template(
                         "admin/send_verification_link.jinja", user=new_user, link=link
                     )
-
 
             return redirect(url_for("user.update", user_id=new_user.id))
 
@@ -292,9 +290,9 @@ def get(user_id: int):
         "user/user.jinja",
         user=user,
         roles=role_list,
-        headmaster_schools = server.school.get_headmaster_schools(token, user),
-        teacher_schools = server.school.get_teacher_schools(token, user),
-        student_schools = server.school.get_student_schools(token, user)
+        headmaster_schools=server.school.get_headmaster_schools(token, user),
+        teacher_schools=server.school.get_teacher_schools(token, user),
+        student_schools=server.school.get_student_schools(token, user),
     )
 
 

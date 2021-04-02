@@ -16,7 +16,8 @@ from wtforms import (
     DateField,
 )
 
-from digicubes_flask.client import proxy, service as srv
+from digicubes_flask.client.model import SchoolModel, CourseModel
+from digicubes_flask.client import service as srv
 from digicubes_flask import (
     login_required,
     current_user,
@@ -114,21 +115,20 @@ def update(school_id: int, course_id: int):
     form = CourseForm()
 
     # First get the course to be updated
-    service.get_courses(token, proxy.SchoolProxy(id=school_id))
+    service.get_courses(token, SchoolModel(id=school_id))
 
     # if method is post and all fields are valid,
     # create the new course.
     if form.validate_on_submit():
 
-        course = proxy.CourseProxy()
-        form.populate_obj(course)
+        course = CourseModel.parse_obj(form.data)
         course.school_id = int(course.school_id)
         course.id = int(course_id)
         service.update_course(token, course)
         return redirect(url_for("school.get", school_id=school_id))
 
-    school_proxy: proxy.SchoolProxy = service.get(token, school_id)
-    course: proxy.CourseProxy = service.get_course(token, course_id)
+    school_proxy: SchoolModel = service.get(token, school_id)
+    course: CourseModel = service.get_course(token, course_id)
     action_url = url_for("course.update", school_id=school_proxy.id, course_id=course.id)
     form = CourseForm(obj=course)
     form.submit.label.text = "Update"
@@ -154,8 +154,8 @@ def get(school_id: int, course_id: int):
     user_service: srv.UserService = digicubes.user
 
     token = digicubes.token
-    db_course: proxy.CourseProxy = service.get_course_or_none(token, course_id)
-    db_school: proxy.SchoolProxy = service.get(token, school_id)
+    db_course: CourseModel = service.get_course_or_none(token, course_id)
+    db_school: SchoolModel = service.get(token, school_id)
 
     # If there is no course, we just display the
     # school details
@@ -166,7 +166,9 @@ def get(school_id: int, course_id: int):
     db_units = service.get_units(token, course_id)
 
     # Get infos about the creator
-    creator = user_service.get(token, db_course.created_by_id, ["login", "first_name", "last_name", "id"])
+    creator = user_service.get(
+        token, db_course.created_by_id, ["login", "first_name", "last_name", "id"]
+    )
 
     return render_template(
         "course/course.jinja", school=db_school, course=db_course, units=db_units, creator=creator
@@ -197,25 +199,25 @@ def create(school_id: int):
     # create the new course.
     if form.validate_on_submit():
 
-        new_course = proxy.CourseProxy(created_by_id=current_user.id)
-        form.populate_obj(new_course)
+        new_course = CourseModel.parse_obj(form.data)
+        new_course.created_by_id = current_user.id
 
         # Create the course.
         # TODO: Errors may occoure and have to be handled in a proper way.
-        server.school.create_course(server.token, proxy.SchoolProxy(id=school_id), new_course)
+        server.school.create_course(server.token, SchoolModel(id=school_id), new_course)
 
         # After succesfully creating the course go back to
         # the administration page of the school.
         return redirect(url_for("school.get", school_id=school_id))
 
-    # Get the school proxy from the server and render out the form.
+    # Get the school from the server and render out the form.
     token: str = server.token
-    school_proxy: proxy.SchoolProxy = server.school.get(token, school_id)
+    school_model: SchoolModel = server.school.get(token, school_id)
     form.submit.label.text = "Create"
-    action_url = url_for("course.create", school_id=school_proxy.id)
+    action_url = url_for("course.create", school_id=school_model.id)
     return render_template(
         "course/create_course.jinja",
-        school=school_proxy,
+        school=school_model,
         form=form,
         action=action_url,
     )

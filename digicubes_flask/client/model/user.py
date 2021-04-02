@@ -3,6 +3,7 @@ from datetime import datetime
 
 import pydantic as pyd
 
+
 class UserModelUpsert(pyd.BaseModel):
     first_name: Optional[pyd.constr(strip_whitespace=True, max_length=20)]
     last_name: Optional[pyd.constr(strip_whitespace=True, max_length=20)]
@@ -11,6 +12,7 @@ class UserModelUpsert(pyd.BaseModel):
     is_active: Optional[bool]
     is_verified: Optional[bool]
     password: Optional[Text]
+
 
 class UserModel(pyd.BaseModel):
     id: Optional[pyd.PositiveInt]

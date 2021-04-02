@@ -13,7 +13,8 @@ from wtforms import (
 
 from wtforms.validators import ValidationError
 
-from digicubes_flask.client import proxy, service as srv
+from digicubes_flask.client.model import SchoolModel
+from digicubes_flask.client import service as srv
 from digicubes_flask import (
     login_required,
     current_user,
@@ -59,7 +60,7 @@ class SchoolNameAvailable:
             if not field.data:
                 raise ValidationError("Name may not be empty")
 
-            db_school: proxy.SchoolProxy = digicubes.school.get_by_name(digicubes.token, field.data)
+            db_school: SchoolModel = digicubes.school.get_by_name(digicubes.token, field.data)
 
             if self.school_id is not None and db_school.id == self.school_id:
                 # Of course the school may keep its name
@@ -121,7 +122,7 @@ def create():
     form = SchoolForm()
     if form.is_submitted():
         if form.validate({"name": [SchoolNameAvailable()]}):
-            new_school = proxy.SchoolProxy(
+            new_school = SchoolModel(
                 name=form.name.data,
                 description=form.description.data,
             )
@@ -160,13 +161,12 @@ def update(school_id: int):
     service: srv.SchoolService = digicubes.school
     token = digicubes.token
     form = SchoolForm()
-    db_school: proxy.SchoolProxy = service.get(token, school_id)
+    db_school: SchoolModel = service.get(token, school_id)
 
     # What about the creation date and the modified date?
     if form.is_submitted():
         if form.validate({"name": [SchoolNameAvailable(school_id=school_id)]}):
-            upschool = proxy.SchoolProxy()
-            form.populate_obj(upschool)
+            upschool = SchoolModel.parse_obj(form.data)
             upschool.id = school_id
             digicubes.school.update(token, upschool)
 

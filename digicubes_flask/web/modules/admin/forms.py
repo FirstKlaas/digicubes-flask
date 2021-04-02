@@ -14,7 +14,7 @@ from wtforms import (
 
 from wtforms.validators import ValidationError
 
-from digicubes_flask.client import proxy
+from digicubes_flask.client.model import SchoolModel
 
 from digicubes_flask import exceptions as ex
 import digicubes_flask.web.wtforms_widgets as w
@@ -85,7 +85,7 @@ class SchoolNameAvailable:
             if not field.data:
                 raise ValidationError("Name may not be empty")
 
-            school: proxy.SchoolProxy = digicubes.school.get_by_name(digicubes.token, field.data)
+            school: SchoolModel = digicubes.school.get_by_name(digicubes.token, field.data)
 
             if self.school_id is not None and school.id == self.school_id:
                 # Of course the school may keep its name
@@ -114,6 +114,7 @@ class SchoolForm(FlaskForm):
         validators=[validators.InputRequired("A description is required.")],
     )
     submit = SubmitField("Ok", widget=w.materialize_submit)
+
 
 class SimpleTextForm(FlaskForm):
     login = StringField(

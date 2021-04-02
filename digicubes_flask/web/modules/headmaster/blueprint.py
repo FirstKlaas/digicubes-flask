@@ -13,6 +13,7 @@ headmaster_service = Blueprint("headmaster", __name__)
 
 logger = logging.getLogger(__name__)
 
+
 @headmaster_service.route("/")
 @login_required
 def index():
@@ -25,6 +26,7 @@ def index():
 def home():
     return redirect(url_for("account.home"))
 
+
 @headmaster_service.route("/myschools")
 @login_required
 def get_my_schools():
@@ -35,7 +37,5 @@ def get_my_schools():
     """
     school_service: SchoolService = digicubes.school
 
-    schools = school_service.get_headmaster_schools(
-        digicubes.token,
-        UserModel(id=current_user.id))
+    schools = school_service.get_headmaster_schools(digicubes.token, UserModel(id=current_user.id))
     return render_template("headmaster/schools.jinja", schools=schools)

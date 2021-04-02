@@ -2,6 +2,7 @@ from typing import Optional, List
 
 from digicubes_flask.client.model import UserModel, RoleModel
 
+
 class Cache:
     def get_user_rights(self, user_id: int) -> Optional[List[str]]:
         return None

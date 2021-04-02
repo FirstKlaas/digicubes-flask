@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 # pylint: disable=unnecessary-lambda
 account_manager = LocalProxy(lambda: _get_account_manager())
-digicubes: 'DigicubesAccountManager' = account_manager
+digicubes: "DigicubesAccountManager" = account_manager
 current_user = LocalProxy(lambda: _get_current_user())
 
 DIGICUBES_ACCOUNT_ATTRIBUTE_NAME = "digicubes_account_manager"
@@ -156,7 +156,7 @@ class CurrentUser:
 
         if self._roles is None:
             # Lazy load the rols of the current user
-            #TODO: get_my_roles gibt es noch nicht.
+            # TODO: get_my_roles gibt es noch nicht.
             self._roles = [str(r) for r in account_manager.user.get_my_roles(self.token)]
 
 
@@ -166,7 +166,7 @@ def _get_current_user():
     return g.digiuser
 
 
-def _get_account_manager() -> 'DigicubesAccountManager':
+def _get_account_manager() -> "DigicubesAccountManager":
     return getattr(current_app, DIGICUBES_ACCOUNT_ATTRIBUTE_NAME, None)
 
 

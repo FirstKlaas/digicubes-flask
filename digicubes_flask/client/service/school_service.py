@@ -4,14 +4,13 @@ All service calls for schooles.
 import logging
 from typing import Optional, List
 
-from digicubes_flask.client.model import UserModel
+from digicubes_flask.client.model import UserModel, SchoolModel, CourseModel, UnitModel
 
 from .abstract_service import AbstractService
-from ..proxy import SchoolProxy, CourseProxy, UnitProxy
 
-SchoolList = Optional[List[SchoolProxy]]
-CourseList = Optional[List[CourseProxy]]
-UnitList = Optional[List[UnitProxy]]
+SchoolList = Optional[List[SchoolModel]]
+CourseList = Optional[List[CourseModel]]
+UnitList = Optional[List[UnitModel]]
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +25,7 @@ class SchoolService(AbstractService):
     def all(self, token) -> SchoolList:
         """
         Returns all schools.
-        The result is a list of ``SchoolProxy`` objects.
+        The result is a list of ``SchoolModel`` objects.
         """
         headers = self.create_default_header(token)
         url = self.url_for("/schools/")
@@ -34,9 +33,9 @@ class SchoolService(AbstractService):
 
         self.check_response_status(response, expected_status=200)
 
-        return [SchoolProxy.structure(school) for school in response.json()]
+        return [SchoolModel.parse_raw(school) for school in response.json()]
 
-    def get(self, token, school_id: int, fields: XFieldList = None) -> Optional[SchoolProxy]:
+    def get(self, token, school_id: int, fields: XFieldList = None) -> Optional[SchoolModel]:
         """
         Get a single school specified by its id
 
@@ -50,9 +49,9 @@ class SchoolService(AbstractService):
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
 
-        return SchoolProxy.structure(response.json())
+        return SchoolModel.parse_raw(response.json())
 
-    def get_by_name(self, token: str, name: str) -> SchoolProxy:
+    def get_by_name(self, token: str, name: str) -> SchoolModel:
         """
         Get a single school by the name.
 
@@ -63,9 +62,9 @@ class SchoolService(AbstractService):
             self.url_for(f"/school/byname/{name}"), headers=self.create_default_header(token)
         )
         self.check_response_status(response, expected_status=200)
-        return SchoolProxy.structure(response.json())
+        return SchoolModel.parse_raw(response.json())
 
-    def update(self, token, school: SchoolProxy) -> SchoolProxy:
+    def update(self, token, school: SchoolModel) -> SchoolModel:
         """
         Update an existing school.
         If successfull, a new school proxy is returned with the latest version of the
@@ -74,12 +73,12 @@ class SchoolService(AbstractService):
 
         headers = self.create_default_header(token)
         url = self.url_for(f"/school/{school.id}")
-        response = self.requests.put(url, json=school.unstructure(), headers=headers)
+        response = self.requests.put(url, json=school.json(), headers=headers)
         self.check_response_status(response, expected_status=200)
 
-        return SchoolProxy.structure(response.json())
+        return SchoolModel.parse_raw(response.json())
 
-    def delete(self, token, school_id: int) -> Optional[SchoolProxy]:
+    def delete(self, token, school_id: int) -> Optional[SchoolModel]:
         """
         Deletes a school from the database
         """
@@ -87,25 +86,25 @@ class SchoolService(AbstractService):
         url = self.url_for(f"/school/{school_id}")
         response = self.requests.delete(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return SchoolProxy.structure(response.json())
+        return SchoolModel.parse_raw(response.json())
 
-    def create(self, token, school: SchoolProxy) -> SchoolProxy:
+    def create(self, token, school: SchoolModel) -> SchoolModel:
         """
         Create a new school
         """
         headers = self.create_default_header(token)
-        data = school.unstructure()
+        data = school.json()
         url = self.url_for("/schools/")
         response = self.requests.post(url, json=data, headers=headers)
         self.check_response_status(response, expected_status=201)
-        return SchoolProxy.structure(response.json())
+        return SchoolModel.parse_raw(response.json())
 
-    def create_bulk(self, token, schools: List[SchoolProxy]) -> None:
+    def create_bulk(self, token, schools: List[SchoolModel]) -> None:
         """
         Create multiple schools
         """
         headers = self.create_default_header(token)
-        data = [school.unstructure() for school in schools]
+        data = [school.json() for school in schools]
         url = self.url_for("/schools/")
         response = self.requests.post(url, json=data, headers=headers)
         self.check_response_status(response, expected_status=201)
@@ -123,16 +122,16 @@ class SchoolService(AbstractService):
         response = self.requests.delete(url, headers=headers)
         self.check_response_status(response, expected_status=200)
 
-    def create_course(self, token: str, school: SchoolProxy, course: CourseProxy) -> CourseProxy:
+    def create_course(self, token: str, school: SchoolModel, course: CourseModel) -> CourseModel:
         headers = self.create_default_header(token)
         course.school_id = school.id
         data = course.to_json_dict()
         url = self.url_for(f"/school/{school.id}/courses/")
         response = self.requests.post(url, json=data, headers=headers)
         self.check_response_status(response, expected_status=201)
-        return CourseProxy.structure(response.json())
+        return CourseModel.parse_raw(response.json())
 
-    def get_courses(self, token: str, school: SchoolProxy) -> CourseList:
+    def get_courses(self, token: str, school: SchoolModel) -> CourseList:
         """
         Get a list of courses, associated with the provided school.
         """
@@ -140,9 +139,9 @@ class SchoolService(AbstractService):
             self.url_for(f"/school/{school.id}/courses/"), headers=self.create_default_header(token)
         )
         self.check_response_status(response, expected_status=200)
-        return [CourseProxy.structure(course) for course in response.json()]
+        return [CourseModel.parse_raw(course) for course in response.json()]
 
-    def get_course(self, token: str, course_id: int) -> CourseProxy:
+    def get_course(self, token: str, course_id: int) -> CourseModel:
         """
         Get an course by id.
 
@@ -157,11 +156,11 @@ class SchoolService(AbstractService):
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
 
-        return CourseProxy.structure(response.json())
+        return CourseModel.parse_raw(response.json())
 
-    def get_course_or_none(self, token: str, course_id: int) -> Optional[CourseProxy]:
+    def get_course_or_none(self, token: str, course_id: int) -> Optional[CourseModel]:
         """
-        Returns the CourseProxy for the requested course is or None, if
+        Returns the CourseModel for the requested course is or None, if
         any prerequisite does not match (Does not exist, not enough rigths, ...)
         """
         try:
@@ -169,7 +168,7 @@ class SchoolService(AbstractService):
         except:  # pylint: disable=bare-except
             return None
 
-    def delete_course(self, token: str, course_id: int) -> CourseProxy:
+    def delete_course(self, token: str, course_id: int) -> CourseModel:
         """
         Delete a course specified by it's id
 
@@ -185,9 +184,9 @@ class SchoolService(AbstractService):
         url = self.url_for(f"/course/{course_id}")
         response = self.requests.delete(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return CourseProxy.structure(response.json())
+        return CourseModel.parse_raw(response.json())
 
-    def update_course(self, token: str, updated_course: CourseProxy) -> CourseProxy:
+    def update_course(self, token: str, updated_course: CourseModel) -> CourseModel:
         """
         Update an existing course specified by it's id of the proxy.
 
@@ -204,45 +203,45 @@ class SchoolService(AbstractService):
         """
         headers = self.create_default_header(token)
         url = self.url_for(f"/course/{updated_course.id}")
-        response = self.requests.put(url, json=updated_course.unstructure(), headers=headers)
+        response = self.requests.put(url, json=updated_course.json(), headers=headers)
         self.check_response_status(response, expected_status=200)
-        return CourseProxy.structure(response.json())
+        return CourseModel.parse_raw(response.json())
 
     def get_units(self, token: str, course_id: int) -> UnitList:
         headers = self.create_default_header(token)
         url = self.url_for(f"/course/{course_id}/units/")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return [UnitProxy.structure(unit) for unit in response.json()]
+        return [UnitModel.parse_raw(unit) for unit in response.json()]
 
-    def get_unit(self, token: str, unit_id: int) -> UnitProxy:
+    def get_unit(self, token: str, unit_id: int) -> UnitModel:
         headers = self.create_default_header(token)
         url = self.url_for(f"/unit/{unit_id}")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return UnitProxy.structure(response.json())
+        return UnitModel.parse_raw(response.json())
 
-    def create_unit(self, token: str, course_id: int, unit: UnitProxy) -> CourseProxy:
+    def create_unit(self, token: str, course_id: int, unit: UnitModel) -> CourseModel:
         headers = self.create_default_header(token)
-        data = unit.unstructure()
+        data = unit.json()
         url = self.url_for(f"/course/{course_id}/units/")
         response = self.requests.post(url, json=data, headers=headers)
         self.check_response_status(response, expected_status=201)
-        return UnitProxy.structure(response.json())
+        return UnitModel.parse_raw(response.json())
 
-    def update_unit(self, token: str, unit: UnitProxy) -> UnitProxy:
+    def update_unit(self, token: str, unit: UnitModel) -> UnitModel:
         headers = self.create_default_header(token)
         url = self.url_for(f"/unit/{unit.id}")
-        response = self.requests.put(url, headers=headers, json=unit.unstructure())
+        response = self.requests.put(url, headers=headers, json=unit.json())
         self.check_response_status(response, expected_status=200)
-        return UnitProxy.structure(response.json())
+        return UnitModel.parse_raw(response.json())
 
-    def delete_unit(self, token: str, unit_id: int) -> UnitProxy:
+    def delete_unit(self, token: str, unit_id: int) -> UnitModel:
         headers = self.create_default_header(token)
         url = self.url_for(f"/unit/{unit_id}")
         response = self.requests.delete(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return UnitProxy.structure(response.json())
+        return UnitModel.parse_raw(response.json())
 
     def get_school_teacher(self, token: str, school_id: int) -> List[UserModel]:
         headers = self.create_default_header(token)
@@ -251,23 +250,23 @@ class SchoolService(AbstractService):
         self.check_response_status(response, expected_status=200)
         return [UserModel.parse_raw(user) for user in response.json()]
 
-    def _get_space_schools(self, token, user: UserModel, space:str) -> List[SchoolProxy]:
+    def _get_space_schools(self, token, user: UserModel, space: str) -> List[SchoolModel]:
         headers = self.create_default_header(token)
         url = self.url_for(f"/user/{user.id}/{space}/schools/")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return [SchoolProxy.structure(school) for school in response.json()]
+        return [SchoolModel.parse_raw(school) for school in response.json()]
 
-    def get_headmaster_schools(self, token, user: UserModel) -> List[SchoolProxy]:
+    def get_headmaster_schools(self, token, user: UserModel) -> List[SchoolModel]:
         return self._get_space_schools(token, user, "headmaster")
 
-    def get_teacher_schools(self, token, user: UserModel) -> List[SchoolProxy]:
+    def get_teacher_schools(self, token, user: UserModel) -> List[SchoolModel]:
         return self._get_space_schools(token, user, "teacher")
 
-    def get_student_schools(self, token, user: UserModel) -> List[SchoolProxy]:
+    def get_student_schools(self, token, user: UserModel) -> List[SchoolModel]:
         return self._get_space_schools(token, user, "student")
 
-    def add_teacher(self, token:str, school: SchoolProxy, teacher: UserModel) -> bool:
+    def add_teacher(self, token: str, school: SchoolModel, teacher: UserModel) -> bool:
         headers = self.create_default_header(token)
         url = self.url_for(f"/school/{school.id}/teacher/{teacher.id}/")
         response = self.requests.put(url, headers=headers)

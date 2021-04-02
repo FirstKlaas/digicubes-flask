@@ -3,6 +3,7 @@ from typing import Optional
 
 import pydantic as pyd
 
+
 class RoleModel(pyd.BaseModel):
     id: Optional[pyd.PositiveInt]
     created_at: Optional[datetime]

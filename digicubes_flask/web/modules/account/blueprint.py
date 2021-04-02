@@ -147,8 +147,7 @@ def register():
     if form.validate_on_submit():
 
         try:
-            new_user = UserModel()
-            form.populate_obj(new_user)
+            new_user = UserModel.parse_obj(form.data)
             new_user.is_active = True
             new_user.id = None  # Just du be shure, we don't have an id in the form accidently
             # and do an update instead of an creation

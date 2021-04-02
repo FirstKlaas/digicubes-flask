@@ -4,10 +4,10 @@ All service calls for roles.
 from typing import List, Optional
 
 from digicubes_flask.exceptions import DoesNotExist
-from digicubes_flask.client.model import UserModel, RoleModel
+from digicubes_flask.client.model import RoleModel, RightModel
 from .abstract_service import AbstractService
 
-RoleList = Optional[List[RoleProxy]]
+RoleList = Optional[List[RoleModel]]
 
 
 class RoleService(AbstractService):
@@ -31,7 +31,7 @@ class RoleService(AbstractService):
 
         """
         headers = self.create_default_header(token)
-        data = role.unstructure()
+        data = role.json()
         url = self.url_for("/roles/")
         response = self.requests.post(url, json=data, headers=headers)
 
@@ -141,4 +141,4 @@ class RoleService(AbstractService):
         url = self.url_for(f"/role/{role.id}/rights/")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response)
-        return [RightProxy.structure(right) for right in response.json()]
+        return [RightModel.parse(right) for right in response.json()]

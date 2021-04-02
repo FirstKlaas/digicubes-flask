@@ -238,20 +238,19 @@ class UserService(AbstractService):
         :raises TokenExpired: is the token has expired.
         :raises ServerError: if an unpredicted exception occurred.
         """
-        #user = self.cache.get_user(user_id)
-        #if user is not None:
+        # user = self.cache.get_user(user_id)
+        # if user is not None:
         #    logger.info("Cache hit for user %s", user.login)
         #    return user  # Cache hit
 
         # Cache miss
         headers = self.create_default_header(token, fields=fields)
         url = self.url_for(f"/user/{user_id}")
-        response = self.requests.get(
-            url, headers=headers)
+        response = self.requests.get(url, headers=headers)
 
         self.check_response_status(response, expected_status=200)
         user = UserModel.parse_raw(response.json())
-        #self.cache.set_user(user)  # Cache the fetched user.
+        # self.cache.set_user(user)  # Cache the fetched user.
         return user
 
     def set_password(
@@ -430,7 +429,7 @@ class UserService(AbstractService):
         user = UserModel.parse_raw(response.json())
 
         # Add or update the cached user
-        #self.cache.set_user(user)
+        # self.cache.set_user(user)
         return user  # TODO Check other status_codes
 
     def get_rights(self, token: str, user_id: int) -> List[str]:
@@ -438,9 +437,9 @@ class UserService(AbstractService):
         Get all rights. The rest method returns an array of right names
         and not json objects.
         """
-        #user_rights = self.cache.get_user_rights(user_id)
-        #if user_rights is not None:
-            # cache hit
+        # user_rights = self.cache.get_user_rights(user_id)
+        # if user_rights is not None:
+        # cache hit
         #    return user_rights
 
         # cache miss
@@ -458,7 +457,7 @@ class UserService(AbstractService):
             raise ServerError(f"Wrong status. Expected 200. Got {result.status_code}")
 
         user_rights = result.json()
-        #self.cache.set_user_rights(user_id, user_rights)  # cache user rights
+        # self.cache.set_user_rights(user_id, user_rights)  # cache user rights
         return user_rights
 
     def get_roles(self, token, user: UserModel) -> List[RoleModel]:

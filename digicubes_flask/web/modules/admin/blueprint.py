@@ -42,17 +42,13 @@ def roles():
 
 @admin_blueprint.route("/user/<int:user_id>/addrole/<int:role_id>")
 def add_user_role(user_id: int, role_id: int):
-    server.user.add_role(
-        server.token, UserModel(id=user_id), RoleModel(id=role_id, name="")
-    )
+    server.user.add_role(server.token, UserModel(id=user_id), RoleModel(id=role_id, name=""))
     return redirect(url_for("user.update", user_id=user_id))
 
 
 @admin_blueprint.route("/user/<int:user_id>/removerole/<int:role_id>")
 def remove_user_role(user_id: int, role_id: int):
-    server.user.remove_role(
-        server.token, UserModel(id=user_id), RoleModel(id=role_id, name="")
-    )
+    server.user.remove_role(server.token, UserModel(id=user_id), RoleModel(id=role_id, name=""))
     return redirect(url_for("user.update", user_id=user_id))
 
 
@@ -64,6 +60,7 @@ def rfc():
 
     response = AdminRFC.call(rfc_request)
     return {"status": response.status, "text": response.text, "data": response.data}
+
 
 @admin_blueprint.route("/school/<int:school_id>/addteacher/", methods=("GET", "POST"))
 def school_add_teacher(school_id: int):
@@ -77,15 +74,14 @@ def school_add_teacher(school_id: int):
             user = server.user.get_by_login_or_none(server.token, login)
             if user is None:
                 flash("No such user")
-            elif server.school.add_teacher(server.token, proxy.SchoolProxy(id=school_id), user):
+            elif server.school.add_teacher(server.token, SchoolModel(id=school_id), user):
                 flash("Teacher added successfully")
             else:
                 flash("Teacher not added")
-    
+
     return render_template(
         "admin/school_add_teacher.jinja",
         form=form,
-        action=url_for(
-            "admin.school_add_teacher",
-            school_id=school_id),
-        teacher=server.school.get_school_teacher(server.token, school_id))
+        action=url_for("admin.school_add_teacher", school_id=school_id),
+        teacher=server.school.get_school_teacher(server.token, school_id),
+    )

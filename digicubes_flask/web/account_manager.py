@@ -80,7 +80,9 @@ class DigicubesAccountManager:
                 return has_right("no_limits")
 
             @app.template_filter()
-            def format_datetime(value, date_format="%d %b %Y %I:%M %p"):  # pylint: disable=unused-variable
+            def format_datetime(
+                value, date_format="%d %b %Y %I:%M %p"
+            ):  # pylint: disable=unused-variable
                 """Format a date time to (Default): d Mon YYYY HH:MM P"""
                 if value is None:
                     return ""
@@ -89,7 +91,6 @@ class DigicubesAccountManager:
                     return datetime.fromisoformat(value).strftime(date_format)
 
                 return value.strftime(date_format)
-
 
             # Make certain objects available to be used in jinja2 templates
             app.context_processor(

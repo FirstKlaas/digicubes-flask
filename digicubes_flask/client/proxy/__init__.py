@@ -1,6 +1,0 @@
-"""
-Importing classes just for the sake of conmvenience.
-"""
-from .role_proxy import RoleProxy
-from .right_proxy import RightProxy
-from .school_proxy import SchoolProxy, CourseProxy, UnitProxy

@@ -49,7 +49,6 @@ class AbstractService:
             header["X-Filter-Fields"] = ",".join(fields)
         return header
 
-
     def url_for(self, route: str, **kwargs) -> str:
         # pylint: disable=C0111
         return self.client.url_for(route, **kwargs)
