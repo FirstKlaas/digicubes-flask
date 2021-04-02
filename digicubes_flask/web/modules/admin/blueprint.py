@@ -10,6 +10,7 @@ from flask import Blueprint, render_template, request, url_for, redirect
 from flask.helpers import flash
 
 from digicubes_flask.client import proxy
+from digicubes_flask.client.model import UserModel, RoleModel
 from digicubes_flask import login_required, digicubes
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 
@@ -42,7 +43,7 @@ def roles():
 @admin_blueprint.route("/user/<int:user_id>/addrole/<int:role_id>")
 def add_user_role(user_id: int, role_id: int):
     server.user.add_role(
-        server.token, proxy.UserProxy(id=user_id), proxy.RoleProxy(id=role_id, name="")
+        server.token, UserModel(id=user_id), RoleModel(id=role_id, name="")
     )
     return redirect(url_for("user.update", user_id=user_id))
 
@@ -50,7 +51,7 @@ def add_user_role(user_id: int, role_id: int):
 @admin_blueprint.route("/user/<int:user_id>/removerole/<int:role_id>")
 def remove_user_role(user_id: int, role_id: int):
     server.user.remove_role(
-        server.token, proxy.UserProxy(id=user_id), proxy.RoleProxy(id=role_id, name="")
+        server.token, UserModel(id=user_id), RoleModel(id=role_id, name="")
     )
     return redirect(url_for("user.update", user_id=user_id))
 

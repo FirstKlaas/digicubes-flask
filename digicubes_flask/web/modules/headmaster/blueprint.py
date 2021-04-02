@@ -5,7 +5,7 @@ import logging
 from flask import Blueprint, render_template, redirect, url_for
 
 from digicubes_flask import login_required, digicubes, current_user, CurrentUser
-from digicubes_flask.client.proxy import UserProxy
+from digicubes_flask.client.model import UserModel
 
 from digicubes_flask.client.service import UserService, SchoolService
 
@@ -37,5 +37,5 @@ def get_my_schools():
 
     schools = school_service.get_headmaster_schools(
         digicubes.token,
-        UserProxy(id=current_user.id))
+        UserModel(id=current_user.id))
     return render_template("headmaster/schools.jinja", schools=schools)

@@ -15,7 +15,7 @@ from digicubes_flask import (
 )
 from digicubes_flask.exceptions import DigiCubeError
 from digicubes_flask.web.account_manager import DigicubesAccountManager
-
+from digicubes_flask.client.model import UserModel
 
 from .forms import LoginForm, RegisterForm, SetPasswordForm
 
@@ -147,7 +147,7 @@ def register():
     if form.validate_on_submit():
 
         try:
-            new_user = proxy.UserProxy()
+            new_user = UserModel()
             form.populate_obj(new_user)
             new_user.is_active = True
             new_user.id = None  # Just du be shure, we don't have an id in the form accidently
@@ -156,7 +156,6 @@ def register():
 
             # Create a new user in behalf of root
             result = account_manager.user.register(new_user)
-            print(result)
             new_user, btd = result
             current_user.set_data(btd)
             # Also setting the password in behalf of root

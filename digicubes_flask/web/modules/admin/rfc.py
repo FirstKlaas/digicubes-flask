@@ -2,9 +2,10 @@ from typing import Tuple, Dict, Any, Text, Union
 
 import attr
 
-from digicubes_flask.client.proxy import UserProxy, SchoolProxy, RoleProxy
+from digicubes_flask.client.proxy import SchoolProxy, RoleProxy
 from digicubes_flask import digicubes, current_user, CurrentUser
 from digicubes_flask.web.account_manager import DigicubesAccountManager
+from digicubes_flask.client.model import UserModel, RoleModel
 
 server: DigicubesAccountManager = digicubes
 user: CurrentUser = current_user
@@ -54,8 +55,7 @@ class AdminRFC:
             raise ValueError("Unknown mode")
 
         if new_state != user.is_active:
-            u = UserProxy(id=user_id, is_active=new_state)
-            u = server.user.update(server.token, u)
+            server.user.update(server.token, UserModel(id=user_id, is_active=new_state))
 
         return RfcResponse(data={"user_id": user_id, "state": new_state})
 
@@ -70,13 +70,13 @@ class AdminRFC:
 
         if operation == "add":
             server.user.add_role(
-                server.token, UserProxy(id=user_id), RoleProxy(id=role_id, name="xxx")
+                server.token, UserModel(id=user_id), RoleModel(id=role_id, name="xxx")
             )
             return RfcResponse(data={"user_id": user_id, "role_id": role_id, "has_role": True})
 
         if operation == "remove":
             server.user.remove_role(
-                server.token, UserProxy(id=user_id), RoleProxy(id=role_id, name="xxx")
+                server.token, UserModel(id=user_id), RoleModel(id=role_id, name="xxx")
             )
             return RfcResponse(data={"user_id": user_id, "role_id": role_id, "has_role": False})
 
@@ -115,7 +115,7 @@ class AdminRFC:
             raise ValueError("Unknown mode")
 
         if new_state != user.is_verified:
-            u = UserProxy(id=user_id, is_verified=new_state)
+            u = UserModel(id=user_id, is_verified=new_state)
             u = server.user.update(server.token, u)
 
         return RfcResponse(data={"user_id": user_id, "state": new_state})

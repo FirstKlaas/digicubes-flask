@@ -4,11 +4,11 @@ All serice calls for rights
 from typing import List, Optional
 
 from digicubes_flask.exceptions import ConstraintViolation, ServerError, DoesNotExist
+from digicubes_flask.client.model import RightModel, RoleModel
 
 from .abstract_service import AbstractService
-from ..proxy import RightProxy, RoleProxy
 
-RightList = List[RightProxy]
+RightList = List[RightModel]
 
 
 class RightService(AbstractService):
@@ -16,17 +16,17 @@ class RightService(AbstractService):
     The rights service
     """
 
-    def create(self, token, right: RightProxy) -> RightProxy:
+    def create(self, token, right: RightModel) -> RightModel:
         """
         Creates a new right
         """
         headers = self.create_default_header(token)
-        data = right.unstructure()
+        data = right.json()
         url = self.url_for("/rights/")
         result = self.requests.post(url, json=data, headers=headers)
 
         if result.status_code == 201:
-            return RightProxy.structure(result.json())
+            return RightModel.parse_raw(result.json())
 
         if result.status_code == 409:
             raise ConstraintViolation(result.text)
@@ -36,7 +36,7 @@ class RightService(AbstractService):
 
         raise ServerError(f"Unknown error. [{result.status_code}] {result.text}")
 
-    def create_multiple(self, token, rights: List[RightProxy]):
+    def create_multiple(self, token, rights: RightList):
         """
         Creates a set of rights and returns a list of created
         right proxies. The creation of the rights is not an atomic
@@ -59,9 +59,9 @@ class RightService(AbstractService):
         if result.status_code == 404:
             return []
 
-        return [RightProxy.structure(right) for right in result.json()]
+        return [RightModel.parse_raw(right) for right in result.json()]
 
-    def get(self, token, right_id: int) -> Optional[RightProxy]:
+    def get(self, token, right_id: int) -> Optional[RightModel]:
         """
         Get a single right by id
         """
@@ -72,7 +72,7 @@ class RightService(AbstractService):
             return None
 
         if result.status_code == 200:
-            return RightProxy.structure(result.json())
+            return RightModel.parse_raw(result.json())
 
         return None
 
@@ -91,7 +91,7 @@ class RightService(AbstractService):
         if result.status_code != 200:
             raise ServerError(result.text)
 
-    def get_roles(self, token, right: RightProxy) -> List[RoleProxy]:
+    def get_roles(self, token, right: RightModel) -> List[RoleModel]:
         # TODO: Use Filter fields
         """
         Get all roles associated with this right
@@ -104,11 +104,11 @@ class RightService(AbstractService):
             raise DoesNotExist(result.text)
 
         if result.status_code == 200:
-            return [RoleProxy.structure(role) for role in result.json()]
+            return [RoleModel.parse_raw(role) for role in result.json()]
 
         raise ServerError(result.text)
 
-    def add_role(self, token, right: RightProxy, role: RoleProxy) -> bool:
+    def add_role(self, token, right: RightModel, role: RoleModel) -> bool:
         """
         Add a role to this right. The role and the right must exist.
         If not, a DoesNotExist error is raised.
@@ -121,7 +121,7 @@ class RightService(AbstractService):
 
         return result.status_code == 200
 
-    def remove_role(self, token, right: RightProxy, role: RoleProxy) -> bool:
+    def remove_role(self, token, right: RightModel, role: RoleModel) -> bool:
         """
         Removes a role from this right. Both, the role and the right must exist.
         If not, a ``DoesNotExist`` exception is thrown.
@@ -139,7 +139,7 @@ class RightService(AbstractService):
 
         return False
 
-    def clear_roles(self, token, right: RightProxy) -> bool:
+    def clear_roles(self, token, right: RightModel) -> bool:
         """
         Clears all roles from the right. After a succesful call no
         role is associated with this right. The right must exist.

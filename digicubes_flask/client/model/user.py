@@ -1,25 +1,25 @@
 from typing import Optional, Text
 from datetime import datetime
 
-from pydantic import BaseModel, PositiveInt, constr
+import pydantic as pyd
 
-class UserModelUpsert(BaseModel):
-    first_name: Optional[constr(strip_whitespace=True, max_length=20)]
-    last_name: Optional[constr(strip_whitespace=True, max_length=20)]
-    login: constr(strip_whitespace=True, max_length=20)
-    email: constr(strip_whitespace=True, max_length=60)
+class UserModelUpsert(pyd.BaseModel):
+    first_name: Optional[pyd.constr(strip_whitespace=True, max_length=20)]
+    last_name: Optional[pyd.constr(strip_whitespace=True, max_length=20)]
+    login: pyd.constr(strip_whitespace=True, max_length=20)
+    email: pyd.constr(strip_whitespace=True, max_length=60)
     is_active: Optional[bool]
     is_verified: Optional[bool]
     password: Optional[Text]
 
-class UserModel(BaseModel):
-    id: Optional[PositiveInt]
+class UserModel(pyd.BaseModel):
+    id: Optional[pyd.PositiveInt]
     created_at: Optional[datetime]
     modified_at: Optional[datetime]
     verified_at: Optional[datetime]
-    first_name: Optional[constr(strip_whitespace=True, max_length=20)]
-    last_name: Optional[constr(strip_whitespace=True, max_length=20)]
-    login: Optional[constr(strip_whitespace=True, max_length=20)]
-    email: Optional[constr(strip_whitespace=True, max_length=60)]
+    first_name: Optional[pyd.constr(strip_whitespace=True, max_length=20)]
+    last_name: Optional[pyd.constr(strip_whitespace=True, max_length=20)]
+    login: Optional[pyd.constr(strip_whitespace=True, max_length=20)]
+    email: Optional[pyd.constr(strip_whitespace=True, max_length=60)]
     is_active: Optional[bool]
     is_verified: Optional[bool]

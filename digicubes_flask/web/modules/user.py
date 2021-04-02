@@ -227,9 +227,9 @@ def create():
 def verify_renew(user_id: int):
     service: srv.UserService = digicubes.user
     token = digicubes.token
-    user_proxy: proxy.UserProxy = service.get(token, user_id)
-    link = mail_cube.create_verification_link(user_proxy)
-    return render_template("admin/send_verification_link.jinja", user=user_proxy, link=link)
+    user: UserModel = service.get(token, user_id)
+    link = mail_cube.create_verification_link(user)
+    return render_template("admin/send_verification_link.jinja", user=user, link=link)
 
 
 @blueprint.route("/update/<int:user_id>/", methods=("GET", "POST"))
@@ -280,21 +280,21 @@ def get(user_id: int):
     """Display detaild information for an existing user"""
     token = server.token
     # Getting the user details from the server
-    user_proxy: proxy.UserProxy = server.user.get(token, user_id)
+    user: UserModel = server.user.get(token, user_id)
 
     # Getting the user roles from the server
-    user_roles_names = [role.name for role in server.user.get_roles(token, user_proxy)]
+    user_roles_names = [role.name for role in server.user.get_roles(token, user)]
     all_roles = server.role.all(token)
 
     role_list = [(role, role.name in user_roles_names) for role in all_roles]
 
     return render_template(
         "user/user.jinja",
-        user=user_proxy,
+        user=user,
         roles=role_list,
-        headmaster_schools = server.school.get_headmaster_schools(token, user_proxy),
-        teacher_schools = server.school.get_teacher_schools(token, user_proxy),
-        student_schools = server.school.get_student_schools(token, user_proxy)
+        headmaster_schools = server.school.get_headmaster_schools(token, user),
+        teacher_schools = server.school.get_teacher_schools(token, user),
+        student_schools = server.school.get_student_schools(token, user)
     )
 
 

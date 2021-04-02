@@ -13,7 +13,6 @@ from digicubes_flask.exceptions import TokenExpired, ServerError, DoesNotExist
 
 # from digicubes_flask.configuration import url_for, Route
 
-from .proxy import UserProxy
 from .service import RoleService, UserService, SchoolService, RightService
 from .cache import create_cache
 

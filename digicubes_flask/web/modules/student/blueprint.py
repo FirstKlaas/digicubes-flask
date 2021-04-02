@@ -4,7 +4,6 @@ The Admin Blueprint
 import logging
 from flask import Blueprint, render_template, abort, current_app as app, redirect, url_for
 
-from digicubes_flask.client import UserProxy
 from digicubes_flask.structures import BearerTokenData
 from digicubes_flask import login_required, account_manager
 from digicubes_flask.exceptions import DigiCubeError

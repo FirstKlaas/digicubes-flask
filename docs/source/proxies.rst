@@ -1,16 +1,16 @@
 Proxies
 =======
 
-UserProxy
+UserModel
 ---------
 
-.. autoclass:: digicubes_flask.client.proxy.UserProxy
+.. autoclass:: digicubes_flask.client.model.UserModel
     :members:
 
-RoleProxy
+RoleModel
 ---------
 
-.. autoclass:: digicubes_flask.client.proxy.RoleProxy
+.. autoclass:: digicubes_flask.client.model.RoleModel
     :members:
 
 RightProxy

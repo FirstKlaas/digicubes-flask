@@ -14,7 +14,7 @@ from flask import current_app, url_for
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
-from digicubes_flask.client import proxy
+from digicubes_flask.client.model import UserModel
 from digicubes_flask import exceptions as ex
 
 logger = logging.getLogger(__name__)
@@ -149,13 +149,13 @@ class MailCube:
             finally:
                 self.queue.task_done()
 
-    def create_verification_link(self, recipient: proxy.UserProxy):
+    def create_verification_link(self, recipient: UserModel):
         from digicubes_flask import digicubes  # pylint: disable=import-outside-toplevel
 
         token = digicubes.user.get_verification_token(recipient.id)
         return url_for("account.verify", token=token, _external=True)
 
-    def send_verification_email(self, recipient: proxy.UserProxy):
+    def send_verification_email(self, recipient: UserModel):
 
         if not self.is_enabled:
             logger.warning(

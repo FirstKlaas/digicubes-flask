@@ -4,8 +4,10 @@ All service calls for schooles.
 import logging
 from typing import Optional, List
 
+from digicubes_flask.client.model import UserModel
+
 from .abstract_service import AbstractService
-from ..proxy import SchoolProxy, CourseProxy, UnitProxy, UserProxy
+from ..proxy import SchoolProxy, CourseProxy, UnitProxy
 
 SchoolList = Optional[List[SchoolProxy]]
 CourseList = Optional[List[CourseProxy]]
@@ -242,30 +244,30 @@ class SchoolService(AbstractService):
         self.check_response_status(response, expected_status=200)
         return UnitProxy.structure(response.json())
 
-    def get_school_teacher(self, token: str, school_id: int) -> List[UserProxy]:
+    def get_school_teacher(self, token: str, school_id: int) -> List[UserModel]:
         headers = self.create_default_header(token)
         url = self.url_for(f"/school/{school_id}/teacher/")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return [UserProxy.structure(user) for user in response.json()]
+        return [UserModel.parse_raw(user) for user in response.json()]
 
-    def _get_space_schools(self, token, user: UserProxy, space:str) -> List[SchoolProxy]:
+    def _get_space_schools(self, token, user: UserModel, space:str) -> List[SchoolProxy]:
         headers = self.create_default_header(token)
         url = self.url_for(f"/user/{user.id}/{space}/schools/")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
         return [SchoolProxy.structure(school) for school in response.json()]
 
-    def get_headmaster_schools(self, token, user: UserProxy) -> List[SchoolProxy]:
+    def get_headmaster_schools(self, token, user: UserModel) -> List[SchoolProxy]:
         return self._get_space_schools(token, user, "headmaster")
 
-    def get_teacher_schools(self, token, user: UserProxy) -> List[SchoolProxy]:
+    def get_teacher_schools(self, token, user: UserModel) -> List[SchoolProxy]:
         return self._get_space_schools(token, user, "teacher")
 
-    def get_student_schools(self, token, user: UserProxy) -> List[SchoolProxy]:
+    def get_student_schools(self, token, user: UserModel) -> List[SchoolProxy]:
         return self._get_space_schools(token, user, "student")
 
-    def add_teacher(self, token:str, school: SchoolProxy, teacher: UserProxy) -> bool:
+    def add_teacher(self, token:str, school: SchoolProxy, teacher: UserModel) -> bool:
         headers = self.create_default_header(token)
         url = self.url_for(f"/school/{school.id}/teacher/{teacher.id}/")
         response = self.requests.put(url, headers=headers)

@@ -3,7 +3,7 @@ from typing import Optional, List
 
 import redis
 
-from digicubes_flask.client import proxy as p
+from digicubes_flask.client.model import UserModel, RoleModel
 from .cache import Cache
 
 
@@ -34,27 +34,27 @@ class RedisCache(Cache):
 
         self.redis = redis.Redis(**kwargs)
 
-    def get_user(self, user_id: int) -> p.UserProxy:
+    def get_user(self, user_id: int) -> UserModel:
         raw_data = self.redis.get(f"USER:{user_id}")
         return None if raw_data is None else pickle.loads(raw_data)
 
-    def set_user(self, user: p.UserProxy):
+    def set_user(self, user: UserModel):
         key = f"USER:{user.id}"
-        self.redis.set(key, pickle.dumps(user), ex=self.max_age)
+        self.redis.set(key, user.json(), ex=self.max_age)
 
     def get_user_rights(self, user_id: int) -> Optional[List[str]]:
         raw_data = self.redis.get(f"USER:{user_id}:RIGHTS")
-        return None if raw_data is None else pickle.loads(raw_data)
+        return None if raw_data is None else UserModel.parse_raw(raw_data)
 
     def set_user_rights(self, user_id: int, rights: List[str]):
         key = f"USER:{user_id}:RIGHTS"
         self.redis.set(key, pickle.dumps(rights), ex=self.max_age)
 
-    def get_user_roles(self, user_id: int) -> Optional[List[p.RoleProxy]]:
+    def get_user_roles(self, user_id: int) -> Optional[List[RoleModel]]:
         raw_data = self.redis.get(f"USER:{user_id}:ROLES")
         return None if raw_data is None else pickle.loads(raw_data)
 
-    def set_user_roles(self, user_id: int, roles: List[p.RoleProxy]):
+    def set_user_roles(self, user_id: int, roles: List[RoleModel]):
         key = f"USER:{user_id}:ROLES"
         self.redis.set(key, pickle.dumps(roles), ex=self.max_age)
 

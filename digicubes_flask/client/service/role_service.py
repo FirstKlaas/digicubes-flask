@@ -4,7 +4,7 @@ All service calls for roles.
 from typing import List, Optional
 
 from digicubes_flask.exceptions import DoesNotExist
-from ..proxy import RightProxy, RoleProxy
+from digicubes_flask.client.model import UserModel, RoleModel
 from .abstract_service import AbstractService
 
 RoleList = Optional[List[RoleProxy]]
@@ -15,7 +15,7 @@ class RoleService(AbstractService):
     All role services
     """
 
-    def create(self, token, role: RoleProxy) -> RoleProxy:
+    def create(self, token, role: RoleModel) -> RoleModel:
         """
         Creates a new role.
 
@@ -25,7 +25,7 @@ class RoleService(AbstractService):
         error will be raised. THe message of the error should give you a good indication
         what is wrong with the data.
 
-        :param RoleProxy role: The role you want to create. Be shure, that at least all
+        :param RoleModel role: The role you want to create. Be shure, that at least all
             non null attributes have meaningful values. Attributes like ``id``, ``created_at``
             and ``modified_at`` will be ignored.
 
@@ -36,23 +36,23 @@ class RoleService(AbstractService):
         response = self.requests.post(url, json=data, headers=headers)
 
         self.check_response_status(response, expected_status=201)
-        return RoleProxy.structure(response.json())
+        return RoleModel.parse_raw(response.json())
 
-    def create_bulk(self, token, roles: List[RoleProxy]) -> None:
+    def create_bulk(self, token, roles: List[RoleModel]) -> None:
         """
         Create multiple roles
         """
         headers = self.create_default_header(token)
-        data = [role.unstructure() for role in roles]
+        data = [role.json() for role in roles]
         url = self.url_for("/roles/")
         response = self.requests.post(url, json=data, headers=headers)
         self.check_response_status(response, expected_status=201)
 
-    def all(self, token) -> RoleList:
+    def all(self, token) -> List[RoleModel]:
         """
         Returns all roles
 
-        The result is a list of ``RoleProxy`` objects
+        The result is a list of ``RoleModel`` objects
         """
         cached_roles = self.cache.get_roles()
         if cached_roles is not None:
@@ -63,25 +63,25 @@ class RoleService(AbstractService):
         response = self.requests.get(url, headers=headers)
 
         self.check_response_status(response)
-        roles = [RoleProxy.structure(role) for role in response.json()]
+        roles = [RoleModel.parse_raw(role) for role in response.json()]
         self.cache.set_roles(roles)
         return roles
 
-    def get(self, token, role_id: int) -> Optional[RoleProxy]:
+    def get(self, token, role_id: int) -> Optional[RoleModel]:
         """
-        Get a single user.
+        Get a single role.
 
-        The requested user is specified by the ``id``.
-        If the requested user was found, a ``UserProxy`` object
+        The requested role is specified by the ``id``.
+        If the requested role was found, a ``RoleModel`` object
         will be returned. ``None`` otherwise.
         """
         headers = self.create_default_header(token)
         url = self.url_for(f"/role/{role_id}")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response)
-        return RoleProxy.structure(response.json())
+        return RoleModel.parse_raw(response.json())
 
-    def get_by_name(self, token: str, name: str) -> RoleProxy:
+    def get_by_name(self, token: str, name: str) -> RoleModel:
         """
         Get a single role by the name.
 
@@ -90,15 +90,15 @@ class RoleService(AbstractService):
 
         :param str name: The name of the role.
         :return: The role
-        :rtype: :class:`digicubes_flask.client.proxy.RoleProxy`
+        :rtype: :class:`digicubes_flask.client.model.RoleModel`
         """
         headers = self.create_default_header(token)
         url = self.url_for(f"/role/byname/{name}")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return RoleProxy.structure(response.json())
+        return RoleModel.parse_raw(response.json())
 
-    def get_by_name_or_none(self, token: str, name: str) -> RoleProxy:
+    def get_by_name_or_none(self, token: str, name: str) -> RoleModel:
         """
         Get a single role by the name.
 
@@ -110,7 +110,7 @@ class RoleService(AbstractService):
         except DoesNotExist:
             return None
 
-    def delete(self, token, role_id: int) -> Optional[RoleProxy]:
+    def delete(self, token, role_id: int) -> Optional[RoleModel]:
         """
         Deletes a role from the database
         """
@@ -118,7 +118,7 @@ class RoleService(AbstractService):
         url = self.url_for(f"/role/{role_id}")
         response = self.requests.delete(url, headers=headers)
         self.check_response_status(response)
-        return RoleProxy.structure(response.json())
+        return RoleModel.parse_raw(response.json())
 
     def delete_all(self, token):
         """
@@ -133,7 +133,7 @@ class RoleService(AbstractService):
         response = self.requests.delete(url, headers=headers)
         self.check_response_status(response)
 
-    def get_rights(self, token, role: RoleProxy) -> List[RightProxy]:
+    def get_rights(self, token, role: RoleModel) -> List[RightModel]:
         """
         Get all rights assiciated with this role.
         """
