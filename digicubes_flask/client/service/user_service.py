@@ -2,7 +2,9 @@
 All user requests
 """
 import logging
-from typing import Optional, List
+from typing import Optional, List, Text
+
+from pydantic import parse_obj_as, parse_raw_as
 
 from digicubes_flask.exceptions import (
     ConstraintViolation,
@@ -12,14 +14,15 @@ from digicubes_flask.exceptions import (
     DigiCubeError,
 )
 
+from digicubes_flask.client.model import RoleModel, UserModelUpsert, UserModel
+
 from digicubes_flask.structures import BearerTokenData
 
 from .abstract_service import AbstractService
-from ..proxy import UserProxy, RoleProxy
 from .filter import FilterFunction, Query
 
-UserList = List[UserProxy]
-XFieldList = Optional[List[str]]
+UserList = List[UserModel]
+XFieldList = Optional[List[Text]]
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +47,7 @@ class UserService(AbstractService):
         """
         Get all users in the database.
 
-        Returns a list of :class:`digicubes_flask.client.proxy.UserProxy` instances.
+        Returns a list of :class:`UserModel` instances.
         If ``X-Filter-Fields`` is provided, only attributes are send back that
         are in the list. If an attribute has no value it will be omitted.
 
@@ -59,15 +62,12 @@ class UserService(AbstractService):
             items may of course be smaller than count.
         :kwargs: These named parameters will be added as query parameters
         :return: The requested Users
-        :rtype: A list of :class:`digicubes_flask.client.proxy.UserProxy` objects.
+        :rtype: A list of :class:`UserModel` objects.
         :raises InsufficientRights: If the requesting user has not the permission.
         :raises TokenExpired: is the token has expired.
         :raises ServerError: if an unpredicted exception occurred.
         """
-        headers = self.create_default_header(token)
-        if fields is not None:
-            headers[self.X_FILTER_FIELDS] = ",".join(fields)
-
+        headers = self.create_default_header(token, fields=fields)
         url = self.url_for("/users/")
         params = {}
         if offset:
@@ -92,7 +92,7 @@ class UserService(AbstractService):
         if user_data is None:
             raise ServerError("No content provided.")
 
-        return [UserProxy.structure(user) for user in user_data]
+        return parse_obj_as(List[UserModel], user_data)
 
     def get_my_rights(self, token, fields: XFieldList = None):
         "Get my rights"
@@ -110,25 +110,26 @@ class UserService(AbstractService):
 
         raise TokenExpired("Could not read user rights. Token expired.")
 
-    def get_my_roles(self, token, fields: XFieldList = None) -> List[RoleProxy]:
-        "Get my roles"
+    def get_my_roles(self, token, fields: XFieldList = None) -> List[RoleModel]:
+        """
+        Get my roles. Returns a list of role names, that the
+        current user has.
+        """
         headers = self.create_default_header(token=token)
         if fields is not None:
             headers[self.X_FILTER_FIELDS] = ",".join(fields)
-
         url = self.url_for("/me/roles/")
         result = self.requests.get(url, headers=headers)
 
         if result.status_code == 200:
-            data = result.json()
-            return [RoleProxy.structure(role) for role in data]
+            return parse_raw_as(List[RoleModel], result.json())
 
         if result.status_code == 404:
             raise DoesNotExist()
 
         raise TokenExpired("Could not read user roles. Token expired.")
 
-    def me(self, token, fields: XFieldList = None) -> Optional[UserProxy]:
+    def me(self, token, fields: XFieldList = None) -> Optional[UserModel]:
         """
         Get a single user
         """
@@ -146,11 +147,11 @@ class UserService(AbstractService):
             return None
 
         if result.status_code == 200:
-            return UserProxy.structure(result.json())
+            return UserModel.parse_obj(result.json())
 
         return None
 
-    def get_by_login(self, token: str, login: str) -> UserProxy:
+    def get_by_login(self, token: str, login: str) -> UserModel:
         """
         Get a single user by his login, if existent.
 
@@ -158,7 +159,7 @@ class UserService(AbstractService):
         :param str token: The authentification token
         :param str login: The login of the user to be looked up.
         :return: The found user
-        :rtype: UserProxy
+        :rtype: UserModel
         :raises InsufficientRights: If the requesting user has not the permission.
         :raises DoesNotExist: if no user exists with the provided login.
         :raises TokenExpired: is the token has expired.
@@ -168,9 +169,9 @@ class UserService(AbstractService):
         url = self.url_for(f"/user/bylogin/{login}")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return UserProxy.structure(response.json())
+        return UserModel.parse_raw(response.json())
 
-    def get_by_login_or_none(self, token: str, login: str) -> UserProxy:
+    def get_by_login_or_none(self, token: str, login: str) -> UserModel:
         """
         Get a single user by his login or none, if the user does not
         exist.
@@ -178,7 +179,7 @@ class UserService(AbstractService):
         :param str token: The authentification token
         :param str login: The login of the user to be looked up.
         :return: The found user or None, if nor user with the login exists
-        :rtype: UserProxy
+        :rtype: UserModel
         :raises InsufficientRights: If the requesting user has not the permission.
         :raises TokenExpired: is the token has expired.
         :raises ServerError: if an unpredicted exception occurred.
@@ -197,9 +198,9 @@ class UserService(AbstractService):
         )
 
         self.check_response_status(response, expected_status=200)
-        return [UserProxy.structure(user) for user in response.json()]
+        return parse_obj_as(List[UserModel], response.json())
 
-    def get_by_email(self, token: str, email: str) -> Optional[UserProxy]:
+    def get_by_email(self, token: str, email: str) -> Optional[UserModel]:
         """
         Get a single user by his email, if existent.
 
@@ -207,7 +208,7 @@ class UserService(AbstractService):
         :param str token: The authentification token
         :param str email: The email of the user to be looked up.
         :return: The found user
-        :rtype: UserProxy
+        :rtype: UserModel
         :raises InsufficientRights: If the requesting user has not the permission.
         :raises DoesNotExist: if no user exists with the provided login.
         :raises TokenExpired: is the token has expired.
@@ -219,11 +220,11 @@ class UserService(AbstractService):
             params={"v": email},
         )
         self.check_response_status(response, expected_status=200)
-        users = [UserProxy.structure(user) for user in response.json()]
+        users = parse_obj_as(List[UserModel], response.json())
         # TODO: len > 1 ?
         return users[0] if len(users) > 0 else None
 
-    def get(self, token, user_id: int, fields: XFieldList = None) -> Optional[UserProxy]:
+    def get(self, token, user_id: int, fields: XFieldList = None) -> Optional[UserModel]:
         """
         Get a single user with the given id.
 
@@ -231,28 +232,26 @@ class UserService(AbstractService):
         :param int user_id: The id of the requested user.
         :param XFieldList fields: The fields of the user, that should be returned.
         :return: The requested user.
-        :rtype: :class:`digicubes_flask.client.proxy.UserProxy`
+        :rtype: :class:`UserModel`
         :raises InsufficientRights: If the requesting user has not the permission.
         :raises DoesNotExist: if no user exists with the provided login.
         :raises TokenExpired: is the token has expired.
         :raises ServerError: if an unpredicted exception occurred.
         """
-        user = self.cache.get_user(user_id)
-        if user is not None:
-            logger.info("Cache hit for user %s", user.login)
-            return user  # Cache hit
+        #user = self.cache.get_user(user_id)
+        #if user is not None:
+        #    logger.info("Cache hit for user %s", user.login)
+        #    return user  # Cache hit
 
         # Cache miss
-        headers = self.create_default_header(token)
-        if fields is not None:
-            headers[self.X_FILTER_FIELDS] = ",".join(fields)
-
+        headers = self.create_default_header(token, fields=fields)
         url = self.url_for(f"/user/{user_id}")
-        response = self.requests.get(url, headers=headers)
+        response = self.requests.get(
+            url, headers=headers)
 
         self.check_response_status(response, expected_status=200)
-        user = UserProxy.structure(response.json())
-        self.cache.set_user(user)  # Cache the fetched user.
+        user = UserModel.parse_raw(response.json())
+        #self.cache.set_user(user)  # Cache the fetched user.
         return user
 
     def set_password(
@@ -268,7 +267,7 @@ class UserService(AbstractService):
         response = self.requests.post(url, headers=headers, data=data)
         self.check_response_status(response, expected_status=200)
 
-    def delete(self, token, user_id: int) -> Optional[UserProxy]:
+    def delete(self, token, user_id: int) -> Optional[UserModel]:
         """
         Deletes a user from the database
         """
@@ -283,7 +282,7 @@ class UserService(AbstractService):
         if result.status_code != 200:
             raise ServerError(f"Wrong status. Expected 200. Got {result.status_code}")
 
-        return UserProxy.structure(result.json())
+        return UserModel.parse_raw(result.json())
 
     def delete_all(self, token) -> None:
         """
@@ -296,7 +295,7 @@ class UserService(AbstractService):
         if result.status_code != 200:
             raise ServerError(f"Wrong status. Expected 200. Got {result.status_code}")
 
-    def register(self, user: UserProxy) -> UserProxy:
+    def register(self, user: UserModel) -> UserModel:
         """
         Registers a new user.
 
@@ -305,16 +304,16 @@ class UserService(AbstractService):
 
         The student role is added automaticall to the new user.
 
-        :param UserProxy user: The userdate for the new user.
+        :param UserModel user: The userdate for the new user.
         """
-        data = user.unstructure()
+        data = user.json()
         url = self.url_for("/user/register/")
         result = self.requests.post(url, json=data)
 
         # Status 201: Ressource created
         if result.status_code == 201:
             response_data = result.json()
-            user = UserProxy.structure(response_data["user"])
+            user = UserModel.parse_obj(response_data["user"])
             bearer_token_data: BearerTokenData = BearerTokenData.structure(
                 response_data["bearer_token_data"]
             )
@@ -324,8 +323,6 @@ class UserService(AbstractService):
                 bearer_token_data.bearer_token, "student"
             )
             if student_role:
-                print(user)
-                print(student_role)
                 self.add_role(bearer_token_data.bearer_token, user, student_role)
             return (
                 user,
@@ -334,16 +331,12 @@ class UserService(AbstractService):
 
         raise DigiCubeError(f"Something went wrong. Status {result.status_code}")
 
-    def create(self, token: str, user: UserProxy, fields: XFieldList = None) -> UserProxy:
+    def create(self, token: str, user: UserModelUpsert, fields: XFieldList = None) -> UserModel:
         """
         Creates a new user
         """
-        headers = self.create_default_header(token)
-        data = user.unstructure()
-
-        if fields is not None:
-            headers[self.X_FILTER_FIELDS] = ",".join(fields)
-
+        headers = self.create_default_header(token, fields=fields)
+        data = user.json()
         url = self.url_for("/users/")
         result = self.requests.post(url, json=data, headers=headers)
 
@@ -353,32 +346,13 @@ class UserService(AbstractService):
             #
             # TODO: Why not able to set the password directly in the
             # REST call? Check is and change it, if possible.
-            user_proxy: UserProxy = UserProxy.structure(result.json())
+            user_model = UserModel.parse_raw(result.json())
             if not user.password:
                 logger.debug("Created user without password.")
             else:
-                self.set_password(token=token, user_id=user_proxy.id, new_password=user.password)
+                self.set_password(token=token, user_id=user_model.id, new_password=user.password)
 
-            return user_proxy
-
-        if result.status_code == 409:
-            raise ConstraintViolation(result.text)
-
-        if result.status_code == 500:
-            raise ServerError(result.text)
-
-        raise ServerError(f"Unknown error. [{result.status_code}] {result.text}")
-
-    def create_bulk(self, token, users: List[UserProxy]) -> None:
-        """
-        Create multiple users
-        """
-        headers = self.create_default_header(token)
-        data = [user.unstructure() for user in users]
-        url = self.url_for("/users/")
-        result = self.requests.post(url, json=data, headers=headers)
-        if result.status_code == 201:
-            return
+            return user_model
 
         if result.status_code == 409:
             raise ConstraintViolation(result.text)
@@ -420,7 +394,7 @@ class UserService(AbstractService):
         :Method: PUT
         :param str token: The verification token returned by ``get_verification_token``
         :return: The verified user.
-        :rtype: :class:`digicubes_flask.client.proxy.UserProxy`
+        :rtype: :class:`UserModel`
         :raises InsufficientRights: If the requesting user has not the permission.
         :raises DoesNotExist: if the user connected to the token does not exist.
         :raises TokenExpired: is the token has expired.
@@ -430,17 +404,17 @@ class UserService(AbstractService):
         response = self.requests.put(url)
         data = response.json()
 
-        return UserProxy.structure(data["user"]), data["token"]
+        return UserModel.parse_obj(data["user"]), data["token"]
 
-    def update(self, token, user: UserProxy) -> UserProxy:
+    def update(self, token, user: UserModelUpsert) -> UserModel:
         """
         Update an existing user.
-        If successfull, a new user proxy is returned with the latest version of the
+        If successfull, a new user model is returned with the latest version of the
         user data.
         """
         response = self.requests.put(
             self.url_for(f"/user/{user.id}"),
-            json=user.unstructure(),
+            json=user.json(),
             headers=self.create_default_header(token),
         )
 
@@ -453,10 +427,10 @@ class UserService(AbstractService):
         if response.status_code != 200:
             raise ServerError(f"Wrong status. Expected 200. Got {response.status_code}")
 
-        user = UserProxy.structure(response.json())
+        user = UserModel.parse_raw(response.json())
 
         # Add or update the cached user
-        self.cache.set_user(user)
+        #self.cache.set_user(user)
         return user  # TODO Check other status_codes
 
     def get_rights(self, token: str, user_id: int) -> List[str]:
@@ -464,10 +438,10 @@ class UserService(AbstractService):
         Get all rights. The rest method returns an array of right names
         and not json objects.
         """
-        user_rights = self.cache.get_user_rights(user_id)
-        if user_rights is not None:
+        #user_rights = self.cache.get_user_rights(user_id)
+        #if user_rights is not None:
             # cache hit
-            return user_rights
+        #    return user_rights
 
         # cache miss
         headers = self.create_default_header(token)
@@ -484,10 +458,10 @@ class UserService(AbstractService):
             raise ServerError(f"Wrong status. Expected 200. Got {result.status_code}")
 
         user_rights = result.json()
-        self.cache.set_user_rights(user_id, user_rights)  # cache user rights
+        #self.cache.set_user_rights(user_id, user_rights)  # cache user rights
         return user_rights
 
-    def get_roles(self, token, user: UserProxy) -> List[RoleProxy]:
+    def get_roles(self, token, user: UserModel) -> List[RoleModel]:
         """
         Get all roles for user.
         """
@@ -508,9 +482,9 @@ class UserService(AbstractService):
         if result.status_code != 200:
             raise ServerError(f"Wrong status. Expected 200. Got {result.status_code}")
 
-        return [RoleProxy.structure(role) for role in result.json()]
+        return parse_obj_as(List[RoleModel], result.json())
 
-    def add_role(self, token, user: UserProxy, role: RoleProxy) -> bool:
+    def add_role(self, token, user: UserModel, role: RoleModel) -> bool:
         """
         Adds a role to the user
         """
@@ -519,7 +493,7 @@ class UserService(AbstractService):
         result = self.requests.put(url, headers=headers)
         return result.status_code == 200
 
-    def remove_role(self, token, user: UserProxy, role: RoleProxy) -> bool:
+    def remove_role(self, token, user: UserModel, role: RoleModel) -> bool:
         """
         Remove a role from the user
         """

@@ -12,7 +12,8 @@ def to_local_datetime(timestamp, dt_format="llll"):
     elif isinstance(timestamp, str):
         data = datetime.fromisoformat(timestamp).strftime("%Y-%m-%dT%H:%M:%S Z")
     else:
-        raise AttributeError("Unsupported timestamp type.")
+        return "MOMENT JS ERROR"
+        #raise AttributeError(f"Unsupported timestamp type. {type(timestamp)}")
 
     return Markup("<script>\ndocument.write(moment(\"%s\").%s);\n</script>" % (data, dt_format))
 

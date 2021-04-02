@@ -82,9 +82,15 @@ idna==2.10
     #   requests
 imagesize==1.2.0
     # via sphinx
-importlib-metadata==3.9.0
+importlib-metadata==3.10.0
     # via
+    #   -r requirements.txt
     #   keyring
+    #   markdown
+    #   pep517
+    #   pluggy
+    #   pytest
+    #   stevedore
     #   twine
 iniconfig==1.1.1
     # via pytest
@@ -146,6 +152,8 @@ pybadges==2.2.1
     # via -r requirements-dev.in
 pycparser==2.20
     # via cffi
+pydantic==1.8.1
+    # via -r requirements.txt
 pygments==2.8.1
     # via
     #   doc8
@@ -153,7 +161,7 @@ pygments==2.8.1
     #   sphinx
 pyjwt==2.0.1
     # via -r requirements.txt
-pylint==2.7.2
+pylint==2.7.4
     # via -r requirements-dev.in
 pyparsing==2.4.7
     # via packaging
@@ -231,9 +239,15 @@ tqdm==4.59.0
 twine==3.4.1
     # via -r requirements-dev.in
 typed-ast==1.4.2
-    # via black
+    # via
+    #   astroid
+    #   black
 typing-extensions==3.7.4.3
-    # via black
+    # via
+    #   -r requirements.txt
+    #   black
+    #   importlib-metadata
+    #   pydantic
 urllib3==1.26.4
     # via
     #   -r requirements.txt
@@ -251,7 +265,10 @@ wtforms==2.3.3
     #   -r requirements.txt
     #   flask-wtf
 zipp==3.4.1
-    # via importlib-metadata
+    # via
+    #   -r requirements.txt
+    #   importlib-metadata
+    #   pep517
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip

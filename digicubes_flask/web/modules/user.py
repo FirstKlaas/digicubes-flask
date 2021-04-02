@@ -32,6 +32,8 @@ from digicubes_flask import (
     CurrentUser,
     exceptions as ex,
 )
+
+from digicubes_flask.client.model import UserModel, UserModelUpsert
 from digicubes_flask.email import mail_cube
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 import digicubes_flask.web.wtforms_widgets as w
@@ -139,8 +141,8 @@ class UserLoginAvailable:
             raise ValidationError("Login may not be empty.")
 
         try:
-            user_proxy: proxy.UserProxy = digicubes.user.get_by_login(digicubes.token, field.data)
-            if self.user_id is not None and self.user_id == user_proxy.id:
+            user_model = digicubes.user.get_by_login(digicubes.token, field.data)
+            if self.user_id is not None and self.user_id == user_model.id:
                 return
 
             raise ValidationError("User already exists. Try a different login.")
@@ -178,8 +180,8 @@ def create():
 
     if form.is_submitted():
         if form.user.validate({"login": [UserLoginAvailable()]}):
-            new_user = proxy.UserProxy()
-            form.user.form.populate_obj(new_user)
+            new_user = UserModelUpsert.parse_obj(form.user.form.data)
+            #form.user.form.populate_obj(new_user)
 
             # When users are created by an admin,
             # he decides, whether the user is verified or not.
@@ -239,21 +241,24 @@ def update(user_id: int):
     service: srv.UserService = digicubes.user
     token = digicubes.token
     form = UserForm()
-    user_proxy: proxy.UserProxy = service.get(token, user_id)
+    user_model: UserModel = None
 
     if form.is_submitted():
         if form.validate({"login": [UserLoginAvailable(user_id=user_id)]}):
-            user_proxy = proxy.UserProxy(id=user_id)
-            form.populate_obj(user_proxy)
-            digicubes.user.update(token, user_proxy)
+            user_model = UserModel.parse_obj(form.data)
+            user_model.id = user_id
+            digicubes.user.update(token, user_model)
             return redirect(url_for("user.get", user_id=user_id))
+        else:
+            user_model: UserModel = service.get(token, user_id)
     else:
-        form.process(obj=user_proxy)
+        user_model: UserModel = service.get(token, user_id)
+        form.process(obj=user_model)
 
     return render_template(
         "admin/update_user.jinja",
         form=form,
-        user=user_proxy,
+        user=user_model,
         action=url_for("user.update", user_id=user_id),
     )
 

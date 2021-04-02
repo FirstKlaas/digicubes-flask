@@ -151,7 +151,7 @@ class CurrentUser:
 
     @property
     def roles(self) -> List[str]:
-        if self.tolen is None:
+        if self.token is None:
             return []
 
         if self._roles is None:

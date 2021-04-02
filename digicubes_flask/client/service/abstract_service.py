@@ -1,7 +1,7 @@
 """
 A base class for all service endpoint.
 """
-from typing import Optional, Dict, Text
+from typing import Optional, Dict, Text, List
 
 from digicubes_flask import exceptions as ex
 
@@ -37,14 +37,18 @@ class AbstractService:
         """
         return self.client.requests
 
-    def create_default_header(self, token) -> Dict[Text, Text]:
+    def create_default_header(self, token, fields: Optional[List[Text]] = None) -> Dict[Text, Text]:
         """
         Creates the default header for a standard
         call. Sets the bearer token as well as the
         accept header.
         """
         auth_value = f"Bearer {token}"
-        return {"Authorization": auth_value, "Accept": "application/json"}
+        header = {"Authorization": auth_value, "Accept": "application/json"}
+        if fields is not None:
+            header["X-Filter-Fields"] = ",".join(fields)
+        return header
+
 
     def url_for(self, route: str, **kwargs) -> str:
         # pylint: disable=C0111
