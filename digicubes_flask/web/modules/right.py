@@ -3,17 +3,14 @@ The Right Blueprint
 """
 import logging
 
-from flask import Blueprint, redirect, render_template, url_for
+from flask import Blueprint, render_template
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, validators
-from wtforms.validators import ValidationError
+from wtforms import StringField, SubmitField, validators
 
-import digicubes_flask.exceptions as ex
 import digicubes_flask.web.wtforms_widgets as w
 from digicubes_flask import (CurrentUser, current_user, digicubes,
                              login_required)
 from digicubes_flask.client import RightService
-from digicubes_flask.client import service as srv
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 
 blueprint = Blueprint("right", __name__, url_prefix="/right")

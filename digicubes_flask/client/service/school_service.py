@@ -166,7 +166,7 @@ class SchoolService(AbstractService):
         """
         try:
             return self.get_course(token, course_id)
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=bare-except
             return None
 
     def delete_course(self, token: str, course_id: int) -> CourseModel:

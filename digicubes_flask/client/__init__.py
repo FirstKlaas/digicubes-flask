@@ -2,10 +2,8 @@
     Client for the DigiCubeServer
 """
 
-import json
 import logging
 
-import cattr
 import requests
 
 from digicubes_flask import structures as st

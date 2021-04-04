@@ -1,7 +1,6 @@
 import logging
 
-from flask import (Blueprint, abort, current_app, redirect, render_template,
-                   request, url_for)
+from flask import Blueprint, render_template
 
 __ALL__ = ["blueprint"]
 

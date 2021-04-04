@@ -3,7 +3,7 @@ All service calls for roles.
 """
 from typing import List, Optional
 
-from pydantic import parse_obj_as, parse_raw_as
+from pydantic import parse_obj_as
 
 from digicubes_flask.client.model import RightModel, RoleModel
 from digicubes_flask.exceptions import DoesNotExist

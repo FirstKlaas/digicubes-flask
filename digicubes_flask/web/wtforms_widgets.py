@@ -202,7 +202,7 @@ def materialize_checkbox(field, **kwargs):
         input_params["checked"] = "checked"
 
     return f"""
-    <div {html_params(**div_params)}>    
+    <div {html_params(**div_params)}>
         <label>
             <input {html_params(**input_params)} ></input>
             <span>{field.label}</span>

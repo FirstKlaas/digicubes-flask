@@ -13,7 +13,7 @@ from digicubes_flask.exceptions import (ConstraintViolation, DigiCubeError,
 from digicubes_flask.structures import BearerTokenData
 
 from .abstract_service import AbstractService
-from .filter import FilterFunction, Query
+from .filter import Query
 
 UserList = List[UserModel]
 XFieldList = Optional[List[Text]]
@@ -186,7 +186,7 @@ class UserService(AbstractService):
     def filter(self, token, query: Query):
 
         response = self.requests.get(
-            self.url_for(f"/users/filter/"),
+            self.url_for("/users/filter/"),
             headers=self.create_default_header(token),
             params=query.build,
         )

@@ -132,7 +132,7 @@ class MailCube:
                     msg.add_alternative(html_text, subtype="html")
                     mailserver.send_message(msg)
 
-            except:  # pylint: disable=bare-except
+            except Exception:  # pylint: disable=bare-except
                 # Something failed, so we put
                 # the item back into he queue to try
                 # again "later"

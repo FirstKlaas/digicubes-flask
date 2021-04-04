@@ -3,9 +3,9 @@ The main extension module
 """
 import logging
 import os
-from datetime import date, datetime
+from datetime import datetime
 
-from flask import Flask, abort, current_app, g, redirect, request, url_for
+from flask import Flask, abort, current_app, redirect, url_for
 from flask_wtf.csrf import CSRFError
 from markdown import markdown
 

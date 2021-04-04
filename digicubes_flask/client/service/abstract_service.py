@@ -74,5 +74,6 @@ class AbstractService:
 
         if expected_status and response.status_code != expected_status:
             raise ex.ServerError(
-                f"Unexpected status. Expected {expected_status} but got {response.status_code} - {response.text}"
+                f"Unexpected status. Expected {expected_status} but got "
+                f"{response.status_code} - {response.text}"
             )

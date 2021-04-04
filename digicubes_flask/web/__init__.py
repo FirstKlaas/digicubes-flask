@@ -5,15 +5,9 @@ as a quickstart module.
 import datetime
 import logging
 import os
-import re
-from importlib.resources import open_text
-from logging.config import \
-    dictConfig  # pylint: disable=import-outside-toplevel
-from pathlib import Path
-from typing import Optional
 
 from dotenv import load_dotenv
-from flask import Flask, Request, Response, g, redirect, request, url_for
+from flask import Flask, g, redirect, request, url_for
 from flask_babel import Babel
 from libgravatar import Gravatar
 from markdown import markdown

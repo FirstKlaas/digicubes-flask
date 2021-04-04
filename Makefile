@@ -20,7 +20,7 @@ deps:
 	@pip-sync requirements-dev.txt
 
 lint: deps
-	pylint $(checkfiles)
+	flake8 --max-line-length 100 $(checkfiles)
 
 checkdocs:
 	doc8 docs/source/

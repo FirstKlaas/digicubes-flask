@@ -7,4 +7,4 @@ from .role_service import RoleService
 from .school_service import SchoolService
 from .user_service import UserService
 
-_ALL_ = ["AbstractService", "UserService", "RoleService", "RightService", "SchoolService"]
+__all__ = ["AbstractService", "UserService", "RoleService", "RightService", "SchoolService"]

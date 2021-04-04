@@ -60,7 +60,7 @@ def verify(token: str):
         user_proxy, token = service.verify_user(token)
         current_user.token = token
         return render_template("account/verified.jinja", user=user_proxy)
-    except:  # pylint: disable=bare-except
+    except Exception:  # pylint: disable=bare-except
         logger.exception("Could not verify your account.")
         abort(500)
 

@@ -5,10 +5,9 @@ import logging
 
 from flask import Blueprint, redirect, render_template, url_for
 
-from digicubes_flask import (CurrentUser, current_user, digicubes,
-                             login_required)
+from digicubes_flask import current_user, digicubes, login_required
 from digicubes_flask.client.model import UserModel
-from digicubes_flask.client.service import SchoolService, UserService
+from digicubes_flask.client.service import SchoolService
 
 headmaster_service = Blueprint("headmaster", __name__)
 
