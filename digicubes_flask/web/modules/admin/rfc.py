@@ -1,11 +1,10 @@
-from typing import Tuple, Dict, Any, Text, Union
+from typing import Any, Dict, Text, Tuple, Union
 
 import attr
 
-from digicubes_flask.client.model import SchoolModel, RoleModel
-from digicubes_flask import digicubes, current_user, CurrentUser
+from digicubes_flask import CurrentUser, current_user, digicubes
+from digicubes_flask.client.model import RoleModel, SchoolModel, UserModel
 from digicubes_flask.web.account_manager import DigicubesAccountManager
-from digicubes_flask.client.model import UserModel, RoleModel
 
 server: DigicubesAccountManager = digicubes
 user: CurrentUser = current_user

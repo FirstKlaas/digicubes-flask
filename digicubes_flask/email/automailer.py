@@ -1,21 +1,20 @@
-import smtplib
-import threading
 import logging
 import os
+import smtplib
+import threading
+from email.headerregistry import Address
+from email.message import EmailMessage
 from queue import Queue
 from typing import Optional
 
-from email.message import EmailMessage
-from email.headerregistry import Address
+from flask import current_app, url_for
+from jinja2 import Environment, PackageLoader, select_autoescape
+
+from digicubes_flask import exceptions as ex
+from digicubes_flask.client.model import UserModel
 
 # from email.utils import make_msgid
 
-from flask import current_app, url_for
-
-from jinja2 import Environment, PackageLoader, select_autoescape
-
-from digicubes_flask.client.model import UserModel
-from digicubes_flask import exceptions as ex
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +149,8 @@ class MailCube:
                 self.queue.task_done()
 
     def create_verification_link(self, recipient: UserModel):
-        from digicubes_flask import digicubes  # pylint: disable=import-outside-toplevel
+        from digicubes_flask import \
+            digicubes  # pylint: disable=import-outside-toplevel
 
         token = digicubes.user.get_verification_token(recipient.id)
         return url_for("account.verify", token=token, _external=True)

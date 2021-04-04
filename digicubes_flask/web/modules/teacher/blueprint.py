@@ -2,13 +2,11 @@
 The Admin Blueprint
 """
 import logging
-from flask import Blueprint, render_template, redirect, url_for
 
-from digicubes_flask import login_required, digicubes, current_user
-from digicubes_flask.client import proxy
+from flask import Blueprint, redirect, render_template, url_for
+
+from digicubes_flask import digicubes, login_required
 from digicubes_flask.web.account_manager import DigicubesAccountManager
-
-from .forms import UnitForm
 
 teacher_service = Blueprint("teacher", __name__)
 

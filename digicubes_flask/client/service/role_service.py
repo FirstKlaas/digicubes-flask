@@ -3,8 +3,11 @@ All service calls for roles.
 """
 from typing import List, Optional
 
+from pydantic import parse_obj_as, parse_raw_as
+
+from digicubes_flask.client.model import RightModel, RoleModel
 from digicubes_flask.exceptions import DoesNotExist
-from digicubes_flask.client.model import RoleModel, RightModel
+
 from .abstract_service import AbstractService
 
 RoleList = Optional[List[RoleModel]]
@@ -63,7 +66,7 @@ class RoleService(AbstractService):
         response = self.requests.get(url, headers=headers)
 
         self.check_response_status(response)
-        roles = [RoleModel.parse_raw(role) for role in response.json()]
+        roles = parse_obj_as(List[RoleModel], response.json())
         self.cache.set_roles(roles)
         return roles
 

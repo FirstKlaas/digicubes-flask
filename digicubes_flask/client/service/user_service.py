@@ -2,20 +2,14 @@
 All user requests
 """
 import logging
-from typing import Optional, List, Text
+from typing import List, Optional, Text
 
 from pydantic import parse_obj_as, parse_raw_as
 
-from digicubes_flask.exceptions import (
-    ConstraintViolation,
-    ServerError,
-    DoesNotExist,
-    TokenExpired,
-    DigiCubeError,
-)
-
-from digicubes_flask.client.model import RoleModel, UserModelUpsert, UserModel
-
+from digicubes_flask.client.model import RoleModel, UserModel, UserModelUpsert
+from digicubes_flask.exceptions import (ConstraintViolation, DigiCubeError,
+                                        DoesNotExist, ServerError,
+                                        TokenExpired)
 from digicubes_flask.structures import BearerTokenData
 
 from .abstract_service import AbstractService
@@ -147,7 +141,7 @@ class UserService(AbstractService):
             return None
 
         if result.status_code == 200:
-            return UserModel.parse_obj(result.json())
+            return UserModel.parse_raw(result.json())
 
         return None
 
@@ -312,7 +306,7 @@ class UserService(AbstractService):
         # Status 201: Ressource created
         if result.status_code == 201:
             response_data = result.json()
-            user = UserModel.parse_obj(response_data["user"])
+            user = UserModel.raw(response_data["user"])
             bearer_token_data: BearerTokenData = BearerTokenData.structure(
                 response_data["bearer_token_data"]
             )
@@ -403,7 +397,7 @@ class UserService(AbstractService):
         response = self.requests.put(url)
         data = response.json()
 
-        return UserModel.parse_obj(data["user"]), data["token"]
+        return UserModel.parse_raw(data["user"]), data["token"]
 
     def update(self, token, user: UserModelUpsert) -> UserModel:
         """

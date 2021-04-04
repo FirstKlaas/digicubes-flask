@@ -1,7 +1,7 @@
 """
 A base class for all service endpoint.
 """
-from typing import Optional, Dict, Text, List
+from typing import Dict, List, Optional, Text
 
 from digicubes_flask import exceptions as ex
 

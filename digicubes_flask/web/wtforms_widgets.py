@@ -2,13 +2,11 @@
 Some form widgets.
 """
 import logging
-
 from datetime import date, datetime
 
+from markupsafe import Markup, escape
 from wtforms import Field
 from wtforms.widgets import html_params
-
-from markupsafe import Markup, escape
 
 logger = logging.getLogger(__name__)
 

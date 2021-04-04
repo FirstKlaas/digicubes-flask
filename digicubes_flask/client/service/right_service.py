@@ -3,8 +3,9 @@ All serice calls for rights
 """
 from typing import List, Optional
 
-from digicubes_flask.exceptions import ConstraintViolation, ServerError, DoesNotExist
 from digicubes_flask.client.model import RightModel, RoleModel
+from digicubes_flask.exceptions import (ConstraintViolation, DoesNotExist,
+                                        ServerError)
 
 from .abstract_service import AbstractService
 
@@ -59,7 +60,7 @@ class RightService(AbstractService):
         if result.status_code == 404:
             return []
 
-        return [RightModel.parse_raw(right) for right in result.json()]
+        return [RightModel.parse_obj(right) for right in result.json()]
 
     def get(self, token, right_id: int) -> Optional[RightModel]:
         """

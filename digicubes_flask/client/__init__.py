@@ -9,12 +9,13 @@ import cattr
 import requests
 
 from digicubes_flask import structures as st
-from digicubes_flask.exceptions import TokenExpired, ServerError, DoesNotExist
+from digicubes_flask.exceptions import DoesNotExist, ServerError, TokenExpired
+
+from .cache import create_cache
+from .service import RightService, RoleService, SchoolService, UserService
 
 # from digicubes_flask.configuration import url_for, Route
 
-from .service import RoleService, UserService, SchoolService, RightService
-from .cache import create_cache
 
 logger = logging.getLogger(__name__)
 

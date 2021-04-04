@@ -2,29 +2,18 @@
 The Admin Blueprint
 """
 import logging
-from flask import Blueprint, render_template, redirect, url_for
+
+from flask import Blueprint, redirect, render_template, url_for
 from flask_wtf import FlaskForm
-from wtforms import (
-    StringField,
-    SubmitField,
-    validators,
-    TextAreaField,
-    BooleanField,
-    IntegerField,
-)
-
-from digicubes_flask.client import service as srv
-from digicubes_flask.client.model import SchoolModel, CourseModel, UnitModel
-from digicubes_flask import (
-    login_required,
-    current_user,
-    digicubes,
-    CurrentUser,
-)
-
-from digicubes_flask.web.account_manager import DigicubesAccountManager
+from wtforms import (BooleanField, IntegerField, StringField, SubmitField,
+                     TextAreaField, validators)
 
 import digicubes_flask.web.wtforms_widgets as w
+from digicubes_flask import (CurrentUser, current_user, digicubes,
+                             login_required)
+from digicubes_flask.client import service as srv
+from digicubes_flask.client.model import CourseModel, SchoolModel, UnitModel
+from digicubes_flask.web.account_manager import DigicubesAccountManager
 
 unit_service = Blueprint("unit", __name__, url_prefix="/unit")
 

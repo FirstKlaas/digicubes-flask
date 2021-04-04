@@ -2,9 +2,10 @@
 All service calls for schooles.
 """
 import logging
-from typing import Optional, List
+from typing import List, Optional
 
-from digicubes_flask.client.model import UserModel, SchoolModel, CourseModel, UnitModel
+from digicubes_flask.client.model import (CourseModel, SchoolModel, UnitModel,
+                                          UserModel)
 
 from .abstract_service import AbstractService
 
@@ -67,7 +68,7 @@ class SchoolService(AbstractService):
     def update(self, token, school: SchoolModel) -> SchoolModel:
         """
         Update an existing school.
-        If successfull, a new school proxy is returned with the latest version of the
+        If successfull, a new school model is returned with the latest version of the
         school data.
         """
 
@@ -188,7 +189,7 @@ class SchoolService(AbstractService):
 
     def update_course(self, token: str, updated_course: CourseModel) -> CourseModel:
         """
-        Update an existing course specified by it's id of the proxy.
+        Update an existing course specified by it's id of the course.
 
         We do not need an school id, as course ids are unique.
         For security reasons, we should check if this course is

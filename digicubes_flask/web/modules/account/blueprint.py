@@ -2,20 +2,15 @@
 The Admin Blueprint
 """
 import logging
-from flask import Blueprint, render_template, abort, redirect, url_for, flash
 
-from digicubes_flask.client import proxy, service as srv
-from digicubes_flask import (
-    login_required,
-    account_manager,
-    request,
-    current_user,
-    digicubes,
-    CurrentUser,
-)
+from flask import Blueprint, abort, flash, redirect, render_template, url_for
+
+from digicubes_flask import (CurrentUser, account_manager, current_user,
+                             digicubes, login_required, request)
+from digicubes_flask.client import service as srv
+from digicubes_flask.client.model import UserModel
 from digicubes_flask.exceptions import DigiCubeError
 from digicubes_flask.web.account_manager import DigicubesAccountManager
-from digicubes_flask.client.model import UserModel
 
 from .forms import LoginForm, RegisterForm, SetPasswordForm
 

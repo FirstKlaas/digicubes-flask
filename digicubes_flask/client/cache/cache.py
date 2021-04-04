@@ -1,6 +1,6 @@
-from typing import Optional, List
+from typing import List, Optional
 
-from digicubes_flask.client.model import UserModel, RoleModel
+from digicubes_flask.client.model import RoleModel, UserModel
 
 
 class Cache:

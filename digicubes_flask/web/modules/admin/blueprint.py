@@ -6,16 +6,15 @@ role 'admin'
 """
 import logging
 
-from flask import Blueprint, render_template, request, url_for, redirect
+from flask import Blueprint, redirect, render_template, request, url_for
 from flask.helpers import flash
 
-from digicubes_flask.client import proxy
-from digicubes_flask.client.model import UserModel, RoleModel
-from digicubes_flask import login_required, digicubes
+from digicubes_flask import digicubes, login_required
+from digicubes_flask.client.model import RoleModel, SchoolModel, UserModel
 from digicubes_flask.web.account_manager import DigicubesAccountManager
 
-from .rfc import AdminRFC, RfcRequest
 from .forms import SimpleTextForm
+from .rfc import AdminRFC, RfcRequest
 
 admin_blueprint = Blueprint("admin", __name__, template_folder="templates")
 

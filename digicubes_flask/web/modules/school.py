@@ -2,30 +2,19 @@
 The School Blueprint
 """
 import logging
-from flask import Blueprint, render_template, redirect, url_for
-from flask_wtf import FlaskForm
-from wtforms import (
-    StringField,
-    SubmitField,
-    validators,
-    TextAreaField,
-)
 
+from flask import Blueprint, redirect, render_template, url_for
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, TextAreaField, validators
 from wtforms.validators import ValidationError
 
-from digicubes_flask.client.model import SchoolModel
-from digicubes_flask.client import service as srv
-from digicubes_flask import (
-    login_required,
-    current_user,
-    digicubes,
-    CurrentUser,
-)
-
 import digicubes_flask.exceptions as ex
-from digicubes_flask.web.account_manager import DigicubesAccountManager
-
 import digicubes_flask.web.wtforms_widgets as w
+from digicubes_flask import (CurrentUser, current_user, digicubes,
+                             login_required)
+from digicubes_flask.client import service as srv
+from digicubes_flask.client.model import SchoolModel
+from digicubes_flask.web.account_manager import DigicubesAccountManager
 
 blueprint = Blueprint("school", __name__, url_prefix="/school")
 

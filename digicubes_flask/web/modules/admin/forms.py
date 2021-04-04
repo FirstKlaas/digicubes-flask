@@ -4,21 +4,14 @@ Some forms to be used with the wtforms package.
 import logging
 
 from flask_wtf import FlaskForm
-from wtforms import (
-    PasswordField,
-    StringField,
-    SubmitField,
-    validators,
-    TextAreaField,
-)
-
+from wtforms import (PasswordField, StringField, SubmitField, TextAreaField,
+                     validators)
 from wtforms.validators import ValidationError
 
-from digicubes_flask.client.model import SchoolModel
-
-from digicubes_flask import exceptions as ex
 import digicubes_flask.web.wtforms_widgets as w
 from digicubes_flask import digicubes
+from digicubes_flask import exceptions as ex
+from digicubes_flask.client.model import SchoolModel
 
 logger = logging.getLogger(__name__)
 

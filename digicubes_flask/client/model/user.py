@@ -1,5 +1,5 @@
-from typing import Optional, Text
 from datetime import datetime
+from typing import Optional, Text
 
 import pydantic as pyd
 

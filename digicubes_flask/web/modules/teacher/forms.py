@@ -3,18 +3,10 @@ Some forms to be used with the wtforms package.
 """
 import logging
 from datetime import date
-from flask_wtf import FlaskForm
-from wtforms import (
-    StringField,
-    SubmitField,
-    validators,
-    TextAreaField,
-    HiddenField,
-    BooleanField,
-    DateField,
-    IntegerField,
-)
 
+from flask_wtf import FlaskForm
+from wtforms import (BooleanField, DateField, HiddenField, IntegerField,
+                     StringField, SubmitField, TextAreaField, validators)
 
 import digicubes_flask.web.wtforms_widgets as w
 

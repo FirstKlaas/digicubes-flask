@@ -39,6 +39,7 @@ check: deps
 
 style:
 	black -l 100 $(checkfiles)
+	isort $(checkfiles)
 
 badges: deps
 	python lintbadge.py

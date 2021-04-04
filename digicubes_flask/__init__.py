@@ -1,17 +1,17 @@
 """
 The main extension module
 """
-import logging
-from functools import wraps
-from datetime import datetime, timedelta
-from importlib.resources import open_text
 import json
-from typing import Optional, List
+import logging
+from datetime import datetime, timedelta
+from functools import wraps
+from importlib.resources import open_text
+from typing import List, Optional
 
-from flask import abort, current_app, request, Response, redirect, Flask, url_for, g
+from flask import (Flask, Response, abort, current_app, g, redirect, request,
+                   url_for)
 from flask_wtf.csrf import CSRFError
 from werkzeug.local import LocalProxy
-
 
 from digicubes_flask.client import DigiCubeClient, service
 

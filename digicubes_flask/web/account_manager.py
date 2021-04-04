@@ -1,24 +1,18 @@
 """
 The main extension module
 """
-from datetime import datetime, date
 import logging
 import os
+from datetime import date, datetime
 
-from flask import abort, current_app, redirect, Flask, url_for, request, g
+from flask import Flask, abort, current_app, g, redirect, request, url_for
 from flask_wtf.csrf import CSRFError
 from markdown import markdown
 
-from digicubes_flask.client import (
-    DigiCubeClient,
-    RoleService,
-    UserService,
-    RightService,
-    SchoolService,
-)
-
-from digicubes_flask.structures import BearerTokenData
 from digicubes_flask import account_manager, current_user, get_version_string
+from digicubes_flask.client import (DigiCubeClient, RightService, RoleService,
+                                    SchoolService, UserService)
+from digicubes_flask.structures import BearerTokenData
 
 from .momentjs import to_local_datetime
 

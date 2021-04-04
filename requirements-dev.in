@@ -6,7 +6,8 @@ pip-tools
 
 ## Linter tools
 #mypy
-#flake8-isort
+flake8
+flake8-isort
 pylint
 #docutils
 #pygments

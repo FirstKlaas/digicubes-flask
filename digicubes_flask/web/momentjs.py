@@ -1,5 +1,6 @@
-from jinja2 import Markup
 from datetime import datetime
+
+from jinja2 import Markup
 
 
 def to_local_datetime(timestamp, dt_format="llll"):

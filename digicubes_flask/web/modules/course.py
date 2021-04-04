@@ -1,34 +1,21 @@
 """
 The Course Blueprint
 """
-from datetime import date
 import logging
+from datetime import date
 
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, redirect, render_template, url_for
 from flask_wtf import FlaskForm
-from wtforms import (
-    StringField,
-    SubmitField,
-    validators,
-    TextAreaField,
-    BooleanField,
-    HiddenField,
-    DateField,
-)
-
-from digicubes_flask.client.model import SchoolModel, CourseModel
-from digicubes_flask.client import service as srv
-from digicubes_flask import (
-    login_required,
-    current_user,
-    digicubes,
-    CurrentUser,
-    exceptions as ex,
-)
-
-from digicubes_flask.web.account_manager import DigicubesAccountManager
+from wtforms import (BooleanField, DateField, HiddenField, StringField,
+                     SubmitField, TextAreaField, validators)
 
 import digicubes_flask.web.wtforms_widgets as w
+from digicubes_flask import CurrentUser, current_user, digicubes
+from digicubes_flask import exceptions as ex
+from digicubes_flask import login_required
+from digicubes_flask.client import service as srv
+from digicubes_flask.client.model import CourseModel, SchoolModel
+from digicubes_flask.web.account_manager import DigicubesAccountManager
 
 blueprint = Blueprint("course", __name__, url_prefix="/course")
 

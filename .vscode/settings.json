@@ -2,6 +2,7 @@
     "python.pythonPath": "venv/bin/python3",
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
-    "python.linting.pylintEnabled": true,
+    "python.linting.pylintEnabled": false,
     "restructuredtext.confPath": "${workspaceFolder}/docs/source",
+    "python.linting.flake8Enabled": true,
 }

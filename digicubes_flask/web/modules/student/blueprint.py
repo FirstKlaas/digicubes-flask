@@ -2,11 +2,14 @@
 The Admin Blueprint
 """
 import logging
-from flask import Blueprint, render_template, abort, current_app as app, redirect, url_for
 
-from digicubes_flask.structures import BearerTokenData
-from digicubes_flask import login_required, account_manager
+from flask import Blueprint, abort
+from flask import current_app as app
+from flask import redirect, render_template, url_for
+
+from digicubes_flask import account_manager, login_required
 from digicubes_flask.exceptions import DigiCubeError
+from digicubes_flask.structures import BearerTokenData
 
 student_service = Blueprint("student", __name__)
 

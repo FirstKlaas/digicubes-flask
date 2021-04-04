@@ -6,34 +6,29 @@ import datetime
 import logging
 import os
 import re
-from logging.config import dictConfig  # pylint: disable=import-outside-toplevel
-
 from importlib.resources import open_text
-from typing import Optional
+from logging.config import \
+    dictConfig  # pylint: disable=import-outside-toplevel
 from pathlib import Path
+from typing import Optional
 
 from dotenv import load_dotenv
-from flask import Flask, redirect, url_for, Response, request, Request, g
+from flask import Flask, Request, Response, g, redirect, request, url_for
 from flask_babel import Babel
-
 from libgravatar import Gravatar
 from markdown import markdown
 
-from digicubes_flask import account_manager as accm, current_user
+from digicubes_flask import account_manager as accm
+from digicubes_flask import current_user
 from digicubes_flask.email import MailCube
 from digicubes_flask.exceptions import DigiCubeError, TokenExpired
-from digicubes_flask.web.modules import (
-    account_blueprint,
-    admin_blueprint,
-    headmaster_blueprint,
-    teacher_blueprint,
-    student_blueprint,
-    blockly_blueprint,
-    register_blueprints,
-)
+from digicubes_flask.web.modules import (account_blueprint, admin_blueprint,
+                                         blockly_blueprint,
+                                         headmaster_blueprint,
+                                         register_blueprints,
+                                         student_blueprint, teacher_blueprint)
 
 from .account_manager import DigicubesAccountManager
-
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

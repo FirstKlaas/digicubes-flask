@@ -4,39 +4,20 @@ The User Blueprint
 import logging
 from typing import List
 
-from flask import (
-    Blueprint,
-    render_template,
-    redirect,
-    url_for,
-    abort,
-    request,
-    flash,
-)
+from flask import (Blueprint, abort, flash, redirect, render_template, request,
+                   url_for)
 from flask_wtf import FlaskForm
-from wtforms import (
-    Field,
-    StringField,
-    FormField,
-    SubmitField,
-    validators,
-    BooleanField,
-    ValidationError,
-)
+from wtforms import (BooleanField, Field, FormField, StringField, SubmitField,
+                     ValidationError, validators)
 
-from digicubes_flask.client import proxy, service as srv
-from digicubes_flask import (
-    login_required,
-    current_user,
-    digicubes,
-    CurrentUser,
-    exceptions as ex,
-)
-
-from digicubes_flask.client.model import UserModel, UserModelUpsert
+import digicubes_flask.web.wtforms_widgets as w
+from digicubes_flask import CurrentUser, current_user, digicubes
+from digicubes_flask import exceptions as ex
+from digicubes_flask import login_required
+from digicubes_flask.client import service as srv
+from digicubes_flask.client.model import RoleModel, UserModel, UserModelUpsert
 from digicubes_flask.email import mail_cube
 from digicubes_flask.web.account_manager import DigicubesAccountManager
-import digicubes_flask.web.wtforms_widgets as w
 
 blueprint = Blueprint("user", __name__, url_prefix="/user")
 
@@ -97,7 +78,7 @@ class UserForm(FlaskForm):
     submit = SubmitField("Update", widget=w.materialize_submit)
 
 
-def create_userform_with_roles(roles: List[proxy.RoleProxy]) -> UserForm:
+def create_userform_with_roles(roles: List[RoleModel]) -> UserForm:
     """
     Function to create a user form, that boolean fields for all defined
     roles.

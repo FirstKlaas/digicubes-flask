@@ -1,9 +1,10 @@
 import pickle
-from typing import Optional, List
+from typing import List, Optional
 
 import redis
 
-from digicubes_flask.client.model import UserModel, RoleModel
+from digicubes_flask.client.model import RoleModel, UserModel
+
 from .cache import Cache
 
 
