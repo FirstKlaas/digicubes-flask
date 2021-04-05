@@ -13,10 +13,7 @@ astroid==2.5.2
 asynctest==0.13.0
     # via -r requirements-dev.in
 attrs==20.3.0
-    # via
-    #   -r requirements.txt
-    #   cattrs
-    #   pytest
+    # via pytest
 babel==2.9.0
     # via
     #   -r requirements.txt
@@ -26,8 +23,6 @@ black==20.8b1 ; python_version >= "3.6"
     # via -r requirements-dev.in
 bleach==3.3.0
     # via readme-renderer
-cattrs==1.4.0
-    # via -r requirements.txt
 certifi==2020.12.5
     # via
     #   -r requirements.txt
@@ -140,6 +135,8 @@ mccabe==0.6.1
     #   pylint
 mypy-extensions==0.4.3
     # via black
+orjson==3.5.1
+    # via -r requirements.txt
 packaging==20.9
     # via
     #   bleach

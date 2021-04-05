@@ -1,13 +1,15 @@
 from datetime import datetime
 from typing import Optional
 
-import pydantic as pyd
+from pydantic import PositiveInt, constr
+
+from .abstract_base import DigiBaseModel
 
 
-class RightModel(pyd.BaseModel):
-    id: Optional[pyd.PositiveInt]
+class RightModel(DigiBaseModel):
+    id: Optional[PositiveInt]
     created_at: Optional[datetime]
     modified_at: Optional[datetime]
 
-    name: pyd.constr(strip_whitespace=True, max_length=32)
-    description: Optional[pyd.constr(strip_whitespace=True, max_length=60)]
+    name: constr(strip_whitespace=True, max_length=32)
+    description: Optional[constr(strip_whitespace=True, max_length=60)]
