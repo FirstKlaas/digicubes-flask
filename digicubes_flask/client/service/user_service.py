@@ -405,7 +405,7 @@ class UserService(AbstractService):
         """
         response = self.requests.put(
             self.url_for(f"/user/{user.id}"),
-            json=user.json(),
+            data=user.json(),
             headers=self.create_default_header(token),
         )
 

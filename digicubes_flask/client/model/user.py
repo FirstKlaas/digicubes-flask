@@ -19,6 +19,7 @@ class UserModel(pyd.BaseModel):
     created_at: Optional[datetime]
     modified_at: Optional[datetime]
     verified_at: Optional[datetime]
+    last_login_at: Optional[datetime]
     first_name: Optional[pyd.constr(strip_whitespace=True, max_length=20)]
     last_name: Optional[pyd.constr(strip_whitespace=True, max_length=20)]
     login: Optional[pyd.constr(strip_whitespace=True, max_length=20)]
