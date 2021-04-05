@@ -113,7 +113,6 @@ def create(school_id: int, course_id: int):
     if form.validate_on_submit():
 
         new_unit = UnitModel.parse_obj(form.data)
-        new_unit.created_by_id = current_user.id
         server.school.create_unit(server.token, course_id, new_unit)
 
         return redirect(url_for("course.get", school_id=school_id, course_id=course_id))

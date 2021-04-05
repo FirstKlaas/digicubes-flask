@@ -14,4 +14,4 @@ class CourseModel(pyd.BaseModel):
     description: Optional[str]
     created_by_id: Optional[int]
     from_date: Optional[date]
-    until: Optional[date]
+    until_date: Optional[date]

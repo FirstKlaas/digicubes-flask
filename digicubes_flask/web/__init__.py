@@ -83,7 +83,8 @@ def create_app(cfg_file_name=None):
             date = datetime.datetime.fromisoformat(str(dtstr))
             return date.strftime("%d.%m.%Y")
 
-        raise ValueError(f"Cannot convert given value. Unsupported type {type(dtstr)}")
+        return f"XXXX {type(dtstr)}"
+        # raise ValueError(f"Cannot convert given value. Unsupported type {type(dtstr)}")
 
     @app.template_filter()
     def md(txt: str) -> str:  # pylint: disable=unused-variable

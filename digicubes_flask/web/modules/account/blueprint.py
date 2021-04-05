@@ -3,10 +3,11 @@ The Admin Blueprint
 """
 import logging
 
-from flask import Blueprint, abort, flash, redirect, render_template, url_for
+from flask import (Blueprint, abort, flash, redirect, render_template, request,
+                   url_for)
 
 from digicubes_flask import (CurrentUser, account_manager, current_user,
-                             digicubes, login_required, request)
+                             digicubes, login_required)
 from digicubes_flask.client import service as srv
 from digicubes_flask.client.model import UserModel
 from digicubes_flask.exceptions import DigiCubeError

@@ -1,19 +1,17 @@
 """
     Client for the DigiCubeServer
 """
-
 import logging
 
 import requests
 
-from digicubes_flask import structures as st
+from digicubes_flask.client.model import BearerTokenData
 from digicubes_flask.exceptions import DoesNotExist, ServerError, TokenExpired
 
 from .cache import create_cache
 from .service import RightService, RoleService, SchoolService, UserService
 
-# from digicubes_flask.configuration import url_for, Route
-
+__all__ = ["DigiCubeClient"]
 
 logger = logging.getLogger(__name__)
 
@@ -49,10 +47,10 @@ class DigiCubeClient:
         self.protocol = protocol
         self.hostname = hostname
         self.port = port
-        self.user_service: UserService = UserService(self)
-        self.role_service: RoleService = RoleService(self)
-        self.right_service: RightService = RightService(self)
-        self.school_service: SchoolService = SchoolService(self)
+        self.user_service = UserService(self)
+        self.role_service = RoleService(self)
+        self.right_service = RightService(self)
+        self.school_service = SchoolService(self)
 
         self.requests = requests
 
@@ -62,7 +60,7 @@ class DigiCubeClient:
         # but can be used in the code.
         self.cache = create_cache()
 
-    def generate_token_for(self, login: str, password: str):
+    def generate_token_for(self, login: str, password: str) -> BearerTokenData:
         """
         Log into the server with the given credentials.
         If successfull, the it returns the access token.
@@ -84,7 +82,7 @@ class DigiCubeClient:
         if response.status_code != 200:
             raise ServerError(response.text)
 
-        return st.BearerTokenData.structure(response.json())
+        return BearerTokenData.parse_obj(response.json())
 
     def login(self, login: str, password: str) -> str:
         """
@@ -97,7 +95,7 @@ class DigiCubeClient:
         :rtype: BearerTokenData
         :raises: DoesNotExist, ServerError
         """
-        token: st.BearerTokenData = self.generate_token_for(login, password)
+        token = self.generate_token_for(login, password)
         me = self.user_service.me(token.bearer_token)
         self.cache.set_user(me)
         return token
@@ -130,7 +128,7 @@ class DigiCubeClient:
         auth_value = f"Bearer {token}"
         return {"Authorization": auth_value, "Accept": "application/json"}
 
-    def refresh_token(self, token) -> st.BearerTokenData:
+    def refresh_token(self, token) -> BearerTokenData:
         """
         Requesting a new bearer token.
         """
@@ -139,7 +137,7 @@ class DigiCubeClient:
         headers = self.create_default_header(token)
         response = self.requests.post(url, headers=headers)
         if response.status_code == 200:
-            data = st.BearerTokenData.structure(response.json())
+            data = BearerTokenData.parse_obj(response.json())
             return data
         if response.status_code == 401:
             raise TokenExpired("Your auth token has expired.")

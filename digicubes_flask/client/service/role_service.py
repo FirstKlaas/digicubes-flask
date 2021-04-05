@@ -36,20 +36,10 @@ class RoleService(AbstractService):
         headers = self.create_default_header(token)
         data = role.json()
         url = self.url_for("/roles/")
-        response = self.requests.post(url, json=data, headers=headers)
+        response = self.requests.post(url, data=data, headers=headers)
 
         self.check_response_status(response, expected_status=201)
-        return RoleModel.parse_raw(response.json())
-
-    def create_bulk(self, token, roles: List[RoleModel]) -> None:
-        """
-        Create multiple roles
-        """
-        headers = self.create_default_header(token)
-        data = [role.json() for role in roles]
-        url = self.url_for("/roles/")
-        response = self.requests.post(url, json=data, headers=headers)
-        self.check_response_status(response, expected_status=201)
+        return RoleModel.parse_obj(response.json())
 
     def all(self, token) -> List[RoleModel]:
         """
@@ -82,7 +72,7 @@ class RoleService(AbstractService):
         url = self.url_for(f"/role/{role_id}")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response)
-        return RoleModel.parse_raw(response.json())
+        return RoleModel.parse_obj(response.json())
 
     def get_by_name(self, token: str, name: str) -> RoleModel:
         """
@@ -99,7 +89,7 @@ class RoleService(AbstractService):
         url = self.url_for(f"/role/byname/{name}")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return RoleModel.parse_raw(response.json())
+        return RoleModel.parse_obj(response.json())
 
     def get_by_name_or_none(self, token: str, name: str) -> RoleModel:
         """
@@ -121,7 +111,7 @@ class RoleService(AbstractService):
         url = self.url_for(f"/role/{role_id}")
         response = self.requests.delete(url, headers=headers)
         self.check_response_status(response)
-        return RoleModel.parse_raw(response.json())
+        return RoleModel.parse_obj(response.json())
 
     def delete_all(self, token):
         """

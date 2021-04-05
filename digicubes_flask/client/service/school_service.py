@@ -34,7 +34,7 @@ class SchoolService(AbstractService):
 
         self.check_response_status(response, expected_status=200)
 
-        return [SchoolModel.parse_raw(school) for school in response.json()]
+        return [SchoolModel.parse_obj(school) for school in response.json()]
 
     def get(self, token, school_id: int, fields: XFieldList = None) -> Optional[SchoolModel]:
         """
@@ -50,7 +50,7 @@ class SchoolService(AbstractService):
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
 
-        return SchoolModel.parse_raw(response.json())
+        return SchoolModel.parse_obj(response.json())
 
     def get_by_name(self, token: str, name: str) -> SchoolModel:
         """
@@ -63,7 +63,7 @@ class SchoolService(AbstractService):
             self.url_for(f"/school/byname/{name}"), headers=self.create_default_header(token)
         )
         self.check_response_status(response, expected_status=200)
-        return SchoolModel.parse_raw(response.json())
+        return SchoolModel.parse_obj(response.json())
 
     def update(self, token, school: SchoolModel) -> SchoolModel:
         """
@@ -74,10 +74,10 @@ class SchoolService(AbstractService):
 
         headers = self.create_default_header(token)
         url = self.url_for(f"/school/{school.id}")
-        response = self.requests.put(url, json=school.json(), headers=headers)
+        response = self.requests.put(url, data=school.json(), headers=headers)
         self.check_response_status(response, expected_status=200)
 
-        return SchoolModel.parse_raw(response.json())
+        return SchoolModel.parse_obj(response.json())
 
     def delete(self, token, school_id: int) -> Optional[SchoolModel]:
         """
@@ -87,7 +87,7 @@ class SchoolService(AbstractService):
         url = self.url_for(f"/school/{school_id}")
         response = self.requests.delete(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return SchoolModel.parse_raw(response.json())
+        return SchoolModel.parse_obj(response.json())
 
     def create(self, token, school: SchoolModel) -> SchoolModel:
         """
@@ -96,19 +96,9 @@ class SchoolService(AbstractService):
         headers = self.create_default_header(token)
         data = school.json()
         url = self.url_for("/schools/")
-        response = self.requests.post(url, json=data, headers=headers)
+        response = self.requests.post(url, data=data, headers=headers)
         self.check_response_status(response, expected_status=201)
-        return SchoolModel.parse_raw(response.json())
-
-    def create_bulk(self, token, schools: List[SchoolModel]) -> None:
-        """
-        Create multiple schools
-        """
-        headers = self.create_default_header(token)
-        data = [school.json() for school in schools]
-        url = self.url_for("/schools/")
-        response = self.requests.post(url, json=data, headers=headers)
-        self.check_response_status(response, expected_status=201)
+        return SchoolModel.parse_obj(response.json())
 
     def delete_all(self, token: str) -> None:
         """
@@ -126,11 +116,11 @@ class SchoolService(AbstractService):
     def create_course(self, token: str, school: SchoolModel, course: CourseModel) -> CourseModel:
         headers = self.create_default_header(token)
         course.school_id = school.id
-        data = course.to_json_dict()
+        data = course.json()
         url = self.url_for(f"/school/{school.id}/courses/")
-        response = self.requests.post(url, json=data, headers=headers)
+        response = self.requests.post(url, data=data, headers=headers)
         self.check_response_status(response, expected_status=201)
-        return CourseModel.parse_raw(response.json())
+        return CourseModel.parse_obj(response.json())
 
     def get_courses(self, token: str, school: SchoolModel) -> CourseList:
         """
@@ -140,7 +130,7 @@ class SchoolService(AbstractService):
             self.url_for(f"/school/{school.id}/courses/"), headers=self.create_default_header(token)
         )
         self.check_response_status(response, expected_status=200)
-        return [CourseModel.parse_raw(course) for course in response.json()]
+        return [CourseModel.parse_obj(course) for course in response.json()]
 
     def get_course(self, token: str, course_id: int) -> CourseModel:
         """
@@ -157,7 +147,7 @@ class SchoolService(AbstractService):
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
 
-        return CourseModel.parse_raw(response.json())
+        return CourseModel.parse_obj(response.json())
 
     def get_course_or_none(self, token: str, course_id: int) -> Optional[CourseModel]:
         """
@@ -185,7 +175,7 @@ class SchoolService(AbstractService):
         url = self.url_for(f"/course/{course_id}")
         response = self.requests.delete(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return CourseModel.parse_raw(response.json())
+        return CourseModel.parse_obj(response.json())
 
     def update_course(self, token: str, updated_course: CourseModel) -> CourseModel:
         """
@@ -204,59 +194,59 @@ class SchoolService(AbstractService):
         """
         headers = self.create_default_header(token)
         url = self.url_for(f"/course/{updated_course.id}")
-        response = self.requests.put(url, json=updated_course.json(), headers=headers)
+        response = self.requests.put(url, data=updated_course.json(), headers=headers)
         self.check_response_status(response, expected_status=200)
-        return CourseModel.parse_raw(response.json())
+        return CourseModel.parse_obj(response.json())
 
     def get_units(self, token: str, course_id: int) -> UnitList:
         headers = self.create_default_header(token)
         url = self.url_for(f"/course/{course_id}/units/")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return [UnitModel.parse_raw(unit) for unit in response.json()]
+        return [UnitModel.parse_obj(unit) for unit in response.json()]
 
     def get_unit(self, token: str, unit_id: int) -> UnitModel:
         headers = self.create_default_header(token)
         url = self.url_for(f"/unit/{unit_id}")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return UnitModel.parse_raw(response.json())
+        return UnitModel.parse_obj(response.json())
 
     def create_unit(self, token: str, course_id: int, unit: UnitModel) -> CourseModel:
         headers = self.create_default_header(token)
         data = unit.json()
         url = self.url_for(f"/course/{course_id}/units/")
-        response = self.requests.post(url, json=data, headers=headers)
+        response = self.requests.post(url, data=data, headers=headers)
         self.check_response_status(response, expected_status=201)
-        return UnitModel.parse_raw(response.json())
+        return UnitModel.parse_obj(response.json())
 
     def update_unit(self, token: str, unit: UnitModel) -> UnitModel:
         headers = self.create_default_header(token)
         url = self.url_for(f"/unit/{unit.id}")
-        response = self.requests.put(url, headers=headers, json=unit.json())
+        response = self.requests.put(url, headers=headers, data=unit.json())
         self.check_response_status(response, expected_status=200)
-        return UnitModel.parse_raw(response.json())
+        return UnitModel.parse_obj(response.json())
 
     def delete_unit(self, token: str, unit_id: int) -> UnitModel:
         headers = self.create_default_header(token)
         url = self.url_for(f"/unit/{unit_id}")
         response = self.requests.delete(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return UnitModel.parse_raw(response.json())
+        return UnitModel.parse_obj(response.json())
 
     def get_school_teacher(self, token: str, school_id: int) -> List[UserModel]:
         headers = self.create_default_header(token)
         url = self.url_for(f"/school/{school_id}/teacher/")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return [UserModel.parse_raw(user) for user in response.json()]
+        return [UserModel.parse_obj(user) for user in response.json()]
 
     def _get_space_schools(self, token, user: UserModel, space: str) -> List[SchoolModel]:
         headers = self.create_default_header(token)
         url = self.url_for(f"/user/{user.id}/{space}/schools/")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return [SchoolModel.parse_raw(school) for school in response.json()]
+        return [SchoolModel.parse_obj(school) for school in response.json()]
 
     def get_headmaster_schools(self, token, user: UserModel) -> List[SchoolModel]:
         return self._get_space_schools(token, user, "headmaster")

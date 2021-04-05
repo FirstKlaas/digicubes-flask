@@ -12,11 +12,13 @@ from markdown import markdown
 from digicubes_flask import account_manager, current_user, get_version_string
 from digicubes_flask.client import (DigiCubeClient, RightService, RoleService,
                                     SchoolService, UserService)
-from digicubes_flask.structures import BearerTokenData
+from digicubes_flask.client.model import BearerTokenData
 
 from .momentjs import to_local_datetime
 
 logger = logging.getLogger(__name__)
+
+__all__ = ["DigicubesAccountManager"]
 
 
 class DigicubesAccountManager:
@@ -185,7 +187,7 @@ class DigicubesAccountManager:
         app = current_app
         return app.config
 
-    def login(self, login: str, password: str) -> str:
+    def login(self, login: str, password: str) -> BearerTokenData:
         """
         Checks the credentials and, if successfully, adds
         user id and token to the session.
@@ -194,11 +196,8 @@ class DigicubesAccountManager:
         :rtype: BearerTokenData
         :raises: DoesNotExist, ServerError
         """
-        data: BearerTokenData = self._client.login(login, password)
+        data = self._client.login(login, password)
         current_user.set_data(data)
-        # logger.debug("Requested login data for user %s succesfully", login)
-        # logger.debug("data is: %r", data)
-        # logger.debug("Current token is: %s", current_user.token)
         return data
 
     def generate_token_for(self, login: str, password: str) -> str:

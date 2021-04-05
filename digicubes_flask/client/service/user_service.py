@@ -4,13 +4,13 @@ All user requests
 import logging
 from typing import List, Optional, Text
 
-from pydantic import parse_obj_as, parse_raw_as
+from pydantic import parse_obj_as
 
-from digicubes_flask.client.model import RoleModel, UserModel, UserModelUpsert
+from digicubes_flask.client.model import (BearerTokenData, RoleModel,
+                                          UserModel, UserModelUpsert)
 from digicubes_flask.exceptions import (ConstraintViolation, DigiCubeError,
                                         DoesNotExist, ServerError,
                                         TokenExpired)
-from digicubes_flask.structures import BearerTokenData
 
 from .abstract_service import AbstractService
 from .filter import Query
@@ -116,7 +116,7 @@ class UserService(AbstractService):
         result = self.requests.get(url, headers=headers)
 
         if result.status_code == 200:
-            return parse_raw_as(List[RoleModel], result.json())
+            return parse_obj_as(List[RoleModel], result.json())
 
         if result.status_code == 404:
             raise DoesNotExist()
@@ -141,7 +141,7 @@ class UserService(AbstractService):
             return None
 
         if result.status_code == 200:
-            return UserModel.parse_raw(result.json())
+            return UserModel.parse_obj(result.json())
 
         return None
 
@@ -163,7 +163,7 @@ class UserService(AbstractService):
         url = self.url_for(f"/user/bylogin/{login}")
         response = self.requests.get(url, headers=headers)
         self.check_response_status(response, expected_status=200)
-        return UserModel.parse_raw(response.json())
+        return UserModel.parse_obj(response.json())
 
     def get_by_login_or_none(self, token: str, login: str) -> UserModel:
         """
@@ -243,7 +243,7 @@ class UserService(AbstractService):
         response = self.requests.get(url, headers=headers)
 
         self.check_response_status(response, expected_status=200)
-        user = UserModel.parse_raw(response.json())
+        user = UserModel.parse_obj(response.json())
         # self.cache.set_user(user)  # Cache the fetched user.
         return user
 
@@ -275,7 +275,7 @@ class UserService(AbstractService):
         if result.status_code != 200:
             raise ServerError(f"Wrong status. Expected 200. Got {result.status_code}")
 
-        return UserModel.parse_raw(result.json())
+        return UserModel.parse_obj(result.json())
 
     def delete_all(self, token) -> None:
         """
@@ -301,15 +301,13 @@ class UserService(AbstractService):
         """
         data = user.json()
         url = self.url_for("/user/register/")
-        result = self.requests.post(url, json=data)
+        result = self.requests.post(url, data=data)
 
         # Status 201: Ressource created
         if result.status_code == 201:
             response_data = result.json()
             user = UserModel.raw(response_data["user"])
-            bearer_token_data: BearerTokenData = BearerTokenData.structure(
-                response_data["bearer_token_data"]
-            )
+            bearer_token_data = BearerTokenData.parse_obj(response_data["bearer_token_data"])
 
             # Not get the student role
             student_role = self.client.role_service.get_by_name_or_none(
@@ -331,7 +329,7 @@ class UserService(AbstractService):
         headers = self.create_default_header(token, fields=fields)
         data = user.json()
         url = self.url_for("/users/")
-        result = self.requests.post(url, json=data, headers=headers)
+        result = self.requests.post(url, data=data, headers=headers)
 
         if result.status_code == 201:
             # User created successfully. We cannot create the user directly
@@ -339,7 +337,7 @@ class UserService(AbstractService):
             #
             # TODO: Why not able to set the password directly in the
             # REST call? Check is and change it, if possible.
-            user_model = UserModel.parse_raw(result.json())
+            user_model = UserModel.parse_obj(result.json())
             if not user.password:
                 logger.debug("Created user without password.")
             else:
@@ -397,7 +395,7 @@ class UserService(AbstractService):
         response = self.requests.put(url)
         data = response.json()
 
-        return UserModel.parse_raw(data["user"]), data["token"]
+        return UserModel.parse_obj(data["user"]), data["token"]
 
     def update(self, token, user: UserModelUpsert) -> UserModel:
         """
@@ -420,7 +418,7 @@ class UserService(AbstractService):
         if response.status_code != 200:
             raise ServerError(f"Wrong status. Expected 200. Got {response.status_code}")
 
-        user = UserModel.parse_raw(response.json())
+        user = UserModel.parse_obj(response.json())
 
         # Add or update the cached user
         # self.cache.set_user(user)

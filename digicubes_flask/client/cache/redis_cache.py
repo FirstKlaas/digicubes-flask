@@ -45,7 +45,7 @@ class RedisCache(Cache):
 
     def get_user_rights(self, user_id: int) -> Optional[List[str]]:
         raw_data = self.redis.get(f"USER:{user_id}:RIGHTS")
-        return None if raw_data is None else UserModel.parse_raw(raw_data)
+        return None if raw_data is None else UserModel.parse_obj(raw_data)
 
     def set_user_rights(self, user_id: int, rights: List[str]):
         key = f"USER:{user_id}:RIGHTS"

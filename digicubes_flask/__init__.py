@@ -11,7 +11,7 @@ from typing import List, Optional
 from flask import current_app, g
 from werkzeug.local import LocalProxy
 
-from .structures import BearerTokenData
+from digicubes_flask.client.model import BearerTokenData
 
 logger = logging.getLogger(__name__)
 

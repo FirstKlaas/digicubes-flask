@@ -24,10 +24,10 @@ class RightService(AbstractService):
         headers = self.create_default_header(token)
         data = right.json()
         url = self.url_for("/rights/")
-        result = self.requests.post(url, json=data, headers=headers)
+        result = self.requests.post(url, data=data, headers=headers)
 
         if result.status_code == 201:
-            return RightModel.parse_raw(result.json())
+            return RightModel.parse_obj(result.json())
 
         if result.status_code == 409:
             raise ConstraintViolation(result.text)
@@ -73,7 +73,7 @@ class RightService(AbstractService):
             return None
 
         if result.status_code == 200:
-            return RightModel.parse_raw(result.json())
+            return RightModel.parse_obj(result.json())
 
         return None
 
@@ -105,7 +105,7 @@ class RightService(AbstractService):
             raise DoesNotExist(result.text)
 
         if result.status_code == 200:
-            return [RoleModel.parse_raw(role) for role in result.json()]
+            return [RoleModel.parse_obj(role) for role in result.json()]
 
         raise ServerError(result.text)
 

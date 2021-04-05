@@ -1,4 +1,4 @@
 # pylint: disable=C0114
-from .blueprint import teacher_service
+from .blueprint import teacher_service as teacher_blueprint
 
-__all__ = ["teacher_service"]
+__all__ = [teacher_blueprint]
