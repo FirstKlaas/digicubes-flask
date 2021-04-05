@@ -5,4 +5,5 @@
     "python.linting.pylintEnabled": false,
     "restructuredtext.confPath": "${workspaceFolder}/docs/source",
     "python.linting.flake8Enabled": true,
+    "restructuredtext.languageServer.disabled": true,
 }
