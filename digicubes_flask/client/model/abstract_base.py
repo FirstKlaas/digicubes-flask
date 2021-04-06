@@ -16,7 +16,6 @@ def orjson_loads(obj: Union[bytes, bytearray, str]) -> Any:
 
 
 class DigiBaseModel(BaseModel):
-
     class Config:
         json_loads = orjson_loads
         json_dumps = orjson_dumps
