@@ -21,6 +21,7 @@ User Details
 
 {# Header info for this unit #}
 <div class="section">
+    {{ info.row("Login", user.login) }}
     {{ info.row("Vorname", user.first_name) }}
     {{ info.row("Nachname", user.last_name) }}
     {{ info.row("Email", user.email) }}
