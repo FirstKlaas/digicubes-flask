@@ -76,7 +76,11 @@ def school_add_teacher(school_id: int):
             elif server.school.add_teacher(server.token, SchoolModel(id=school_id), user):
                 flash("Teacher added successfully")
             else:
-                flash("Teacher not added")
+                # Now lets see, if the user has not the right role.
+                if server.user.has_role(server.token, user, "teacher"):
+                    flash("Teacher not added. No reason.")
+                else:
+                    flash("User is not a teacher.")
 
     return render_template(
         "admin/school_add_teacher.jinja",

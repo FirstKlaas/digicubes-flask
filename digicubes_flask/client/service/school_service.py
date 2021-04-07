@@ -262,3 +262,9 @@ class SchoolService(AbstractService):
         url = self.url_for(f"/school/{school.id}/teacher/{teacher.id}/")
         response = self.requests.put(url, headers=headers)
         return response.status_code == 200
+
+    def remove_teacher(self, token: str, school: SchoolModel, teacher: UserModel) -> bool:
+        headers = self.create_default_header(token)
+        url = self.url_for(f"/school/{school.id}/teacher/{teacher.id}/")
+        response = self.requests.delete(url, headers=headers)
+        return response.status_code == 200

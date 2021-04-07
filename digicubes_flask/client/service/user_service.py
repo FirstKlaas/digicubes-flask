@@ -429,12 +429,6 @@ class UserService(AbstractService):
         Get all rights. The rest method returns an array of right names
         and not json objects.
         """
-        # user_rights = self.cache.get_user_rights(user_id)
-        # if user_rights is not None:
-        # cache hit
-        #    return user_rights
-
-        # cache miss
         headers = self.create_default_header(token)
         url = self.url_for(f"/user/{user_id}/rights/")
         result = self.requests.get(url, headers=headers)
@@ -449,8 +443,17 @@ class UserService(AbstractService):
             raise ServerError(f"Wrong status. Expected 200. Got {result.status_code}")
 
         user_rights = result.json()
-        # self.cache.set_user_rights(user_id, user_rights)  # cache user rights
         return user_rights
+
+    def has_role(self, token, user: UserModel, role_name: str) -> bool:
+        """
+        Checks if the given user has the requested role. The role is specified
+        by its name.
+        """
+        for role in self.get_my_roles(token, fields=["name"]):
+            if role.name == role_name:
+                return True
+        return False
 
     def get_roles(self, token, user: UserModel) -> List[RoleModel]:
         """

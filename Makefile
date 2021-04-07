@@ -82,4 +82,4 @@ docker: pack
 	docker build -t digicubes-web .
 
 gunicorn:
-	gunicorn -b 0.0.0.0:5050 --worker-tmp-dir=/dev/shm --workers=2 --threads=4 --worker-class=gthread wsgi:app
+	gunicorn -b 0.0.0.0:5000 --worker-tmp-dir=/dev/shm --workers=2 --threads=4 --worker-class=gthread wsgi:app

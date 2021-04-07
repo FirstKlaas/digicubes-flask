@@ -53,7 +53,7 @@ class AbstractService:
         # pylint: disable=C0111
         return self.client.url_for(route, **kwargs)
 
-    def check_response_status(self, response, expected_status: Optional[int] = None):
+    def check_response_status(self, response, expected_status: Optional[int] = 200):
         """
         A default handler for the most common exception.
         """
