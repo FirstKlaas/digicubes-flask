@@ -1,6 +1,9 @@
 {% extends "admin/base.jinja" %}
 {% import "macros/forms.jinja" as forms %}
 
+{% macro gravatar(email) -%}
+    <img src="{{ email | gravatar }}" alt="" class="circle">
+{%- endmacro %}
 
 {% block page_title %}
 Create new User
@@ -23,10 +26,29 @@ Create new User
 </div>
 <div class="section">
     <h3>Zugeordnete Lehrer</h3>
-    {% for t in teacher %}
+    {% if teacher %}
     <div class="row">
-        <div class="col s12" >{{ t.last_name }},{{ t.first_name }} [{{ t.login }}]</div>
+        <div class="col s12">
+            <ul class="collection">
+            {% for user in teacher %}
+            <li class="collection-item avatar">
+                {{ gravatar(user.email) }}
+                <span class="title">{{ user.login }}</span>
+                <p>{{ user.first_name }} {{user.last_name}}<br>
+                {{ user.email }}
+                </p>
+                <a href="#!" class="secondary-content"><i class="material-icons">delete_sweep</i></a>
+            </li>
+            {% endfor %}
+            </ul>
+        </div>
     </div>
-    {% endfor %}
+    {% else %}
+    <div class="row">
+        <div class="col s12">
+            No Teacher so far
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

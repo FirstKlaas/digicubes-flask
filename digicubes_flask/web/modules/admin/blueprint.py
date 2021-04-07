@@ -75,6 +75,7 @@ def school_add_teacher(school_id: int):
                 flash("No such user")
             elif server.school.add_teacher(server.token, SchoolModel(id=school_id), user):
                 flash("Teacher added successfully")
+                return redirect(url_for('school.get', school_id=school_id))
             else:
                 # Now lets see, if the user has not the right role.
                 if server.user.has_role(server.token, user, "teacher"):

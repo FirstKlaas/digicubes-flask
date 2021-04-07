@@ -87,11 +87,11 @@ School
             {% for user in teacher %}
             <li class="collection-item avatar">
                 {{ gravatar(user.email) }}
-                <span class="title">{{ user.login }}</span>
+                <span class="title"><a href="{{ url_for('user.get', user_id=user.id) }}">{{ user.login }}</a></span>
                 <p>{{ user.first_name }} {{user.last_name}}<br>
                 {{ user.email }}
                 </p>
-                <a href="#!" class="secondary-content"><i class="material-icons">delete_sweep</i></a>
+                <a href="#!" class="secondary-content"><i class="material-icons red-text text-darken-3">delete_sweep</i></a>
             </li>
             {% endfor %}
             </ul>
