@@ -61,7 +61,7 @@ def rfc():
     return {"status": response.status, "text": response.text, "data": response.data}
 
 
-@admin_blueprint.route("/school/<int:school_id>/addteacher/", methods=("GET", "POST"))
+@admin_blueprint.route("/school/<int:school_id>/teacher/add/", methods=("GET", "POST"))
 def school_add_teacher(school_id: int):
 
     form = SimpleTextForm()
@@ -75,7 +75,7 @@ def school_add_teacher(school_id: int):
                 flash("No such user")
             elif server.school.add_teacher(server.token, SchoolModel(id=school_id), user):
                 flash("Teacher added successfully")
-                return redirect(url_for('school.get', school_id=school_id))
+                return redirect(url_for("school.get", school_id=school_id))
             else:
                 # Now lets see, if the user has not the right role.
                 if server.user.has_role(server.token, user, "teacher"):
@@ -89,3 +89,22 @@ def school_add_teacher(school_id: int):
         action=url_for("admin.school_add_teacher", school_id=school_id),
         teacher=server.school.get_school_teacher(server.token, school_id),
     )
+
+
+@admin_blueprint.route(
+    "/school/<int:school_id>/teacher/<int:teacher_id>/remove/", methods=("GET", "POST")
+)
+def school_remove_teacher(school_id: int, teacher_id: int):
+    try:
+        success = server.school.remove_teacher(
+            server.token, SchoolModel(id=school_id), UserModel(id=teacher_id)
+        )
+        if success:
+            flash("Teacher removed")
+        else:
+            flash("Could not remove teacher.")
+
+        return redirect(url_for("school.get", school_id=school_id))
+    except Exception:
+        logger.exception("Could not remove teacher from school")
+        return redirect(url_for("school.get", school_id=school_id))

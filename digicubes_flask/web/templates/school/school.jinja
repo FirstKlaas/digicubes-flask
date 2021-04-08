@@ -91,7 +91,7 @@ School
                 <p>{{ user.first_name }} {{user.last_name}}<br>
                 {{ user.email }}
                 </p>
-                <a href="#!" class="secondary-content"><i class="material-icons red-text text-darken-3">delete_sweep</i></a>
+                <a href="{{ url_for('admin.school_remove_teacher', school_id=school.id, teacher_id=user.id) }}" class="secondary-content"><i class="material-icons red-text text-darken-3">delete_sweep</i></a>
             </li>
             {% endfor %}
             </ul>
