@@ -2,7 +2,7 @@ DigiCubes = {}
 
 DigiCubes.token = null;
 DigiCubes.routes = {}
-DigiCubes.mama = {}
+DigiCubes.rest = {}
 
 DigiCubes.addRoute = function(name, path) {
     DigiCubes.routes[name] = path
@@ -61,10 +61,10 @@ DigiCubes.getUsers = async function(token) {
             throw new Error(response.text);
         }    
     })
-}
+};
 
-DigiCubes.mama.getUsers = async function(token) {
-    await fetch('/account/users/', {
+DigiCubes.rest.get_json_data = async function(token, url) {
+    response = await fetch(url, {
         method: 'GET',
         mode: 'same-origin',
         cache: 'default',
@@ -75,11 +75,27 @@ DigiCubes.mama.getUsers = async function(token) {
         },
         redirect: 'follow',
         referrer: 'no-referrer'
-    }).then( ( response ) => {
-        return response.text();
-    }).then( (json) => {
-        console.log(json);
     });
+    
+    data = await response.json();
+    return data;
+}
+
+
+DigiCubes.rest.getUsers = async function(token) {
+    return DigiCubes.rest.get_json_data(token, '/user/all/');
+}
+
+DigiCubes.rest.getRights = async function(token) {
+    return DigiCubes.rest.get_json_data(token, '/rights/all/')
+}
+
+DigiCubes.rest.getRoles = async function(token) {
+    return DigiCubes.rest.get_json_data(token, '/rights/roles/')
+}
+
+DigiCubes.rest.getSchools = async function(token) {
+    return DigiCubes.rest.get_json_data(token, '/rights/schools/')
 }
 
 DigiCubes.getUserTable = async function(offset = null, count = null) {

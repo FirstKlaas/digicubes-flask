@@ -144,7 +144,9 @@ class UserLoginAvailable:
 def get_all():
     """The user list route."""
     user_list = digicubes.user.all(digicubes.token)
-    best = Accept(request.accept_mimetypes).best_match(["application/json", "text/html"], "text/html")
+    best = Accept(request.accept_mimetypes).best_match(
+        ["application/json", "text/html"], "text/html"
+    )
     if best == "text/html":
         return render_template("admin/users.jinja", users=user_list, token=digicubes.token)
 

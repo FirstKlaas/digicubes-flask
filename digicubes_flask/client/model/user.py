@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Text, List, TypeVar
+from typing import List, Optional, Text, TypeVar
 
 import pydantic as pyd
 

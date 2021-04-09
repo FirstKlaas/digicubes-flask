@@ -3,8 +3,9 @@ The School Blueprint
 """
 import logging
 
-from flask import Blueprint, redirect, render_template, url_for
+from flask import Blueprint, redirect, render_template, request, url_for
 from flask_wtf import FlaskForm
+from werkzeug.datastructures import Accept
 from wtforms import StringField, SubmitField, TextAreaField, validators
 from wtforms.validators import ValidationError
 
@@ -91,7 +92,14 @@ def get_all():
     Display all schools
     """
     school_list = digicubes.school.all(digicubes.token)
-    return render_template("school/schools.jinja", schools=school_list)
+
+    best = Accept(request.accept_mimetypes).best_match(
+        ["application/json", "text/html"], "text/html"
+    )
+    if best == "text/html":
+        return render_template("school/schools.jinja", schools=school_list)
+
+    return SchoolModel.list_model(school_list).json()
 
 
 @blueprint.route("/<int:school_id>/teacher/", methods=("GET",))

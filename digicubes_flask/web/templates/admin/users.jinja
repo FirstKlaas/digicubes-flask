@@ -83,7 +83,10 @@ All Users
 {% block page_script %}
     let token='{{ token }}';
     console.log(token);
-    DigiCubes.mama.getUsers(token);    
+    DigiCubes.rest.getUsers(token).then( (data) => {
+        console.log(data);
+    });
+        
     $().ready(function() {
         init();
     });
