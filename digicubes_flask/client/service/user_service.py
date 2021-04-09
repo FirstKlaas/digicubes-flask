@@ -79,7 +79,7 @@ class UserService(AbstractService):
             raise ValueError("Not authenticated")
 
         if result.status_code != 200:
-            raise ServerError("Got an server error")
+            raise ServerError("Got an server error.")
 
         data = result.json()
         user_data = data.get("result", None)
@@ -87,6 +87,13 @@ class UserService(AbstractService):
             raise ServerError("No content provided.")
 
         return parse_obj_as(List[UserModel], user_data)
+
+    def user_schema(self, token):
+        headers = self.create_default_header(token=token)
+        headers["Accept"] = "application/schema+json"
+        url = self.url_for("/users/")
+        result = self.requests.get(url, headers=headers)
+        return result.json()
 
     def get_my_rights(self, token, fields: XFieldList = None):
         "Get my rights"

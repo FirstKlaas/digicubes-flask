@@ -2,6 +2,7 @@
 flask
 flask_wtf
 flask_babel
+flask_accept
 orjson
 
 pyjwt

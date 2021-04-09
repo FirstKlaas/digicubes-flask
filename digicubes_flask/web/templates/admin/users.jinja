@@ -81,6 +81,9 @@ All Users
 
 
 {% block page_script %}
+    let token='{{ token }}';
+    console.log(token);
+    DigiCubes.mama.getUsers(token);    
     $().ready(function() {
         init();
     });
