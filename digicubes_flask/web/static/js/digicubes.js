@@ -2,6 +2,7 @@ DigiCubes = {}
 
 DigiCubes.token = null;
 DigiCubes.routes = {}
+DigiCubes.mama = {}
 
 DigiCubes.addRoute = function(name, path) {
     DigiCubes.routes[name] = path
@@ -52,12 +53,33 @@ DigiCubes.getUsers = async function(token) {
         },
         redirect: 'follow',
         referrer: 'no-referrer'
-    });
-    if (response.status == 200) {
+    })
+    .then( (response) => {
+        if (response.status == 200) {
+            return response.text();
+        } else {
+            throw new Error(response.text);
+        }    
+    })
+}
+
+DigiCubes.mama.getUsers = async function(token) {
+    await fetch('/account/users/', {
+        method: 'GET',
+        mode: 'same-origin',
+        cache: 'default',
+        credentials: 'include',
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'Accept': 'application/json'
+        },
+        redirect: 'follow',
+        referrer: 'no-referrer'
+    }).then( ( response ) => {
         return response.text();
-    } else {
-        throw new Error(response.text);
-    }
+    }).then( (json) => {
+        console.log(json);
+    });
 }
 
 DigiCubes.getUserTable = async function(offset = null, count = null) {

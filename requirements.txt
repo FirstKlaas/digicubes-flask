@@ -16,6 +16,8 @@ dnspython==2.1.0
     # via email-validator
 email-validator==1.1.2
     # via -r requirements.in
+flask-accept==0.0.6
+    # via -r requirements.in
 flask-babel==2.0.0
     # via -r requirements.in
 flask-wtf==0.14.3
@@ -23,6 +25,7 @@ flask-wtf==0.14.3
 flask==1.1.2
     # via
     #   -r requirements.in
+    #   flask-accept
     #   flask-babel
     #   flask-wtf
 gunicorn==20.1.0
@@ -31,8 +34,6 @@ idna==2.10
     # via
     #   email-validator
     #   requests
-importlib-metadata==3.10.0
-    # via markdown
 itsdangerous==1.1.0
     # via
     #   flask
@@ -67,17 +68,13 @@ redis==3.5.3
 requests==2.25.1
     # via -r requirements.in
 typing-extensions==3.7.4.3
-    # via
-    #   importlib-metadata
-    #   pydantic
+    # via pydantic
 urllib3==1.26.4
     # via requests
 werkzeug==1.0.1
     # via flask
 wtforms==2.3.3
     # via flask-wtf
-zipp==3.4.1
-    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

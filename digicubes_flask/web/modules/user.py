@@ -7,6 +7,7 @@ from typing import List
 from flask import (Blueprint, abort, flash, redirect, render_template, request,
                    url_for)
 from flask_wtf import FlaskForm
+from werkzeug.datastructures import Accept
 from wtforms import (BooleanField, Field, FormField, StringField, SubmitField,
                      ValidationError, validators)
 
@@ -143,7 +144,11 @@ class UserLoginAvailable:
 def get_all():
     """The user list route."""
     user_list = digicubes.user.all(digicubes.token)
-    return render_template("admin/users.jinja", users=user_list)
+    best = Accept(request.accept_mimetypes).best_match(["application/json", "text/html"], "text/html")
+    if best == "text/html":
+        return render_template("admin/users.jinja", users=user_list, token=digicubes.token)
+
+    return UserModel.list_model(user_list).json()
 
 
 @blueprint.route("/create/", methods=("GET", "POST"))
