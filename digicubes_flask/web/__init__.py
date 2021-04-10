@@ -7,10 +7,11 @@ import logging
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, g, redirect, request, url_for
+from flask import Flask, g, redirect, request, url_for, Response
 from flask_babel import Babel
 from libgravatar import Gravatar
 from markdown import markdown
+from whitenoise import WhiteNoise
 
 from digicubes_flask import account_manager as accm
 from digicubes_flask import current_user
@@ -109,7 +110,7 @@ def create_app(cfg_file_name=None):
         return value if value is not None else "-"
 
     @app.after_request
-    def after_request_func(response):  # pylint: disable=unused-variable
+    def after_request_func(response: Response):  # pylint: disable=unused-variable
 
         if not g.digitoken_received:
             # No token in request found
@@ -172,6 +173,9 @@ def create_app(cfg_file_name=None):
     the_account_manager.init_app(app)
     mail_cube.init_app(app)
     babel.init_app(app)
+
+    # add whitenoise
+    app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
 
     # ---------------------------
     # Now register the blueprints
