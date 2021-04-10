@@ -8,7 +8,8 @@ from functools import wraps
 from importlib.resources import open_text
 from typing import List, Optional
 
-from flask import current_app, g
+from flask import current_app, g, request
+from werkzeug.datastructures import Accept
 from werkzeug.local import LocalProxy
 
 from digicubes_flask.client.model import BearerTokenData
@@ -21,6 +22,21 @@ digicubes = account_manager
 current_user = LocalProxy(lambda: _get_current_user())
 
 DIGICUBES_ACCOUNT_ATTRIBUTE_NAME = "digicubes_account_manager"
+
+
+def best_mime_type(
+    mime_types: List[str] = ["application/json", "text/html"],
+    default: str = "text/html",
+) -> str:
+    return Accept(request.accept_mimetypes).best_match(mime_types, default)
+
+
+def requested_html() -> bool:
+    return best_mime_type() == "text/html"
+
+
+def requested_json() -> bool:
+    return best_mime_type() == "application/json"
 
 
 def get_version_string():

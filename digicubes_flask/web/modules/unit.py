@@ -10,7 +10,7 @@ from wtforms import (BooleanField, IntegerField, StringField, SubmitField,
 
 import digicubes_flask.web.wtforms_widgets as w
 from digicubes_flask import (CurrentUser, current_user, digicubes,
-                             login_required)
+                             login_required, requested_html)
 from digicubes_flask.client import service as srv
 from digicubes_flask.client.model import CourseModel, SchoolModel, UnitModel
 from digicubes_flask.web.account_manager import DigicubesAccountManager
@@ -90,9 +90,10 @@ def get(school_id: int, course_id: int, unit_id: int):
     db_course: CourseModel = service.get_course_or_none(token, course_id)
     db_school: SchoolModel = service.get(token, school_id)
     db_unit: UnitModel = service.get_unit(token, unit_id)
-    # TODO: Get Unit By ID not implemented.
+    if requested_html():
+        return render_template("unit/unit.jinja", school=db_school, course=db_course, unit=db_unit)
 
-    return render_template("unit/unit.jinja", school=db_school, course=db_course, unit=db_unit)
+    return db_unit.json()
 
 
 # CREATE UNIT
@@ -185,4 +186,5 @@ def delete(school_id: int, course_id: int, unit_id: int):
     token = digicubes.token
 
     service.delete_unit(token, unit_id=unit_id)
+    
     return redirect(url_for("course.get", school_id=school_id, course_id=course_id))

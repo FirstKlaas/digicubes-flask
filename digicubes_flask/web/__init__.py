@@ -7,7 +7,7 @@ import logging
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, g, redirect, request, url_for, Response
+from flask import Flask, Response, g, redirect, request, url_for
 from flask_babel import Babel
 from libgravatar import Gravatar
 from markdown import markdown
@@ -175,7 +175,7 @@ def create_app(cfg_file_name=None):
     babel.init_app(app)
 
     # add whitenoise
-    app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
+    app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
 
     # ---------------------------
     # Now register the blueprints

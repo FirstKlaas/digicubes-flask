@@ -7,14 +7,13 @@ from typing import List
 from flask import (Blueprint, abort, flash, redirect, render_template, request,
                    url_for)
 from flask_wtf import FlaskForm
-from werkzeug.datastructures import Accept
 from wtforms import (BooleanField, Field, FormField, StringField, SubmitField,
                      ValidationError, validators)
 
 import digicubes_flask.web.wtforms_widgets as w
 from digicubes_flask import CurrentUser, current_user, digicubes
 from digicubes_flask import exceptions as ex
-from digicubes_flask import login_required
+from digicubes_flask import login_required, requested_html
 from digicubes_flask.client import service as srv
 from digicubes_flask.client.model import RoleModel, UserModel, UserModelUpsert
 from digicubes_flask.email import mail_cube
@@ -144,10 +143,7 @@ class UserLoginAvailable:
 def get_all():
     """The user list route."""
     user_list = digicubes.user.all(digicubes.token)
-    best = Accept(request.accept_mimetypes).best_match(
-        ["application/json", "text/html"], "text/html"
-    )
-    if best == "text/html":
+    if requested_html():
         return render_template("admin/users.jinja", users=user_list, token=digicubes.token)
 
     return UserModel.list_model(user_list).json()

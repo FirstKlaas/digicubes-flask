@@ -3,14 +3,13 @@ The Right Blueprint
 """
 import logging
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template
 from flask_wtf import FlaskForm
-from werkzeug.datastructures import Accept
 from wtforms import StringField, SubmitField, validators
 
 import digicubes_flask.web.wtforms_widgets as w
 from digicubes_flask import (CurrentUser, current_user, digicubes,
-                             login_required)
+                             login_required, requested_html)
 from digicubes_flask.client import RightService
 from digicubes_flask.client.model import RightModel
 from digicubes_flask.web.account_manager import DigicubesAccountManager
@@ -57,10 +56,7 @@ def all():
     """
     right_list = right_service().all(digicubes.token)
 
-    best = Accept(request.accept_mimetypes).best_match(
-        ["application/json", "text/html"], "text/html"
-    )
-    if best == "text/html":
+    if requested_html:
         return render_template("right/rights.jinja", rights=right_list)
 
     return RightModel.list_model(right_list).json()

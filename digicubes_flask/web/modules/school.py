@@ -3,16 +3,15 @@ The School Blueprint
 """
 import logging
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, url_for
 from flask_wtf import FlaskForm
-from werkzeug.datastructures import Accept
 from wtforms import StringField, SubmitField, TextAreaField, validators
 from wtforms.validators import ValidationError
 
 import digicubes_flask.exceptions as ex
 import digicubes_flask.web.wtforms_widgets as w
 from digicubes_flask import (CurrentUser, current_user, digicubes,
-                             login_required)
+                             login_required, requested_html)
 from digicubes_flask.client import service as srv
 from digicubes_flask.client.model import SchoolModel
 from digicubes_flask.web.account_manager import DigicubesAccountManager
@@ -93,10 +92,7 @@ def get_all():
     """
     school_list = digicubes.school.all(digicubes.token)
 
-    best = Accept(request.accept_mimetypes).best_match(
-        ["application/json", "text/html"], "text/html"
-    )
-    if best == "text/html":
+    if requested_html():
         return render_template("school/schools.jinja", schools=school_list)
 
     return SchoolModel.list_model(school_list).json()
