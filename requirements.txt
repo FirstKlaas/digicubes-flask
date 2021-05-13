@@ -34,8 +34,6 @@ idna==2.10
     # via
     #   email-validator
     #   requests
-importlib-metadata==3.10.0
-    # via markdown
 itsdangerous==1.1.0
     # via
     #   flask
@@ -55,7 +53,7 @@ markupsafe==1.1.1
     #   wtforms
 orjson==3.5.1
     # via -r requirements.in
-pydantic==1.8.1
+pydantic==1.8.2
     # via -r requirements.in
 pyjwt==2.0.1
     # via -r requirements.in
@@ -70,9 +68,7 @@ redis==3.5.3
 requests==2.25.1
     # via -r requirements.in
 typing-extensions==3.7.4.3
-    # via
-    #   importlib-metadata
-    #   pydantic
+    # via pydantic
 urllib3==1.26.4
     # via requests
 werkzeug==1.0.1
@@ -81,8 +77,6 @@ whitenoise==5.2.0
     # via -r requirements.in
 wtforms==2.3.3
     # via flask-wtf
-zipp==3.4.1
-    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
